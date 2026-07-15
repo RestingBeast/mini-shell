@@ -14,16 +14,17 @@
 
 int	main(int argc, char **argv, char **envp)
 {
-	t_list	*env;
+	char *line;
 
-	(void)argc;
-	(void)argv;
-	if (env_init(&env, envp) == -1)
+	while (1)
 	{
-		ft_putendl_fd("minishell: out of memory", STDERR_FILENO);
-		return (1);
+		line = readline("minishell$ ");
+		if (!line)
+			break;
+		if (*line)
+			add_history(line);
+		free(line);
 	}
-	env_print(&env);
-	ft_lstclear(&env, free);
+	printf("exit\n");
 	return (0);
 }
