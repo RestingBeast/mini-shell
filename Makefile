@@ -2,7 +2,8 @@ CC = cc
 CFLAGS = -Wall -Wextra -Werror -g
 INCLUDE = -Iinclude
 NAME = minishell
-SRC = src/minishell.c
+SRC = src/minishell.c \
+      src/lexer.c
 OBJ = $(SRC:.c=.o)
 
 TEST = run-tests
