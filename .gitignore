@@ -1,5 +1,12 @@
+<<<<<<< HEAD
 minishell
 *.o
 run-tests
 libft.a
 .DS_Store
+=======
+minishell
+*.o
+run-tests
+libft.a
+>>>>>>> 3eb1344 (readline)

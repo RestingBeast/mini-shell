@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kkhant-z <kkhant-z@student.42singapor      +#+  +:+       +#+        */
+/*   By: kkhant-z <kkhant-z@student.42singapore.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/07 20:44:16 by kkhant-z          #+#    #+#             */
-/*   Updated: 2026/06/07 20:44:17 by kkhant-z         ###   ########.fr       */
+/*   Updated: 2026/10/10 19:38:39 by kkhant-z         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,11 +14,17 @@
 
 int	main(void)
 {
-	t_lex_err err;
+	char *line;
 
-	t_list *tokens = lexer("cat << \"ab\"c", &err);
-	t_node *tree = parse_tokens(tokens);
-	ft_nodeclear(tree);
-	free_tokens(tokens);
+	while (1)
+	{
+		line = readline("minishell$ ");
+		if (!line)
+			break;
+		if (*line)
+			add_history(line);
+		free(line);
+	}
+	printf("exit\n");
 	return (0);
 }
