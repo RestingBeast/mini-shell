@@ -24,7 +24,7 @@ $(LIBFT):
 	$(MAKE) -C $(LIBFT_DIR)
 
 $(NAME): $(OBJ) $(LIBFT)
-	$(CC) $(CFLAGS) $(OBJ) $(LIBFT) -o $(NAME) 
+	$(CC) $(CFLAGS) $(OBJ) $(LIBFT) -lreadline -o $(NAME)
 
 %.o: %.c
 	$(CC) $(CFLAGS) $(INCLUDE) -o $@ -c $<

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kkhant-z <kkhant-z@student.42singapor      +#+  +:+       +#+        */
+/*   By: kkhant-z <kkhant-z@student.42singapore.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/07 20:44:16 by kkhant-z          #+#    #+#             */
-/*   Updated: 2026/06/07 20:44:17 by kkhant-z         ###   ########.fr       */
+/*   Updated: 2026/09/28 13:42:20 by kkhant-z         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,17 @@
 
 int	main(void)
 {
-	printf("%d> Hello, World!\n", ft_atoi("42"));
+	char *line;
+
+	while (1)
+	{
+		line = readline("minishell$ ");
+		if (!line)
+			break;
+		if (*line)
+			add_history(line);
+		free(line);
+	}
+	printf("exit\n");
 	return (0);
 }
