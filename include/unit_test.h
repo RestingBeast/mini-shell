@@ -6,5 +6,5 @@
 
 const char	*quote_name(enum Quote q);
 const char	*type_name(enum Type t);
-int	compare_segment(t_segment **out, t_segment **exp);
-int	compare_token(t_token **out, t_token **exp);
+int			compare_segment(t_segment **out, t_segment **exp);
+int			compare_token(t_token **out, t_token **exp);
