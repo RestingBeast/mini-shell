@@ -4,12 +4,9 @@ const char	*quote_name(enum Quote q)
 {
 	switch (q)
 	{
-		case 0:
-			return ("NONE");
-		case 1:
-			return ("SINGLE");
-		case 2:
-			return ("DOUBLE");
+		case NONE: return ("NONE");
+		case SINGLE: return ("SINGLE");
+		case DOUBLE: return ("DOUBLE");
 	}
 	return (NULL);
 }
@@ -18,18 +15,12 @@ const char	*type_name(enum Type t)
 {
 	switch (t)
 	{
-		case 0:
-			return ("WORD");
-		case 1:
-			return ("PIPE");
-		case 2:
-			return ("REDIRECT_IN");
-		case 3:
-			return ("REDIRECT_OUT");
-		case 4:
-			return ("HEREDOC");
-		case 5:
-			return ("APPEND");
+		case WORD: return ("WORD");
+		case PIPE: return ("PIPE");
+		case REDIRECT_IN: return ("REDIRECT_IN");
+		case REDIRECT_OUT: return ("REDIRECT_OUT");
+		case HEREDOC: return ("HEREDOC");
+		case APPEND: return ("APPEND");
 	}
 	return (NULL);
 }
