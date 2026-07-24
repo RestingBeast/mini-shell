@@ -1,21 +1,35 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   minishell.h                                        :+:      :+:    :+:   */
+/*   parser.h                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kkhant-z <kkhant-z@student.42singapore.    +#+  +:+       +#+        */
+/*   By: kkhant-z <kkhant-z@student.42singapor      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/06/07 20:43:58 by kkhant-z          #+#    #+#             */
-/*   Updated: 2026/07/15 20:51:54 by kkhant-z         ###   ########.fr       */
+/*   Created: 2026/07/25 02:11:54 by kkhant-z          #+#    #+#             */
+/*   Updated: 2026/07/25 02:11:55 by kkhant-z         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef MINISHELL_H
-# define MINISHELL_H
-# include <stdio.h>
-# include <stdlib.h>
-# include "libft.h"
-# include "lexer.h"
-# include "parser.h"
+#ifndef PARSER_H
+# define PARSER_H
+
+typedef struct s_node		t_node;
+typedef enum e_node_type	t_node_type;
+
+enum e_node_type
+{
+	COMMAND,
+	REDIR,
+	CTRL,
+	TARGET,
+};
+
+struct s_node
+{
+	void		*content;
+	t_node_type	type;
+	t_node		*left;
+	t_node		*right;
+};
 
 #endif
