@@ -1,7 +1,10 @@
 CC = cc
-CFLAGS = -Wall -Wextra -Werror -g
-INCLUDE = -Iinclude
+CFLAGS = -Wall -Wextra -Werror
+MAKE = make
 NAME = minishell
+LIBFT_DIR = libft
+LIBFT = $(LIBFT_DIR)/libft.a
+INCLUDE = -Iinclude -I$(LIBFT_DIR)
 SRC = src/minishell.c \
       src/lexer.c
 OBJ = $(SRC:.c=.o)
@@ -12,20 +15,25 @@ TEST_SRC = tests/lexer.test.c \
 	   tests/test_utils.c
 TEST_OBJ = $(TEST_SRC:.c=.o)
 
-all: $(NAME)
+all: $(LIBFT) $(NAME)
 
-$(NAME): $(OBJ)
-	$(CC) $(CFLAGS) -o $(NAME) $(OBJ)
+$(LIBFT):
+	$(MAKE) -C $(LIBFT_DIR)
+
+$(NAME): $(OBJ) $(LIBFT)
+	$(CC) $(CFLAGS) $(OBJ) $(LIBFT) -o $(NAME) 
 
 %.o: %.c
 	$(CC) $(CFLAGS) $(INCLUDE) -o $@ -c $<
 
 clean:
 	rm -f $(OBJ) $(TEST_OBJ)
+	$(MAKE) -C $(LIBFT_DIR) clean
 
 fclean: clean
 	rm -f $(NAME)
 	rm -f $(TEST)
+	$(MAKE) -C $(LIBFT_DIR) fclean
 
 re: fclean all
 

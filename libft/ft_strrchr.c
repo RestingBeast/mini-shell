@@ -1,19 +1,30 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   minishell.c                                        :+:      :+:    :+:   */
+/*   ft_strrchr.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: kkhant-z <kkhant-z@student.42singapor      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/06/07 20:44:16 by kkhant-z          #+#    #+#             */
-/*   Updated: 2026/06/07 20:44:17 by kkhant-z         ###   ########.fr       */
+/*   Created: 2025/11/22 08:07:29 by kkhant-z          #+#    #+#             */
+/*   Updated: 2025/11/22 08:07:30 by kkhant-z         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "libft.h"
 
-int	main(void)
+char	*ft_strrchr(const char *s, int c)
 {
-	printf("%d> Hello, World!\n", ft_atoi("42"));
-	return (0);
+	int	len;
+
+	len = ft_strlen(s);
+	if ((char)c == '\0')
+	{
+		return ((char *)(s + len));
+	}
+	while (len-- > 0)
+	{
+		if (s[len] == (char)c)
+			return ((char *)(s + len));
+	}
+	return (NULL);
 }

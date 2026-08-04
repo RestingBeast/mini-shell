@@ -1,20 +1,20 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   minishell.h                                        :+:      :+:    :+:   */
+/*   ft_isalpha.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kkhant-z <kkhant-z@student.42singapore.    +#+  +:+       +#+        */
+/*   By: kkhant-z <kkhant-z@student.42singapor      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/06/07 20:43:58 by kkhant-z          #+#    #+#             */
-/*   Updated: 2026/07/15 20:51:54 by kkhant-z         ###   ########.fr       */
+/*   Created: 2025/11/20 16:41:04 by kkhant-z          #+#    #+#             */
+/*   Updated: 2025/11/21 17:35:49 by kkhant-z         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef MINISHELL_H
-# define MINISHELL_H
-# include <stdio.h>
-# include <stdlib.h>
-# include "lexer.h"
-# include "libft.h"
+#include "libft.h"
 
-#endif
+int	ft_isalpha(int c)
+{
+	if ((c >= 65 && c <= 90) || (c >= 97 && c <= 122))
+		return (1);
+	return (0);
+}
