@@ -26,7 +26,7 @@ enum e_node_type
 
 struct s_node
 {
-	void		*content;
+	int			data;
 	t_node_type	type;
 	t_node		*left;
 	t_node		*right;
