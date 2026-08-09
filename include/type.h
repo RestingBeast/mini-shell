@@ -1,27 +1,29 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parser.h                                           :+:      :+:    :+:   */
+/*   type.h                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: kkhant-z <kkhant-z@student.42singapor      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/07/25 02:11:54 by kkhant-z          #+#    #+#             */
-/*   Updated: 2026/07/25 02:11:55 by kkhant-z         ###   ########.fr       */
+/*   Created: 2026/08/09 20:34:55 by kkhant-z          #+#    #+#             */
+/*   Updated: 2026/08/09 20:34:56 by kkhant-z         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef PARSER_H
-# define PARSER_H
-# include "type.h"
+#ifndef TYPE_H
+# define TYPE_H
 
-typedef struct s_node		t_node;
+typedef enum e_type t_type;
 
-struct s_node
+enum e_type
 {
-	void	*data;
-	t_type	type;
-	t_node	*left;
-	t_node	*right;
+	WORD,
+	COMMAND,
+	PIPE,
+	REDIR_IN,
+	REDIR_OUT,
+	HEREDOC,
+	APPEND,
 };
 
 #endif

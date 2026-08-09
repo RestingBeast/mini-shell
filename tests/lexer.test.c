@@ -128,7 +128,7 @@ Test(Lexer, output_redirect_no_space)
 
 	t_token tok1 = TOK(lexeme1, WORD);
 	t_token tok2 = TOK(lexeme2, WORD);
-	t_token tok3 = TOK(NULL, REDIRECT_OUT);
+	t_token tok3 = TOK(NULL, REDIR_OUT);
 	t_token tok4 = TOK(lexeme3, WORD);
 
 	t_token *expected[] = {
@@ -154,7 +154,7 @@ Test(Lexer, input_redirect_space)
 	t_segment seg2 = SEG("cat", NONE);
 	t_segment *lexeme2[] = { &seg2, NULL };
 
-	t_token tok1 = TOK(NULL, REDIRECT_IN);
+	t_token tok1 = TOK(NULL, REDIR_IN);
 	t_token tok2 = TOK(lexeme1, WORD);
 	t_token tok3 = TOK(lexeme2, WORD);
 
