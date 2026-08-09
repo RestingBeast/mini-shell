@@ -1,26 +1,12 @@
 #include "unit_test.h"
 
-const char	*quote_name(enum Quote q)
+const char	*quote_name(t_quote q)
 {
 	switch (q)
 	{
 		case NONE: return ("NONE");
 		case SINGLE: return ("SINGLE");
 		case DOUBLE: return ("DOUBLE");
-	}
-	return (NULL);
-}
-
-const char	*type_name(enum Type t)
-{
-	switch (t)
-	{
-		case WORD: return ("WORD");
-		case PIPE: return ("PIPE");
-		case REDIRECT_IN: return ("REDIRECT_IN");
-		case REDIRECT_OUT: return ("REDIRECT_OUT");
-		case HEREDOC: return ("HEREDOC");
-		case APPEND: return ("APPEND");
 	}
 	return (NULL);
 }
