@@ -1,4 +1,4 @@
-#include "unit_test.h"
+#include "test.h"
 
 // Command: echo "Hello, World"
 Test(Lexer, basic_test)
