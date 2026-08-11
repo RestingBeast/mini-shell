@@ -1,6 +1,6 @@
 #include "test.h"
 
-const char	*quote_name(t_quote q)
+static const char	*quote_name(t_quote q)
 {
 	switch (q)
 	{
@@ -11,84 +11,81 @@ const char	*quote_name(t_quote q)
 	return (NULL);
 }
 
-int	compare_segment(t_segment **out, t_segment **exp)
+static int	compare_segments(t_list *out, t_list *exp)
 {
-	int	i;
+	t_segment	*s1;
+	t_segment	*s2;
+	int			i;
 
-	if (out == NULL)
-		return (0);
 	i = 0;
-	while (out[i] != NULL || exp[i] != NULL)
+	while (out != NULL || exp != NULL)
 	{
-		if (out[i] == NULL || exp[i] == NULL)
-		{
-			printf(
-				"Segment #%d\n\tLexeme Length is not the same\n"
-				"",
-				(i + 1)
-			);
+		if ((out && !exp) || (!out && exp))
 			return (0);
-		}
-		if (out[i]->quote != exp[i]->quote)
+		s1 = (t_segment *)out->content;
+		s2 = (t_segment *)exp->content;
+		if (s1->quote != s2->quote)
 		{
 			printf(
 				"Segment #%d\n"
 				"    Expected quote: %s\n"
 				"    Actual quote:   %s\n",
 				i + 1,
-				quote_name(exp[i]->quote),
-				quote_name(out[i]->quote)
+				quote_name(s2->quote),
+				quote_name(s1->quote)
 			);
 			return (0);
 		}
-		if (strcmp(out[i]->text, exp[i]->text) != 0)
+		if (strcmp(s1->text, s2->text) != 0)
 		{
 			printf(
 				"Segment #%d\n"
 				"    Expected text: %s\n"
 				"    Actual text:   %s\n",
 				i + 1,
-				exp[i]->text,
-				out[i]->text
+				s2->text,
+				s1->text
 			);
 			return (0);
 		}
+		out = out->next;
+		exp = exp->next;
 		i++;
 	}
 	return (1);
 }
 
-int	compare_token(t_token **out, t_token **exp)
+int	compare_tokens(t_list *out, t_list *exp)
 {
-	int	i;
+	t_token	*t1;
+	t_token	*t2;
+	int		i;
 
 	if (out == NULL)
 		return (0);
 	i = 0;
-	while (out[i] != NULL || exp[i] != NULL)
+	while (out != NULL || exp != NULL)
 	{
-		if (out[i] == NULL || exp[i] == NULL)
-		{
-			printf(
-				"Token #%d\n\tToken Length is not the same\n",
-				(i + 1)
-			);
+		if ((out && !exp) || (!out && exp))
 			return (0);
-		}
-		if (out[i]->type != exp[i]->type)
+		t1 = (t_token *)out->content;
+		t2 = (t_token *)exp->content;
+		if (t1->type != t2->type)
 		{
 			printf(
 				"Token #%d\n"
 				"    Expected type: %s\n"
 				"    Actual type:   %s\n",
 				i + 1,
-				type_name(exp[i]->type),
-				type_name(out[i]->type)
+				type_name(t2->type),
+				type_name(t1->type)
 			);
 			return (0);
 		}
-		if (!compare_segment(out[i]->lexeme, exp[i]->lexeme))
+		if (!compare_segments(t1->lexeme, t2->lexeme))
 			return (0);
+		out = out->next;
+		exp = exp->next;
 		i++;
 	}
 	return (1);

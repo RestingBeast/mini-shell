@@ -90,7 +90,7 @@ static int	compare_data(t_node *node1, t_node *node2, int *index)
 	return (1);
 }
 
-static int	compare_node(t_node *node1, t_node *node2, int *index)
+static int	compare_nodes(t_node *node1, t_node *node2, int *index)
 {
 	if ((node1 && !node2) || (!node1 && node2))
 		return (0);
@@ -129,7 +129,7 @@ int compare_trees(t_node *node1, t_node *node2)
 	{
 		node1 = morris_step(node1, &curr1);
 		node2 = morris_step(node2, &curr2);
-		if (compare_node(curr1, curr2, &index) == 0)
+		if (compare_nodes(curr1, curr2, &index) == 0)
 			res = 0;
 	}
 	return (res);
