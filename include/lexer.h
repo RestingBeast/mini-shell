@@ -26,6 +26,6 @@ struct s_token
 	t_type	type;
 };
 
-t_token	**lexer(char *line);
+t_list *lexer(char *line);
 
 #endif

@@ -11,7 +11,9 @@ OBJ = $(SRC:.c=.o)
 
 TEST = run-tests
 TEST_LIB_OBJ = $(filter-out src/minishell.o, $(OBJ))
-TEST_SRC = tests/parser.test.c \
+TEST_SRC = tests/lexer.test.c \
+	   tests/lexer_helpers.c \
+	   tests/parser.test.c \
 	   tests/parser_helpers.c \
 	   tests/test_utils.c
 TEST_OBJ = $(TEST_SRC:.c=.o)
