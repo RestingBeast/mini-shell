@@ -34,13 +34,34 @@ t_node	*morris_step(t_node *node, t_node **curr)
 
 int	compare_data(t_node *node1, t_node *node2)
 {
-	if (node1->type == COMMAND)
+	int		i;
+	char	*s1;
+	char	*s2;
+	char	**arr1;
+	char	**arr2;
+
+	if (node1->type == PIPE)
+		return (1);
+	else if (node1->type == COMMAND)
 	{
-		return (0);
+		arr1 = (char **)node1->data;
+		arr2 = (char **)node2->data;
+		i = 0;
+		while (arr1[i] || arr2[i])
+		{
+			if ((arr1[i] && !arr2[i]) || (!arr1[i] && arr2[i]))
+				return (0);
+			if (ft_strncmp(arr1[i], arr2[i], ft_strlen(arr1[i])) != 0)
+				return (0);
+			i++;
+		}
 	}
 	else
 	{
-		return (0);
+		s1 = (char *)node1->data;
+		s2 = (char *)node2->data;
+		if (ft_strncmp(s1, s2, ft_strlen(s1)) != 0)
+			return (0);
 	}
 	return (1);
 }
@@ -85,6 +106,14 @@ int	compare_trees(t_node *node1, t_node *node2)
 
 int	main(void)
 {
+	t_node node1 = NODE(1, COMMAND, NULL, NULL);
+	t_node node2 = NODE(2, COMMAND, NULL, NULL);
+	t_node root = NODE(3, COMMAND, &node1, &node2);
+
+	t_node node4 = NODE(1, COMMAND, NULL, NULL);
+	t_node node5 = NODE(2, COMMAND, NULL, NULL);
+	t_node root_b = NODE(3, COMMAND, &node4, &node5);
+
 	compare_trees(&root, &root_b);
 	return (0);
 }
