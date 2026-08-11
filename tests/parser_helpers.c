@@ -1,7 +1,7 @@
-#include "unit_test.h"
+#include "test.h"
 
 // Morris Inorder Traversal
-t_node	*morris_step(t_node *node, t_node **curr)
+static t_node	*morris_step(t_node *node, t_node **curr)
 {
 	t_node	*pred;
 
@@ -32,9 +32,10 @@ t_node	*morris_step(t_node *node, t_node **curr)
 	}
 }
 
-int	compare_data(t_node *node1, t_node *node2)
+static int	compare_data(t_node *node1, t_node *node2, int *index)
 {
 	int		i;
+	int		len;
 	char	*s1;
 	char	*s2;
 	char	**arr1;
@@ -51,8 +52,20 @@ int	compare_data(t_node *node1, t_node *node2)
 		{
 			if ((arr1[i] && !arr2[i]) || (!arr1[i] && arr2[i]))
 				return (0);
-			if (ft_strncmp(arr1[i], arr2[i], ft_strlen(arr1[i])) != 0)
+			len = ft_strlen(arr1[i]) > ft_strlen(arr2[i]) ? ft_strlen(arr1[i]) : ft_strlen(arr2[i]);
+			if (ft_strncmp(arr1[i], arr2[i], len) != 0)
+			{
+				printf(
+					"Node #%d\n"
+					"Expected data: %s\n"
+					"Actual data:   %s\n",
+					*index,
+					arr1[i],
+					arr2[i]
+				);
 				return (0);
+
+			}
 			i++;
 		}
 	}
@@ -60,60 +73,64 @@ int	compare_data(t_node *node1, t_node *node2)
 	{
 		s1 = (char *)node1->data;
 		s2 = (char *)node2->data;
-		if (ft_strncmp(s1, s2, ft_strlen(s1)) != 0)
+		len = ft_strlen(s1) > ft_strlen(s2) ? ft_strlen(s1) : ft_strlen(s2);
+		if (ft_strncmp(s1, s2, len) != 0)
+		{
+			printf(
+				"Node #%d\n"
+				"Expected data: %s\n"
+				"Actual data:   %s\n",
+				*index,
+				s1,
+				s2
+			);
 			return (0);
+		}
 	}
 	return (1);
 }
 
-int	compare_node(t_node *node1, t_node *node2)
+static int	compare_node(t_node *node1, t_node *node2, int *index)
 {
 	if ((node1 && !node2) || (!node1 && node2))
 		return (0);
 	if (node1 != NULL && node2 != NULL)
 	{
+		(*index)++;
 		if (node1->type != node2->type)
 		{
 			printf(
+				"Node #%d\n"
 				"Expected type: %s\n"
 				"Actual type:   %s\n",
-				type_name(exp[i]->type),
-				type_name(out[i]->type)
+				*index,
+				type_name(node1->type),
+				type_name(node2->type)
 			);
 			return (0);
 		} else {
-			if (!compare_data(node1, node2))
+			if (!compare_data(node1, node2, index))
 				return (0);
 		}
 	}
 	return (1);
 }
 
-int	compare_trees(t_node *node1, t_node *node2)
+int compare_trees(t_node *node1, t_node *node2)
 {
 	t_node	*curr1 = NULL;
 	t_node	*curr2 = NULL;
+	int		index;
+	int		res;
 
+	res = 1;
+	index = 0;
 	while (node1 || node2)
 	{
 		node1 = morris_step(node1, &curr1);
 		node2 = morris_step(node2, &curr2);
-		if (!compare_node(curr1, curr2))
-			return (0);
+		if (compare_node(curr1, curr2, &index) == 0)
+			res = 0;
 	}
-	return (1);
-}
-
-int	main(void)
-{
-	t_node node1 = NODE(1, COMMAND, NULL, NULL);
-	t_node node2 = NODE(2, COMMAND, NULL, NULL);
-	t_node root = NODE(3, COMMAND, &node1, &node2);
-
-	t_node node4 = NODE(1, COMMAND, NULL, NULL);
-	t_node node5 = NODE(2, COMMAND, NULL, NULL);
-	t_node root_b = NODE(3, COMMAND, &node4, &node5);
-
-	compare_trees(&root, &root_b);
-	return (0);
+	return (res);
 }

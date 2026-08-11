@@ -1,10 +1,16 @@
-#include "unit_test.h"
+#include "test.h"
 
-// Test(Parser, basic_test)
-// {
-// 	t_node node1 = NODE(1, COMMAND, NULL, NULL);
-// 	t_node node2 = NODE(2, COMMAND, NULL, NULL);
-// 	t_node node3 = NODE(3, COMMAND, &node1, &node2);
+Test(Parser, basic_test)
+{
+	char	*cmd[] = {"hello", "1", NULL};
+	t_node node1 = NODE((void *) cmd, COMMAND, NULL, NULL);
+	t_node node2 = NODE((void *) "hello", APPEND, NULL, NULL);
+	t_node expected = NODE((void *) "hello", APPEND, &node1, &node2);
 
-// 	cr_assert(4 + 3 == 7, "Expected 3 + 4 to be equal to 7");
-// }
+	char	*cmd2[] = {"hello", "2", NULL};
+	t_node node4 = NODE((void *) cmd2, COMMAND, NULL, NULL);
+	t_node node5 = NODE((void *) "hell2", APPEND, NULL, NULL);
+	t_node root = NODE((void *) "hello", APPEND, &node4, &node5);
+
+	cr_assert(compare_trees(&expected, &root));
+}

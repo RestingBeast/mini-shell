@@ -1,5 +1,5 @@
 #include "minishell.h"
-// #include <criterion/criterion.h>
+#include <criterion/criterion.h>
 #include <string.h>
 
 #define LST(con, nex) ((t_list){.content = con, next = nex})
@@ -13,3 +13,4 @@ int			compare_segment(t_segment **out, t_segment **exp);
 int			compare_token(t_token **out, t_token **exp);
 
 #define NODE(d, t, l, r) ((t_node){ .data = d, .type = t, .left = l, .right = r})
+int compare_trees(t_node *node1, t_node *node2);

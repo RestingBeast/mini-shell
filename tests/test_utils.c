@@ -1,4 +1,4 @@
-#include "unit_test.h"
+#include "test.h"
 
 const char	*type_name(t_type type)
 {
