@@ -3,17 +3,22 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kkhant-z <kkhant-z@student.42singapor      +#+  +:+       +#+        */
+/*   By: psoe <psoe@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/07 20:44:16 by kkhant-z          #+#    #+#             */
-/*   Updated: 2026/06/07 20:44:17 by kkhant-z         ###   ########.fr       */
+/*   Updated: 2026/08/12 22:54:58 by psoe             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	main(void)
+int	main(int argc,char** argv, char** envp)
 {
-	printf("%d> Hello, World!\n", ft_atoi("42"));
-	return (0);
+	t_list* head;
+	argc++;
+	(void)argv;
+	head = copy_envp(envp);
+	print_list(head);
+	ft_lstclear(&head, free);
+	return(0);
 }

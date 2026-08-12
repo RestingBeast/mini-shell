@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kkhant-z <kkhant-z@student.42singapore.    +#+  +:+       +#+        */
+/*   By: psoe <psoe@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/07 20:43:58 by kkhant-z          #+#    #+#             */
-/*   Updated: 2026/07/15 20:51:54 by kkhant-z         ###   ########.fr       */
+/*   Updated: 2026/08/12 22:50:55 by psoe             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,4 +18,6 @@
 # include "lexer.h"
 # include "parser.h"
 
+void print_list(t_list* node);
+t_list *copy_envp(char** envp);
 #endif
