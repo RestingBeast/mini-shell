@@ -17,5 +17,8 @@
 # include "libft.h"
 # include "lexer.h"
 # include "parser.h"
+# include "test.h"
+
+void	fatal_error(int err);
 
 #endif

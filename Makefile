@@ -9,6 +9,10 @@ SRC = src/minishell.c \
       src/lexer.c \
       src/lexer_word.c \
       src/lexer_utils.c
+      src/parser.c \
+      src/parser_utils.c \
+      src/node.c \
+      src/utils.c
 OBJ = $(SRC:.c=.o)
 
 TEST = run-tests
@@ -26,7 +30,7 @@ $(LIBFT):
 	$(MAKE) -C $(LIBFT_DIR)
 
 $(NAME): $(OBJ) $(LIBFT)
-	$(CC) $(CFLAGS) $(OBJ) $(LIBFT) -o $(NAME) 
+	$(CC) $(CFLAGS) $(OBJ) $(LIBFT) -o $(NAME)
 
 %.o: %.c
 	$(CC) $(CFLAGS) $(INCLUDE) -o $@ -c $<
@@ -48,6 +52,9 @@ image:
 # This target must be run inside the Docker container created by `make image`.
 test: $(TEST_OBJ) $(TEST_LIB_OBJ) $(LIBFT)
 	$(CC) $(CFLAGS) $(INCLUDE) -o $(TEST) \
-	$(TEST_OBJ) $(TEST_LIB_OBJ) $(LIBFT) -lcriterion && ./$(TEST) -f -S --color=always;
+	$(TEST_OBJ) $(TEST_LIB_OBJ) $(LIBFT) -lcriterion \
+	&& valgrind --trace-children=yes --leak-check=full --show-leak-kinds=all \
+	--track-origins=yes ./$(TEST) \
+	-S --always-succeed --color=always;
 
 .PHONY: all clean fclean re image test
