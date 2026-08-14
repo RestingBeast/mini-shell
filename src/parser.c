@@ -34,48 +34,6 @@ char	*combine_segments(t_token *tok)
 	return (res);
 }
 
-/*
-int	count_commands(t_list	*toks)
-{
-	t_token		*tok;
-	t_segment	*seg;
-	t_list		*segs;
-
-	while (toks)
-	{
-		tok = (t_token *)toks->content;
-		if (tok->type != WORD)
-			break ;
-		segs = tok->lexeme;
-		while (segs)
-		{
-			seg = (t_segment *)segs->content;
-			printf("%s\n", seg->text);
-			segs = segs->next;
-		}
-		toks = toks->next;
-	}
-	return (0);
-}
-*/
-
-// crashing
-/*
-int	count_segments(t_token *tok)
-{
-	t_list	*lst;
-	int		count;
-
-	count = 0;
-	lst = tok->lexeme;
-	while (lst)
-	{
-		count += ft_strlen(((t_segment *)lst->content)->text);
-		lst = lst->next;
-	}
-	return (count);
-}
-
 int	count_words(t_list *lst)
 {
 	int	count;
@@ -88,46 +46,43 @@ int	count_words(t_list *lst)
 	}
 	return (count);
 }
-*/
 
-/*
-char	**combine_words(t_list **lst)
+char	**make_command(t_list **lst)
 {
-	int		segs;
-	int		i;
 	char	**cmd;
+	char	*str;
+	int		i;
+	int		words;
+	t_token	*tok;
 
 	words = count_words(*lst);
-	cmd = malloc(words * sizeof(char *));
+	cmd = malloc((words + 1) * sizeof(char *));
 	if (!cmd)
-		return (NULL);
-	printf("Word count: %d\n", words);
-	cmd = NULL;
+		fatal_error(1);
 	i = -1;
 	while (++i < words)
 	{
-		printf("Total Seg length: %d\n", count_segments((t_token *)(*lst)->content));
+		tok = (*lst)->content;
+		str = combine_segments(tok);
+		cmd[i] = str;
 		*lst = (*lst)->next;
 	}
+	cmd[i] = NULL;
 	return (cmd);
 }
-*/
 
 t_node	*parse_tokens(t_list *head)
 {
 	t_token	*tok;
-	char	*str;
+	t_node	*res;
 
 	while (head)
 	{
 		tok = (t_token *)head->content;
 		if (tok->type == WORD)
-		{
-			str = combine_segments(tok);
-			printf("%s\n", str);
-			free(str);
-		}
-		head = head->next;
+			res = ft_nodenew((void *)make_command(&head), COMMAND);
+		if (head)
+			head = head->next;
 	}
-	return (NULL);
+	return (res);
 }

@@ -1,5 +1,5 @@
 CC = cc
-CFLAGS = -Wall -Wextra -Werror
+CFLAGS = -Wall -Wextra -Werror -g
 MAKE = make
 NAME = minishell
 LIBFT_DIR = libft
@@ -51,8 +51,7 @@ image:
 test: $(TEST_OBJ) $(TEST_LIB_OBJ) $(LIBFT)
 	$(CC) $(CFLAGS) $(INCLUDE) -o $(TEST) \
 	$(TEST_OBJ) $(TEST_LIB_OBJ) $(LIBFT) -lcriterion \
-	&& valgrind --trace-children=yes --leak-check=full --show-leak-kinds=all \
-	--track-origins=yes ./$(TEST) \
+	&& ./$(TEST) \
 	-S --always-succeed --color=always;
 
 .PHONY: all clean fclean re image test

@@ -18,7 +18,7 @@ int	main(void)
 	t_list	lexeme1 = LST((void *) &seg1, NULL);
 
 	t_segment	seg2 = SEG("hell", NONE);
-	t_segment	seg3 = SEG("o wo", SINGLE);
+	t_segment	seg3 = SEG("owo", SINGLE);
 	t_segment	seg4 = SEG("rld", DOUBLE);
 	t_list	lexeme2_3 = LST((void *) &seg4, NULL);
 	t_list	lexeme2_2 = LST((void *) &seg3, &lexeme2_3);
@@ -31,6 +31,6 @@ int	main(void)
 	t_list	tokens = LST((void *) &tok1, &lst);
 
 	t_node *root = parse_tokens(&tokens);
-	(void)root;
+	ft_nodeclear(root);
 	return (0);
 }

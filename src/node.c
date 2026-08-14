@@ -26,13 +26,24 @@ t_node	*ft_nodenew(void *data, t_type type)
 	return (root);
 }
 
-void	ft_nodeclear(t_node *root, void (*del)(void *))
+void	ft_nodeclear(t_node *root)
 {
 	t_node	*curr;
+	char	**arr;
+
 	while (root != NULL)
 	{
 		root = morris_next(root, &curr);
-		del(curr->data);
+		if (curr->type == COMMAND)
+		{
+			arr = (char **)curr->data;
+			while (*arr)
+			{
+				free(*arr);
+				arr++;
+			}
+		}
+		free(curr->data);
 		free(curr);
 	}
 }

@@ -16,14 +16,14 @@ enum e_quote
 
 struct s_segment
 {
-	char	*text;
 	t_quote	quote;
+	char	*text;
 };
 
 struct s_token
 {
-	t_list	*lexeme;
 	t_type	type;
+	t_list	*lexeme;
 };
 
 t_list *lexer(char *line);
