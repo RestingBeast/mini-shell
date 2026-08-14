@@ -1,37 +1,5 @@
 #include "test.h"
 
-// Morris Inorder Traversal
-static t_node	*morris_step(t_node *node, t_node **curr)
-{
-	t_node	*pred;
-
-	if (!node)
-		return (NULL);
-	if (node->left == NULL)
-	{
-		*curr = node;
-		return (node->right);
-	}
-	else
-	{
-		pred = node->left;
-		while (pred->right != NULL && pred->right != node)
-			pred = pred->right;
-		if (pred->right == NULL)
-		{
-			pred->right = node;
-			*curr = NULL;
-			return (node->left);
-		}
-		else
-		{
-			pred->right = NULL;
-			*curr = node;
-			return (node->right);
-		}
-	}
-}
-
 static int	compare_data(t_node *node1, t_node *node2, int *index)
 {
 	int		i;
@@ -127,8 +95,8 @@ int compare_trees(t_node *node1, t_node *node2)
 	index = 0;
 	while (node1 || node2)
 	{
-		node1 = morris_step(node1, &curr1);
-		node2 = morris_step(node2, &curr2);
+		node1 = morris_next(node1, &curr1);
+		node2 = morris_next(node2, &curr2);
 		if (compare_nodes(curr1, curr2, &index) == 0)
 			res = 0;
 	}
