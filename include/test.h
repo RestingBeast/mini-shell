@@ -1,5 +1,4 @@
 #include "minishell.h"
-#include <criterion/criterion.h>
 #include <string.h>
 
 #define LST(con, nex) ((t_list){.content = con, .next = nex})
