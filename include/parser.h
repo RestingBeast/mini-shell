@@ -18,8 +18,8 @@ typedef struct s_node		t_node;
 
 struct s_node
 {
-	void	*data;
 	t_type	type;
+	void	*data;
 	t_node	*left;
 	t_node	*right;
 };
@@ -27,6 +27,6 @@ struct s_node
 t_node *parse_tokens(t_list *head);
 t_node	*morris_next(t_node *node, t_node **curr);
 t_node	*ft_nodenew(void *data, t_type type);
-void	ft_nodeclear(t_node *root, void (*del)(void *));
+void	ft_nodeclear(t_node *root);
 
 #endif
