@@ -28,56 +28,21 @@ t_node	*ft_nodenew(void *data, t_type type)
 
 void	ft_nodeclear(t_node *root)
 {
-	t_node	*curr;
 	char	**arr;
 
-	while (root != NULL)
+	if (root == NULL)
+		return ;
+	ft_nodeclear(root->left);
+	ft_nodeclear(root->right);
+	if (root->type == COMMAND)
 	{
-		root = morris_next(root, &curr);
-		if (curr->type == COMMAND)
+		arr = (char **)root->data;
+		while (*arr)
 		{
-			arr = (char **)curr->data;
-			while (*arr)
-			{
-				free(*arr);
-				arr++;
-			}
+			free(*arr);
+			arr++;
 		}
-		free(curr->data);
-		free(curr);
 	}
-}
-
-static t_node	*morris_link_pred(t_node *node, t_node **curr)
-{
-	t_node	*pred;
-
-	pred = node->left;
-	while (pred->right != NULL && pred->right != node)
-		pred = pred->right;
-	if (pred->right == NULL)
-	{
-		pred->right = node;
-		*curr = NULL;
-		return (node->left);
-	}
-	else
-	{
-		pred->right = NULL;
-		*curr = node;
-		return (node->right);
-	}
-}
-
-t_node	*morris_next(t_node *node, t_node **curr)
-{
-	if (!node)
-		return (NULL);
-	if (node->left == NULL)
-	{
-		*curr = node;
-		return (node->right);
-	}
-	else
-		return (morris_link_pred(node, curr));
+	free(root->data);
+	free(root);
 }
