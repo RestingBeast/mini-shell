@@ -102,3 +102,37 @@ int compare_trees(t_node *node1, t_node *node2)
 	}
 	return (res);
 }
+
+static t_node	*morris_link_pred(t_node *node, t_node **curr)
+{
+	t_node	*pred;
+
+	pred = node->left;
+	while (pred->right != NULL && pred->right != node)
+		pred = pred->right;
+	if (pred->right == NULL)
+	{
+		pred->right = node;
+		*curr = NULL;
+		return (node->left);
+	}
+	else
+	{
+		pred->right = NULL;
+		*curr = node;
+		return (node->right);
+	}
+}
+
+t_node	*morris_next(t_node *node, t_node **curr)
+{
+	if (!node)
+		return (NULL);
+	if (node->left == NULL)
+	{
+		*curr = node;
+		return (node->right);
+	}
+	else
+		return (morris_link_pred(node, curr));
+}

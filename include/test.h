@@ -9,3 +9,4 @@
 const char	*type_name(t_type t);
 int			compare_tokens(t_list *out, t_list *exp);
 int compare_trees(t_node *node1, t_node *node2);
+t_node	*morris_next(t_node *node, t_node **curr);

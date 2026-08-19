@@ -59,13 +59,14 @@ char	**make_command(t_list **lst)
 	cmd = malloc((words + 1) * sizeof(char *));
 	if (!cmd)
 		fatal_error(1);
-	i = -1;
-	while (++i < words)
+	i = 0;
+	while (i < words)
 	{
 		tok = (*lst)->content;
 		str = combine_segments(tok);
 		cmd[i] = str;
-		*lst = (*lst)->next;
+		if (++i != words)
+			*lst = (*lst)->next;
 	}
 	cmd[i] = NULL;
 	return (cmd);
@@ -74,15 +75,31 @@ char	**make_command(t_list **lst)
 t_node	*parse_tokens(t_list *head)
 {
 	t_token	*tok;
-	t_node	*res;
+	t_node	*node;
+	t_node	*root;
 
+	root = NULL;
 	while (head)
 	{
 		tok = (t_token *)head->content;
 		if (tok->type == WORD)
-			res = ft_nodenew((void *)make_command(&head), COMMAND);
+		{
+			if (!root)
+				root = ft_nodenew((void *)make_command(&head), COMMAND);
+			else
+				root->right = ft_nodenew((void *)make_command(&head), COMMAND);
+
+		}
+		else
+		{
+			node = root;
+			root = ft_nodenew(NULL, tok->type);
+			if (!root)
+				exit(1);
+			root->left = node;
+		}
 		if (head)
 			head = head->next;
 	}
-	return (res);
+	return (root);
 }
