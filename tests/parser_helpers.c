@@ -1,5 +1,15 @@
 #include "test.h"
 
+static const char	*safe_arr(char **arr)
+{
+    return ((arr && *arr) ? *arr : "(null)");
+}
+
+static const char	*safe_str(char *str)
+{
+	return (str ? str : "(null)");
+}
+
 static int	compare_data(t_node *node1, t_node *node2, int *index)
 {
 	int		i;
@@ -15,6 +25,18 @@ static int	compare_data(t_node *node1, t_node *node2, int *index)
 	{
 		arr1 = (char **)node1->data;
 		arr2 = (char **)node2->data;
+		if (!arr1 || !arr2)
+		{
+			printf(
+				"Node #%d\n"
+				"Expected data: %s\n"
+				"Actual data:   %s\n",
+				*index,
+				safe_arr(arr1),
+				safe_arr(arr2)
+			);
+			return (0);
+		}
 		i = 0;
 		while (arr1[i] || arr2[i])
 		{
@@ -41,6 +63,18 @@ static int	compare_data(t_node *node1, t_node *node2, int *index)
 	{
 		s1 = (char *)node1->data;
 		s2 = (char *)node2->data;
+		if (!s1 || !s2)
+		{
+			printf(
+				"Node #%d\n"
+				"Expected data: %s\n"
+				"Actual data:   %s\n",
+				*index,
+				safe_str(s1),
+				safe_str(s2)
+			);
+			return (0);
+		}
 		len = ft_strlen(s1) > ft_strlen(s2) ? ft_strlen(s1) : ft_strlen(s2);
 		if (ft_strncmp(s1, s2, len) != 0)
 		{
