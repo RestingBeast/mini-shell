@@ -12,6 +12,42 @@
 
 #include "minishell.h"
 
+t_cmd	*ft_cmdnew(char	**args, t_list	*redir)
+{
+	t_cmd	*cmd;
+
+	cmd = malloc(sizeof(t_cmd));
+	if (!cmd)
+		return (NULL);
+	cmd->args = args;
+	cmd->redir = redir;
+	return (cmd);
+}
+
+t_redir	*ft_redirnew_fd(t_type type, int fd)
+{
+	t_redir	*rdr;
+
+	rdr = malloc(sizeof(t_redir));
+	if (!rdr)
+		return (NULL);
+	rdr->type = type;
+	rdr->target.fd = fd;
+	return (rdr);
+}
+
+t_redir	*ft_redirnew_file(t_type type, char *file)
+{
+	t_redir	*rdr;
+
+	rdr = malloc(sizeof(t_redir));
+	if (!rdr)
+		return (NULL);
+	rdr->type = type;
+	rdr->target.file = file;
+	return (rdr);
+}
+
 t_node	*ft_nodenew(void *data, t_type type)
 {
 	t_node	*root;
@@ -24,25 +60,4 @@ t_node	*ft_nodenew(void *data, t_type type)
 	root->left = NULL;
 	root->right = NULL;
 	return (root);
-}
-
-void	ft_nodeclear(t_node *root)
-{
-	char	**arr;
-
-	if (root == NULL)
-		return ;
-	ft_nodeclear(root->left);
-	ft_nodeclear(root->right);
-	if (root->type == COMMAND)
-	{
-		arr = (char **)root->data;
-		while (*arr)
-		{
-			free(*arr);
-			arr++;
-		}
-	}
-	free(root->data);
-	free(root);
 }
