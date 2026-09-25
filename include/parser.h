@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser.h                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kkhant-z <kkhant-z@student.42singapor      +#+  +:+       +#+        */
+/*   By: kkhant-z <kkhant-z@student.42singapore.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/25 02:11:54 by kkhant-z          #+#    #+#             */
-/*   Updated: 2026/07/25 02:11:55 by kkhant-z         ###   ########.fr       */
+/*   Updated: 2026/09/25 22:17:11 by kkhant-z         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 
 typedef struct s_node		t_node;
 typedef struct s_cmd		t_cmd;
-typedef union u_tgt		t_tgt;
+typedef union u_tgt			t_tgt;
 typedef struct s_redir		t_redir;
 
 struct s_node
@@ -45,7 +45,10 @@ struct s_redir
 	t_tgt	target;
 };
 
-t_node *parse_tokens(t_list *head);
+t_node	*parse_tokens(t_list *head);
+t_cmd	*ft_cmdnew(char **args, t_list *redir);
+t_redir	*ft_redirnew_fd(t_type type, int fd);
+t_redir	*ft_redirnew_file(t_type type, char *file);
 t_node	*ft_nodenew(void *data, t_type type);
 void	ft_nodeclear(t_node *root);
 
