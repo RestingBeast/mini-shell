@@ -3,27 +3,12 @@
 # include "type.h"
 # include "libft.h"
 
-typedef struct s_segment t_segment;
 typedef struct s_token t_token;
-typedef enum e_quote t_quote;
-
-enum e_quote
-{
-	NONE,
-	SINGLE,
-	DOUBLE,
-};
-
-struct s_segment
-{
-	t_quote	quote;
-	char	*text;
-};
 
 struct s_token
 {
 	t_type	type;
-	t_list	*lexeme;
+	char	*lexeme;
 };
 
 t_list *lexer(char *line);
