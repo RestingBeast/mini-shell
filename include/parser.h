@@ -15,6 +15,9 @@
 # include "type.h"
 
 typedef struct s_node		t_node;
+typedef struct s_cmd		t_cmd;
+typedef union u_tgt		t_tgt;
+typedef struct s_redir		t_redir;
 
 struct s_node
 {
@@ -22,6 +25,24 @@ struct s_node
 	void	*data;
 	t_node	*left;
 	t_node	*right;
+};
+
+struct s_cmd
+{
+	char	**args;
+	t_list	*redir;
+};
+
+union u_tgt
+{
+	int		fd;
+	char	*file;
+};
+
+struct s_redir
+{
+	t_type	type;
+	t_tgt	target;
 };
 
 t_node *parse_tokens(t_list *head);
