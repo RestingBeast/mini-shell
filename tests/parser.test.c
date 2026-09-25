@@ -7,9 +7,8 @@ Test(Parser, WORD_test)
 	t_cmd		cmd1 = CMD(arg1, NULL);
 	t_node		expected = NODE((void *) &cmd1, COMMAND, NULL, NULL);
 
-
-	t_tok	tok1 = TOK(WORD, "echo");
-	t_tok	tok2 = TOK(WORD, "hell\'o wo\'\"rld\"");
+	t_token	tok1 = TOK(WORD, "echo");
+	t_token	tok2 = TOK(WORD, "hell\'o wo\'\"rld\"");
 
 	t_list		lst = LST((void *) &tok2, NULL);
 	t_list		tokens = LST((void *) &tok1, &lst);
@@ -29,7 +28,7 @@ Test(Parser, REDIR_test)
 
 	char	*arg2[] = {"cat", NULL};
 	t_redir	redir2 = REDIR(REDIR_IN, (t_tgt){.file = "in.txt"});
-	t_list	redir_lst2 = LST((void *) 0, NULL);
+	t_list	redir_lst2 = LST((void *) &redir2, NULL);
 	t_cmd	cmd2 = CMD(arg2, &redir_lst2);
 	t_node	actual = NODE((void *) &cmd2, COMMAND, NULL, NULL);
 
