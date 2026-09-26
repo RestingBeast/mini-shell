@@ -12,94 +12,60 @@
 
 #include "minishell.h"
 
-char	*combine_segments(t_token *tok)
+static int	count_args(t_list *tokens)
 {
-	t_segment	*seg;
-	t_list		*segs;
-	char		*res;
-	char		*tmp;
+	int	res;
+	t_token	*tok;
 
-	res = ft_calloc(1, sizeof(char));
-	if (!res)
-		fatal_error(1);
-	segs = tok->lexeme;
-	while (segs)
+	res = 0;
+	while (tokens)
 	{
-		seg = (t_segment *)segs->content;
-		tmp = ft_strjoin(res, seg->text);
-		free(res);
-		res = tmp;
-		segs = segs->next;
+		tok = (t_token *)tokens->content;
+		if (tok->lexeme != NULL)
+			res++;
+		tokens = tokens->next;
 	}
 	return (res);
 }
 
-int	count_words(t_list *lst)
+static char	**make_args(t_list *tokens)
 {
-	int	count;
-
-	count = 0;
-	while (lst && ((t_token *)lst->content)->type == WORD)
-	{
-		count++;
-		lst = lst->next;
-	}
-	return (count);
-}
-
-char	**make_command(t_list **lst)
-{
-	char	**cmd;
-	char	*str;
+	int		count;
 	int		i;
-	int		words;
 	t_token	*tok;
+	char	**res;
 
-	words = count_words(*lst);
-	cmd = malloc((words + 1) * sizeof(char *));
-	if (!cmd)
-		fatal_error(1);
+	count = count_args(tokens);
+	res = ft_calloc(count + 1, sizeof(char *));
+	if (!res)
+		return (NULL);
 	i = 0;
-	while (i < words)
+	while (tokens)
 	{
-		tok = (*lst)->content;
-		str = combine_segments(tok);
-		cmd[i] = str;
-		if (++i != words)
-			*lst = (*lst)->next;
+		tok = (t_token *)tokens->content;
+		if (tok->lexeme != NULL)
+			res[i++] = tok->lexeme;
+		tok->lexeme = NULL;
+		tokens = tokens->next;
 	}
-	cmd[i] = NULL;
-	return (cmd);
+	return (res);
 }
 
-t_node	*parse_tokens(t_list *head)
+t_node	*parse_tokens(t_list *tokens)
 {
-	t_token	*tok;
-	t_node	*node;
 	t_node	*root;
+	t_cmd	*cmd;
+	char	**args;
 
-	root = NULL;
-	while (head)
+	args = make_args(tokens);
+	cmd = ft_cmdnew(args, NULL);
+	root = ft_nodenew((void *)cmd, COMMAND);
+/*
+	while (*args != NULL)
 	{
-		tok = (t_token *)head->content;
-		if (tok->type == WORD)
-		{
-			if (!root)
-				root = ft_nodenew((void *)make_command(&head), COMMAND);
-			else
-				root->right = ft_nodenew((void *)make_command(&head), COMMAND);
-
-		}
-		else
-		{
-			node = root;
-			root = ft_nodenew(NULL, tok->type);
-			if (!root)
-				exit(1);
-			root->left = node;
-		}
-		if (head)
-			head = head->next;
+		printf("%s\n", *args);
+		args++;
 	}
+*/
 	return (root);
 }
