@@ -20,19 +20,25 @@ Test(Parser, WORD_test)
 
 Test(Parser, REDIR_test)
 {
-	char	*arg1[] = {"cat", NULL};
-	t_redir	redir1 = REDIR(REDIR_IN, (t_tgt){.file = "in.txt"});
+	char	*arg1[] = {"echo", "hello", NULL};
+	t_redir	redir1 = REDIR(REDIR_OUT, (t_tgt){.file = "out"});
 	t_list	redir_lst1 = LST((void *) &redir1, NULL);
 	t_cmd	cmd1 = CMD(arg1, &redir_lst1);
 	t_node	expected = NODE((void *) &cmd1, COMMAND, NULL, NULL);
+	
+	t_token	tok1 = TOK(WORD, "echo");
+	t_token	tok2 = TOK(WORD, "hello");
+	t_token	tok3 = TOK(REDIR_OUT, NULL);
+	t_token	tok4 = TOK(WORD, "out");
 
-	char	*arg2[] = {"cat", NULL};
-	t_redir	redir2 = REDIR(REDIR_IN, (t_tgt){.file = "in.txt"});
-	t_list	redir_lst2 = LST((void *) &redir2, NULL);
-	t_cmd	cmd2 = CMD(arg2, &redir_lst2);
-	t_node	actual = NODE((void *) &cmd2, COMMAND, NULL, NULL);
+	t_list	lst3 = LST((void *)&tok4, NULL);
+	t_list	lst2 = LST((void *)&tok3, &lst3);
+	t_list	lst1 = LST((void *)&tok2, &lst2);
+	t_list	tokens = LST((void *)&tok1, &lst1);
 
-	cr_assert(compare_trees(&expected, &actual));
+	t_node	*root = parse_tokens(&tokens);
+	cr_assert(compare_trees(&expected, root));
+	ft_nodeclear(root);
 }
 
 /*

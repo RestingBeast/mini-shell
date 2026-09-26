@@ -38,7 +38,7 @@ static char	**make_args(t_list *tokens)
 	count = count_args(tokens);
 	res = ft_calloc(count + 1, sizeof(char *));
 	if (!res)
-		return (NULL);
+		return (NULL); // Error-handling should be here
 	i = 0;
 	while (tokens)
 	{
@@ -51,21 +51,53 @@ static char	**make_args(t_list *tokens)
 	return (res);
 }
 
+static t_redir	*make_redir(t_list *tok)
+{
+	t_type	type;
+	char	*file;
+	t_redir	*res;
+
+	type = ((t_token *)tok->content)->type;
+	file = ((t_token *)tok->next->content)->lexeme;
+	res = ft_redirnew_file(type, file);
+	if (!res)
+		return (NULL); // Error-handling should be here
+	((t_token *)tok->next->content)->lexeme = NULL;
+	return (res);
+}
+
+static t_list	*make_redirs(t_list *tokens)
+{
+	t_token	*tok;
+	t_list	*lst;
+	t_list	*tmp;
+
+	lst = NULL;
+	while (tokens)
+	{
+		tok = (t_token *)tokens->content;
+		if (is_redir(tok->type))
+		{
+			tmp = ft_lstnew((void *)make_redir(tokens));
+			if (!tmp)
+				return (NULL); // Error-handling should be here
+			ft_lstadd_back(&lst, tmp);
+		}
+		tokens = tokens->next;
+	}
+	return (lst);
+}
+
 t_node	*parse_tokens(t_list *tokens)
 {
 	t_node	*root;
 	t_cmd	*cmd;
 	char	**args;
+	t_list	*redirs;
 
+	redirs = make_redirs(tokens);
 	args = make_args(tokens);
-	cmd = ft_cmdnew(args, NULL);
+	cmd = ft_cmdnew(args, redirs);
 	root = ft_nodenew((void *)cmd, COMMAND);
-/*
-	while (*args != NULL)
-	{
-		printf("%s\n", *args);
-		args++;
-	}
-*/
 	return (root);
 }

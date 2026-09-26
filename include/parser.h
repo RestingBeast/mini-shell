@@ -45,7 +45,10 @@ struct s_redir
 	t_tgt	target;
 };
 
+// parser.c
 t_node	*parse_tokens(t_list *head);
+int	is_redir(t_type type);
+// node.c
 t_cmd	*ft_cmdnew(char **args, t_list *redir);
 t_redir	*ft_redirnew_fd(t_type type, int fd);
 t_redir	*ft_redirnew_file(t_type type, char *file);
