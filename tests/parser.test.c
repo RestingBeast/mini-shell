@@ -3,7 +3,7 @@
 
 Test(Parser, WORD_test)
 {
-	char		*arg1[] = {"echo", "helloworld", NULL};
+	char		*arg1[] = {"echo", "hell\'o wo\'\"rld\"", NULL};
 	t_cmd		cmd1 = CMD(arg1, NULL);
 	t_node		expected = NODE((void *) &cmd1, COMMAND, NULL, NULL);
 
