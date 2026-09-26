@@ -1,25 +1,38 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   minishell.h                                        :+:      :+:    :+:   */
+/*   get_next_line.h                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: kkhant-z <kkhant-z@student.42singapore.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/06/07 20:43:58 by kkhant-z          #+#    #+#             */
-/*   Updated: 2026/07/15 20:51:54 by kkhant-z         ###   ########.fr       */
+/*   Created: 2026/02/11 15:31:24 by kkhant-z          #+#    #+#             */
+/*   Updated: 2026/04/24 14:34:58 by kkhant-z         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef MINISHELL_H
-# define MINISHELL_H
-# include <stdio.h>
-# include <stdlib.h>
-# include "libft.h"
-# include "get_next_line.h"
-# include "lexer.h"
-# include "parser.h"
-# include "test.h"
+#ifndef GET_NEXT_LINE_H
+# define GET_NEXT_LINE_H
 
-void	fatal_error(int err);
+# include <stdlib.h>
+# include <unistd.h>
+
+# ifndef BUFFER_SIZE
+#  define BUFFER_SIZE 1024
+# endif
+
+typedef struct s_leftover
+{
+	char	*data;
+	size_t	capacity;
+}	t_leftover;
+
+char	*get_next_line(int fd);
+
+// utils
+int		gnl_strchr(char *str, int c);
+int		gnl_strlen(char *str);
+void	gnl_strcat(char *dest, char *src);
+char	*gnl_strjoin(char *s1, char *s2);
+char	*gnl_extract(char *str, char delimiter);
 
 #endif
