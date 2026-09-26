@@ -12,22 +12,6 @@
 
 #include "minishell.h"
 
-static int	count_args(t_list *tokens)
-{
-	int	res;
-	t_token	*tok;
-
-	res = 0;
-	while (tokens)
-	{
-		tok = (t_token *)tokens->content;
-		if (tok->lexeme != NULL)
-			res++;
-		tokens = tokens->next;
-	}
-	return (res);
-}
-
 static char	**make_args(t_list *tokens)
 {
 	int		count;
@@ -51,21 +35,6 @@ static char	**make_args(t_list *tokens)
 	return (res);
 }
 
-static t_redir	*make_redir(t_list *tok)
-{
-	t_type	type;
-	char	*file;
-	t_redir	*res;
-
-	type = ((t_token *)tok->content)->type;
-	file = ((t_token *)tok->next->content)->lexeme;
-	res = ft_redirnew_file(type, file);
-	if (!res)
-		return (NULL); // Error-handling should be here
-	((t_token *)tok->next->content)->lexeme = NULL;
-	return (res);
-}
-
 static t_list	*make_redirs(t_list *tokens)
 {
 	t_token	*tok;
@@ -78,7 +47,7 @@ static t_list	*make_redirs(t_list *tokens)
 		tok = (t_token *)tokens->content;
 		if (is_redir(tok->type))
 		{
-			tmp = ft_lstnew((void *)make_redir(tokens));
+			tmp = ft_lstnew((void *)handle_redir(tokens));
 			if (!tmp)
 				return (NULL); // Error-handling should be here
 			ft_lstadd_back(&lst, tmp);
