@@ -14,21 +14,20 @@
 
 static void	ft_cmdclear(t_cmd *cmd)
 {
+	int	i;
+
 	i = 0;
 	while (cmd->args[i] != NULL)
 	{
-		free(cmd->args[i]);
+		// free(cmd->args[i]);
 		i++;
 	}
 	free(cmd->args);
-	ft_lstclear(cmd, free);
+	ft_lstclear(&(cmd->redir), free);
 }
 
 void	ft_nodeclear(t_node *root)
 {
-	t_cmd	*cmd;
-	int	i;
-
 	if (root == NULL)
 		return ;
 	ft_nodeclear(root->left);
