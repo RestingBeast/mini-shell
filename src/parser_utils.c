@@ -11,3 +11,8 @@
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+int	is_redir(t_type type)
+{
+	return (type == REDIR_IN || type == REDIR_OUT || type == APPEND);
+}
