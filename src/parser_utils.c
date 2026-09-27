@@ -14,7 +14,8 @@
 
 int	is_redir(t_type type)
 {
-	return (type == REDIR_IN || type == REDIR_OUT || type == APPEND);
+	return (type == REDIR_IN || type == REDIR_OUT ||
+			type == APPEND || type == HEREDOC);
 }
 
 int	count_args(t_list *tokens)
@@ -26,6 +27,8 @@ int	count_args(t_list *tokens)
 	while (tokens)
 	{
 		tok = (t_token *)tokens->content;
+		if (tok->type == PIPE)
+			break ;
 		if (tok->lexeme != NULL)
 			res++;
 		tokens = tokens->next;
