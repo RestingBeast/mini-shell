@@ -48,18 +48,6 @@ t_redir	*handle_redir(t_list *tok)
 	return (res);
 }
 
-static int	is_delimiter(char *delimiter, char *line)
-{
-	int	len;
-
-	len = ft_strlen(delimiter);
-	if (ft_strncmp(delimiter, line, len) != 0)
-		return (0);
-	if (line[len] == '\n' && delimiter[len] == '\0')
-		return (1);
-	return (0);
-}
-
 t_redir	*handle_heredoc(t_list *tok)
 {
 	t_redir	*res = NULL;
@@ -70,13 +58,12 @@ t_redir	*handle_heredoc(t_list *tok)
 	if (pipe(fds) != 0)
 		return (NULL); // Error-handling should be here
 	delimiter = ((t_token *)tok->next->content)->lexeme;
-	line = get_next_line(0);
+	line = readline(">");
 	while (line != NULL)
 	{
-		if (is_delimiter(delimiter, line) == 1)
+		if (ft_memcmp((void *)delimiter, (void *)line, ft_strlen(delimiter) + 1) == 0)
 			break ;
-		printf("%s", line);
-		line = get_next_line(0);
+		line = readline(">");
 	}
 	close(fds[0]);
 	close(fds[1]);
