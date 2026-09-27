@@ -1,5 +1,6 @@
 #include "test.h"
 #include <criterion/criterion.h>
+#include <criterion/redirect.h>
 
 Test(Parser, WORD_test)
 {
@@ -36,6 +37,32 @@ Test(Parser, REDIR_test)
 	t_list	lst1 = LST((void *)&tok2, &lst2);
 	t_list	tokens = LST((void *)&tok1, &lst1);
 
+	t_node	*root = parse_tokens(&tokens);
+	cr_assert(compare_trees(&expected, root));
+	ft_nodeclear(root);
+}
+
+Test(Parser, HEREDOC_test)
+{
+	char	*arg[] = {"cat", NULL};
+	t_redir	redir = REDIR(HEREDOC, (t_tgt){.fd = 2});
+	t_list	r_lst = LST((void *)&redir, NULL);
+	t_cmd	cmd = CMD(arg, &r_lst);
+	t_node	expected = NODE((void *) &cmd, COMMAND, NULL, NULL);
+
+	t_token	tok0 = TOK(WORD, "cat");
+	t_token	tok1 = TOK(HEREDOC, NULL);
+	t_token	tok2 = TOK(WORD, "abc");
+	
+	t_list	lst2 = LST((void *)&tok2, NULL);
+	t_list	lst1 = LST((void *)&tok1, &lst2);
+	t_list	tokens = LST((void *)&tok0, &lst1);
+
+	cr_redirect_stdin();
+	FILE *f_stdin = cr_get_redirected_stdin();
+	fprintf(f_stdin, "abc\n");
+	fclose(f_stdin);
+	
 	t_node	*root = parse_tokens(&tokens);
 	cr_assert(compare_trees(&expected, root));
 	ft_nodeclear(root);
