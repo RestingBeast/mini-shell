@@ -4,17 +4,15 @@ MAKE = make
 NAME = minishell
 LIBFT_DIR = libft
 LIBFT = $(LIBFT_DIR)/libft.a
-GNL_DIR = get_next_line
-INCLUDE = -Iinclude -I$(LIBFT_DIR) -I$(GNL_DIR)
+READLINE = -lreadline
+INCLUDE = -Iinclude -I$(LIBFT_DIR)
 SRC = src/minishell.c \
       src/lexer.c \
       src/parser.c \
       src/parser_utils.c \
       src/node.c \
       src/node_utils.c \
-      src/utils.c \
-      $(GNL_DIR)/get_next_line.c \
-      $(GNL_DIR)/get_next_line_utils.c
+      src/utils.c
 
 OBJ = $(SRC:.c=.o)
 
@@ -33,7 +31,7 @@ $(LIBFT):
 	$(MAKE) -C $(LIBFT_DIR)
 
 $(NAME): $(OBJ) $(LIBFT)
-	$(CC) $(CFLAGS) $(OBJ) $(LIBFT) -o $(NAME)
+	$(CC) $(CFLAGS) $(OBJ) $(LIBFT) $(READLINE) -o $(NAME)
 
 %.o: %.c
 	$(CC) $(CFLAGS) $(INCLUDE) -o $@ -c $<

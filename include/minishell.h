@@ -14,8 +14,9 @@
 # define MINISHELL_H
 # include <stdio.h>
 # include <stdlib.h>
+# include <readline/readline.h>
+# include <readline/history.h>
 # include "libft.h"
-# include "get_next_line.h"
 # include "lexer.h"
 # include "parser.h"
 # include "test.h"
