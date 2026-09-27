@@ -55,7 +55,7 @@ image:
 # This target must be run inside the Docker container created by `make image`.
 test: $(TEST_OBJ) $(TEST_LIB_OBJ) $(LIBFT)
 	$(CC) $(CFLAGS) $(INCLUDE) -o $(TEST) \
-	$(TEST_OBJ) $(TEST_LIB_OBJ) $(LIBFT) -lcriterion \
+	$(TEST_OBJ) $(TEST_LIB_OBJ) $(LIBFT) $(READLINE) -lcriterion \
 	&& ./$(TEST) \
 	-S --always-succeed --color=always;
 
