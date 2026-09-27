@@ -50,7 +50,7 @@ t_redir	*handle_redir(t_list *tok)
 
 t_redir	*handle_heredoc(t_list *tok)
 {
-	t_redir	*res = NULL;
+	t_redir	*res;
 	int		fds[2];
 	char	*line;
 	char	*delimiter;
@@ -63,9 +63,14 @@ t_redir	*handle_heredoc(t_list *tok)
 	{
 		if (ft_memcmp((void *)delimiter, (void *)line, ft_strlen(delimiter) + 1) == 0)
 			break ;
+		write(fds[1], line, ft_strlen(line));
+		write(fds[1], "\n", 1);
 		line = readline(">");
 	}
-	close(fds[0]);
 	close(fds[1]);
+	res = ft_redirnew_fd(HEREDOC, fds[0]);
+	if (!res)
+		return (NULL); // Error-handling should be here
+	((t_token *)tok->next->content)->lexeme = NULL;
 	return (res);
 }

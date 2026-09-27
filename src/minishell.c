@@ -36,14 +36,16 @@ int	main(void)
 	t_list	tokens = LST((void *)&tok1, &lst1);
 	*/
 
+	// Test Case 3
+	t_token	tok0 = TOK(WORD, "cat");
 	t_token	tok1 = TOK(HEREDOC, NULL);
 	t_token	tok2 = TOK(WORD, "abc");
 	
-	t_list	lst1 = LST((void *)&tok2, NULL);
-	t_list	tokens = LST((void *)&tok1, &lst1);
+	t_list	lst2 = LST((void *)&tok2, NULL);
+	t_list	lst1 = LST((void *)&tok1, &lst2);
+	t_list	tokens = LST((void *)&tok0, &lst1);
 
-	handle_heredoc(&tokens);
-	// t_node *root = parse_tokens(&tokens);
-	// ft_nodeclear(root);
+	t_node *root = parse_tokens(&tokens);
+	ft_nodeclear(root);
 	return (0);
 }

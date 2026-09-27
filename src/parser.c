@@ -52,6 +52,13 @@ static t_list	*make_redirs(t_list *tokens)
 				return (NULL); // Error-handling should be here
 			ft_lstadd_back(&lst, tmp);
 		}
+		else if (tok->type == HEREDOC)
+		{
+			tmp = ft_lstnew((void *)handle_heredoc(tokens));
+			if (!tmp)
+				return (NULL); // Error-handling should be here
+			ft_lstadd_back(&lst, tmp);
+		}
 		tokens = tokens->next;
 	}
 	return (lst);
