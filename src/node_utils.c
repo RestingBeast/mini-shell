@@ -12,6 +12,18 @@
 
 #include "minishell.h"
 
+static void	ft_redirclear(void * rdr)
+{
+	t_redir	*redir;
+
+	redir = (t_redir *)rdr;
+	/*
+	if (redir->type != HEREDOC)
+		free(redir->target.file);
+	*/
+	free(redir);
+}
+
 static void	ft_cmdclear(t_cmd *cmd)
 {
 	int	i;
@@ -23,7 +35,7 @@ static void	ft_cmdclear(t_cmd *cmd)
 		i++;
 	}
 	free(cmd->args);
-	ft_lstclear(&(cmd->redir), free);
+	ft_lstclear(&(cmd->redir), ft_redirclear);
 }
 
 void	ft_nodeclear(t_node *root)
