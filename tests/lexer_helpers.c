@@ -1,5 +1,5 @@
 #include "test.h"
-
+/*
 static const char	*quote_name(t_quote q)
 {
 	switch (q)
@@ -90,3 +90,4 @@ int	compare_tokens(t_list *out, t_list *exp)
 	}
 	return (1);
 }
+*/

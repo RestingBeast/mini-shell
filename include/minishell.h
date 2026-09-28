@@ -14,8 +14,13 @@
 # define MINISHELL_H
 # include <stdio.h>
 # include <stdlib.h>
+# include <readline/readline.h>
+# include <readline/history.h>
 # include "libft.h"
 # include "lexer.h"
 # include "parser.h"
+# include "test.h"
+
+void	fatal_error(int err);
 
 #endif
