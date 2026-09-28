@@ -68,8 +68,10 @@ t_redir	*handle_heredoc(t_list *tok)
 			break ;
 		write(fds[1], line, ft_strlen(line));
 		write(fds[1], "\n", 1);
+		free(line);
 		line = readline(">");
 	}
+	free(line);
 	close(fds[1]);
 	res = ft_redirnew_fd(HEREDOC, fds[0]);
 	if (!res)
