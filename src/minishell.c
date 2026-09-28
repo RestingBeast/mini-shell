@@ -16,6 +16,7 @@ int	main(void)
 {
 	char *line;
 
+	set_sigaction();
 	while (1)
 	{
 		line = readline("minishell$ ");
@@ -24,7 +25,13 @@ int	main(void)
 		if (*line)
 			add_history(line);
 		free(line);
+		if (sig_captured == SIGINT)
+		{
+			rl_replace_line("", 0);
+			continue ;
+		}
 	}
 	printf("exit\n");
+	rl_clear_history();
 	return (0);
 }

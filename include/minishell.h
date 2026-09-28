@@ -16,7 +16,13 @@
 # include <stdlib.h>
 # include <readline/readline.h>
 # include <readline/history.h>
+# include <signal.h>
 # include "libft.h"
 # include "lexer.h"
 # include "parser.h"
+
+extern volatile sig_atomic_t sig_captured;
+
+void	set_sigaction(void);
+
 #endif
