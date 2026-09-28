@@ -25,12 +25,13 @@ SRC = src/minishell.c \
 	  src/builtins/builtin_unset.c \
 	  src/builtins/builtin_exit.c \
 	  src/lexer_word.c \
-  	src/lexer_utils.c \
+	  src/lexer_utils.c \
 	  src/parser.c \
 	  src/parser_utils.c \
 	  src/node.c \
 	  src/node_utils.c \
-	  src/utils.c
+	  src/utils.c \
+	  src/signals.c
 OBJ = $(SRC:.c=.o)
 
 TEST = run-tests
