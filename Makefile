@@ -14,7 +14,8 @@ SRC =	src/minishell.c \
 	src/parser_utils.c \
 	src/node.c \
 	src/node_utils.c \
-	src/utils.c
+	src/utils.c \
+	src/signals.c
 OBJ = $(SRC:.c=.o)
 
 TEST = run-tests
