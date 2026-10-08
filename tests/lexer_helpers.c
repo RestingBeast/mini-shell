@@ -52,4 +52,3 @@ int	compare_tokens(t_list *out, t_list *exp)
 	}
 	return (1);
 }
-*/

@@ -2,8 +2,8 @@
 #include <string.h>
 
 #define LST(con, nex) ((t_list){.content = con, .next = nex})
-#define TOK(t, str) ((t_token){.type = t, .lexeme = str})
-#define NODE(d, t, l, r) ((t_node){.data = d, .type = t, .left = l, .right = r})
+#define TOK(lex, t) ((t_token){ .lexeme = lex, .type = t})
+#define NODE(d, t, l, r) ((t_node){ .data = d, .type = t, .left = l, .right = r})
 #define REDIR(t, tgt) ((t_redir){.type = t, .target = tgt})
 #define CMD(a, r) ((t_cmd){.args = a, .redir = r})
 
