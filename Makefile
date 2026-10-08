@@ -6,16 +6,15 @@ LIBFT_DIR = libft
 LIBFT = $(LIBFT_DIR)/libft.a
 READLINE = -lreadline
 INCLUDE = -Iinclude -I$(LIBFT_DIR)
-SRC = src/minishell.c \
-      src/lexer.c \
-      src/lexer_word.c \
-      src/lexer_utils.c
-      src/parser.c \
-      src/parser_utils.c \
-      src/node.c \
-      src/node_utils.c \
-      src/utils.c
-
+SRC =	src/minishell.c \
+	src/lexer.c \
+	src/lexer_word.c \
+	src/lexer_utils.c \
+	src/parser.c \
+	src/parser_utils.c \
+	src/node.c \
+	src/node_utils.c \
+	src/utils.c
 OBJ = $(SRC:.c=.o)
 
 TEST = run-tests
