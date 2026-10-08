@@ -39,7 +39,7 @@ static int	add_token(t_list **tokens, t_token *tok)
 	node = NULL;
 	if (!tok)
 	        return (0);
-		node = ft_lstnew(tok);
+	node = ft_lstnew(tok);
 	if (!node)
 	{
 			free_token(tok);
@@ -51,12 +51,27 @@ static int	add_token(t_list **tokens, t_token *tok)
 	return (1);
 }
 
-t_list	*lexer(char *line)
+static t_token	*read_token(char *line, int *i, t_lex_err *err)
+{
+	t_token	*tok;
+
+	*err = LEX_ALLOC;
+	if (is_operator(line[*i]))
+		tok = read_operator(line, i);
+	else
+		tok = read_word(line, i, err);
+	if (tok)
+		*err = LEX_OK;
+	return (tok);
+}
+
+t_list	*lexer(char *line, t_lex_err *err)
 {
 	t_list	*tokens;
 	t_token	*tok;
 	int		i;
 
+	*err = LEX_OK;
 	if (!line)
 		return (NULL);
 	tokens = NULL;
@@ -67,14 +82,11 @@ t_list	*lexer(char *line)
 			i++;
 		else
 		{
-			if (is_operator(line[i]))
-				tok = read_operator(line, &i);
-			else
-				tok = read_word(line, &i);
-				if (!tok)
-					return (free_tokens(tokens), NULL);
+			tok = read_token(line, &i, err);
+			if (!tok)
+				return (free_tokens(tokens), NULL);
 			if (!add_token(&tokens, tok))
-				return (NULL);
+				return (*err = LEX_ALLOC, NULL);
 		}
 	}
 	return (tokens);
