@@ -1,13 +1,13 @@
 #include "minishell.h"
 
-t_token	*new_token(t_type type)
+t_token	*new_token(t_type type, char *lexeme)
 {
 	t_token	*tok;
 
 	tok = malloc(sizeof(t_token));
 	if (!tok)
 		return (NULL);
-	tok->lexeme = NULL;
+	tok->lexeme = lexeme;
 	tok->type = type;
 	return (tok);
 }
@@ -29,7 +29,7 @@ static t_token	*read_operator(char *line, int *i)
 	if (type == HEREDOC || type == APPEND)
 		(*i)++;
 	(*i)++;
-	return (new_token(type));
+	return (new_token(type, NULL));
 }
 
 static int	add_token(t_list **tokens, t_token *tok)
@@ -37,11 +37,11 @@ static int	add_token(t_list **tokens, t_token *tok)
 	t_list	*node;
 
 	node = NULL;
-	if (tok)
+	if (!tok)
+	        return (0);
 		node = ft_lstnew(tok);
 	if (!node)
 	{
-		if (tok)
 			free_token(tok);
 		free_tokens(*tokens);
 		*tokens = NULL;
@@ -71,6 +71,8 @@ t_list	*lexer(char *line)
 				tok = read_operator(line, &i);
 			else
 				tok = read_word(line, &i);
+				if (!tok)
+					return (free_tokens(tokens), NULL);
 			if (!add_token(&tokens, tok))
 				return (NULL);
 		}

@@ -24,11 +24,17 @@ struct s_token
 {
 	t_list	*lexeme;
 	t_type	type;
+typedef struct s_token t_token;
+
+struct s_token
+{
+t_type	type;
+char		*lexeme;
 };
 
 // lexer.c
 t_list	*lexer(char *line);
-t_token	*new_token(t_type type);
+t_token	*new_token(t_type type, char *lexeme);
 
 // lexer_word.c
 t_token	*read_word(char *line, int *i);
@@ -36,7 +42,6 @@ t_token	*read_word(char *line, int *i);
 // lexer_utils.c
 int		is_space(char c);
 int		is_operator(char c);
-void	free_segment(void *content);
 void	free_token(void *content);
 void	free_tokens(t_list *tokens);
 
