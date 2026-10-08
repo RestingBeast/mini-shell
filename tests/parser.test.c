@@ -8,8 +8,8 @@ Test(Parser, WORD_test)
 	t_cmd		cmd1 = CMD(arg1, NULL);
 	t_node		expected = NODE((void *) &cmd1, COMMAND, NULL, NULL);
 
-	t_token	tok1 = TOK(WORD, "echo");
-	t_token	tok2 = TOK(WORD, "hell\'o wo\'\"rld\"");
+	t_token	tok1 = TOK("echo", WORD);
+	t_token	tok2 = TOK("hell\'o wo\'\"rld\"", WORD);
 
 	t_list		lst = LST((void *) &tok2, NULL);
 	t_list		tokens = LST((void *) &tok1, &lst);
@@ -26,11 +26,11 @@ Test(Parser, REDIR_test)
 	t_list	redir_lst1 = LST((void *) &redir1, NULL);
 	t_cmd	cmd1 = CMD(arg1, &redir_lst1);
 	t_node	expected = NODE((void *) &cmd1, COMMAND, NULL, NULL);
-	
-	t_token	tok1 = TOK(WORD, "echo");
-	t_token	tok2 = TOK(WORD, "hello");
-	t_token	tok3 = TOK(REDIR_OUT, NULL);
-	t_token	tok4 = TOK(WORD, "out");
+
+	t_token	tok1 = TOK("echo", WORD);
+	t_token	tok2 = TOK("hello", WORD);
+	t_token	tok3 = TOK(NULL, REDIR_OUT);
+	t_token	tok4 = TOK("out", WORD);
 
 	t_list	lst3 = LST((void *)&tok4, NULL);
 	t_list	lst2 = LST((void *)&tok3, &lst3);
@@ -50,10 +50,10 @@ Test(Parser, HEREDOC_test)
 	t_cmd	cmd = CMD(arg, &r_lst);
 	t_node	expected = NODE((void *) &cmd, COMMAND, NULL, NULL);
 
-	t_token	tok0 = TOK(WORD, "cat");
-	t_token	tok1 = TOK(HEREDOC, NULL);
-	t_token	tok2 = TOK(WORD, "abc");
-	
+	t_token	tok0 = TOK("cat", WORD);
+	t_token	tok1 = TOK(NULL, HEREDOC);
+	t_token	tok2 = TOK("abc", WORD);
+
 	t_list	lst2 = LST((void *)&tok2, NULL);
 	t_list	lst1 = LST((void *)&tok1, &lst2);
 	t_list	tokens = LST((void *)&tok0, &lst1);
@@ -62,7 +62,7 @@ Test(Parser, HEREDOC_test)
 	FILE *f_stdin = cr_get_redirected_stdin();
 	fprintf(f_stdin, "abc\n");
 	fclose(f_stdin);
-	
+
 	t_node	*root = parse_tokens(&tokens);
 	cr_assert(compare_trees(&expected, root));
 	ft_nodeclear(root);
@@ -81,15 +81,15 @@ Test(Parser, Multiple_REDIR_test)
 
 	t_cmd	cmd1 = CMD(arg1, &r_lst1);
 	t_node	expected = NODE((void *) &cmd1, COMMAND, NULL, NULL);
-	
-	t_token	t0 = TOK(WORD, "echo");
-	t_token	t1 = TOK(REDIR_OUT, NULL);
-	t_token	t2 = TOK(WORD, "out1");
-	t_token	t3 = TOK(WORD, "hello");
-	t_token	t4 = TOK(REDIR_OUT, NULL);
-	t_token	t5 = TOK(WORD, "out2");
-	t_token	t6 = TOK(REDIR_OUT, NULL);
-	t_token	t7 = TOK(WORD, "out3");
+
+	t_token	t0 = TOK("echo", WORD);
+	t_token	t1 = TOK(NULL, REDIR_OUT);
+	t_token	t2 = TOK("out1", WORD);
+	t_token	t3 = TOK("hello", WORD);
+	t_token	t4 = TOK(NULL, REDIR_OUT);
+	t_token	t5 = TOK("out2", WORD);
+	t_token	t6 = TOK(NULL, REDIR_OUT);
+	t_token	t7 = TOK("out3", WORD);
 
 	t_list	lst7 = LST((void *)&t7, NULL);
 	t_list	lst6 = LST((void *)&t6, &lst7);
@@ -119,13 +119,13 @@ Test(Parser, PIPE_test)
 
 	t_node	expected = NODE(NULL, PIPE, &n1, &n2);
 
-	t_token	t0 = TOK(WORD, "cat");
-	t_token	t1 = TOK(WORD, "file1");
-	t_token	t2 = TOK(PIPE, NULL);
-	t_token	t3 = TOK(WORD, "grep");
-	t_token	t4 = TOK(WORD, "192.168.0.1");
-	t_token	t5 = TOK(REDIR_IN, NULL);
-	t_token	t6 = TOK(WORD, "log");
+	t_token	t0 = TOK("cat", WORD);
+	t_token	t1 = TOK("file1", WORD);
+	t_token	t2 = TOK(NULL, PIPE);
+	t_token	t3 = TOK("grep", WORD);
+	t_token	t4 = TOK("192.168.0.1", WORD);
+	t_token	t5 = TOK(NULL, REDIR_IN);
+	t_token	t6 = TOK("log", WORD);
 
 	t_list	lst6 = LST((void *)&t6, NULL);
 	t_list	lst5 = LST((void *)&t5, &lst6);
@@ -159,14 +159,14 @@ Test(Parser, TRIPLE_PIPE_test)
 	t_node	inner_pipe = NODE(NULL, PIPE, &n1, &n2);
 	t_node	expected = NODE(NULL, PIPE, &inner_pipe, &n3);
 
-	t_token	t0 = TOK(WORD, "cat");
-	t_token	t1 = TOK(WORD, "file1");
-	t_token	t2 = TOK(PIPE, NULL);
-	t_token	t3 = TOK(WORD, "grep");
-	t_token	t4 = TOK(WORD, "foo");
-	t_token	t5 = TOK(PIPE, NULL);
-	t_token	t6 = TOK(WORD, "wc");
-	t_token	t7 = TOK(WORD, "-l");
+	t_token	t0 = TOK("cat", WORD);
+	t_token	t1 = TOK("file1", WORD);
+	t_token	t2 = TOK(NULL, PIPE);
+	t_token	t3 = TOK("grep", WORD);
+	t_token	t4 = TOK("foo", WORD);
+	t_token	t5 = TOK(NULL, PIPE);
+	t_token	t6 = TOK("wc", WORD);
+	t_token	t7 = TOK("-l", WORD);
 
 	t_list	lst7 = LST((void *)&t7, NULL);
 	t_list	lst6 = LST((void *)&t6, &lst7);
@@ -193,11 +193,11 @@ Test(Parser, HEREDOC_THEN_REDIR_OUT_test)
 	t_cmd	cmd = CMD(arg, &r_lst1);
 	t_node	expected = NODE((void *) &cmd, COMMAND, NULL, NULL);
 
-	t_token	tok0 = TOK(WORD, "cat");
-	t_token	tok1 = TOK(HEREDOC, NULL);
-	t_token	tok2 = TOK(WORD, "EOF");
-	t_token	tok3 = TOK(REDIR_OUT, NULL);
-	t_token	tok4 = TOK(WORD, "out");
+	t_token	tok0 = TOK("cat", WORD);
+	t_token	tok1 = TOK(NULL, HEREDOC);
+	t_token	tok2 = TOK("EOF", WORD);
+	t_token	tok3 = TOK(NULL, REDIR_OUT);
+	t_token	tok4 = TOK("out", WORD);
 
 	t_list	lst3 = LST((void *)&tok4, NULL);
 	t_list	lst2 = LST((void *)&tok3, &lst3);
@@ -232,14 +232,14 @@ Test(Parser, PIPE_WITH_REDIRS_BOTH_SIDES_test)
 
 	t_node	expected = NODE(NULL, PIPE, &n1, &n2);
 
-	t_token	t0 = TOK(WORD, "cat");
-	t_token	t1 = TOK(REDIR_IN, NULL);
-	t_token	t2 = TOK(WORD, "in1");
-	t_token	t3 = TOK(PIPE, NULL);
-	t_token	t4 = TOK(WORD, "grep");
-	t_token	t5 = TOK(WORD, "pattern");
-	t_token	t6 = TOK(REDIR_OUT, NULL);
-	t_token	t7 = TOK(WORD, "out1");
+	t_token	t0 = TOK("cat", WORD);
+	t_token	t1 = TOK(NULL, REDIR_IN);
+	t_token	t2 = TOK("in1", WORD);
+	t_token	t3 = TOK(NULL, PIPE);
+	t_token	t4 = TOK("grep", WORD);
+	t_token	t5 = TOK("pattern", WORD);
+	t_token	t6 = TOK(NULL, REDIR_OUT);
+	t_token	t7 = TOK("out1", WORD);
 
 	t_list	lst7 = LST((void *)&t7, NULL);
 	t_list	lst6 = LST((void *)&t6, &lst7);
@@ -268,11 +268,11 @@ Test(Parser, MULTIPLE_HEREDOC_test)
 	t_cmd	cmd = CMD(arg, &r_lst1);
 	t_node	expected = NODE((void *) &cmd, COMMAND, NULL, NULL);
 
-	t_token	tok0 = TOK(WORD, "cat");
-	t_token	tok1 = TOK(HEREDOC, NULL);
-	t_token	tok2 = TOK(WORD, "A");
-	t_token	tok3 = TOK(HEREDOC, NULL);
-	t_token	tok4 = TOK(WORD, "B");
+	t_token	tok0 = TOK("cat", WORD);
+	t_token	tok1 = TOK(NULL, HEREDOC);
+	t_token	tok2 = TOK("A", WORD);
+	t_token	tok3 = TOK(NULL, HEREDOC);
+	t_token	tok4 = TOK("B", WORD);
 
 	t_list	lst3 = LST((void *)&tok4, NULL);
 	t_list	lst2 = LST((void *)&tok3, &lst3);
@@ -312,17 +312,17 @@ Test(Parser, FULL_PIPELINE_WITH_REDIRS_test)
 	t_node	inner_pipe = NODE(NULL, PIPE, &n1, &n2);
 	t_node	expected = NODE(NULL, PIPE, &inner_pipe, &n3);
 
-	t_token	t0 = TOK(REDIR_IN, NULL);
-	t_token	t1 = TOK(WORD, "input.txt");
-	t_token	t2 = TOK(WORD, "cat");
-	t_token	t3 = TOK(PIPE, NULL);
-	t_token	t4 = TOK(WORD, "grep");
-	t_token	t5 = TOK(WORD, "-v");
-	t_token	t6 = TOK(WORD, "skip");
-	t_token	t7 = TOK(PIPE, NULL);
-	t_token	t8 = TOK(WORD, "sort");
-	t_token	t9 = TOK(APPEND, NULL);
-	t_token	t10 = TOK(WORD, "final.txt");
+	t_token	t0 = TOK(NULL, REDIR_IN);
+	t_token	t1 = TOK("input.txt", WORD);
+	t_token	t2 = TOK("cat", WORD);
+	t_token	t3 = TOK(NULL, PIPE);
+	t_token	t4 = TOK("grep", WORD);
+	t_token	t5 = TOK("-v", WORD);
+	t_token	t6 = TOK("skip", WORD);
+	t_token	t7 = TOK(NULL, PIPE);
+	t_token	t8 = TOK("sort", WORD);
+	t_token	t9 = TOK(NULL, APPEND);
+	t_token	t10 = TOK("final.txt", WORD);
 
 	t_list	lst10 = LST((void *)&t10, NULL);
 	t_list	lst9 = LST((void *)&t9, &lst10);
