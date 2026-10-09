@@ -14,38 +14,11 @@
 
 int	main(void)
 {
-	/*
-	// Test Case 1
-	t_token	tok1 = TOK(WORD, "echo");
-	t_token	tok2 = TOK(WORD, "hell\'o wo\'\"rld\"");
+	t_lex_err err;
 
-	t_list		lst = LST((void *) &tok2, NULL);
-	t_list		tokens = LST((void *) &tok1, &lst);
-	*/
-
-	/*
-	// Test Case 2
-	t_token	tok1 = TOK(WORD, "echo");
-	t_token	tok2 = TOK(WORD, "hello");
-	t_token	tok3 = TOK(REDIR_OUT, NULL);
-	t_token	tok4 = TOK(WORD, "out");
-
-	t_list	lst3 = LST((void *)&tok4, NULL);
-	t_list	lst2 = LST((void *)&tok3, &lst3);
-	t_list	lst1 = LST((void *)&tok2, &lst2);
-	t_list	tokens = LST((void *)&tok1, &lst1);
-	*/
-
-	// Test Case 3
-	t_token	tok0 = TOK(WORD, "cat");
-	t_token	tok1 = TOK(HEREDOC, NULL);
-	t_token	tok2 = TOK(WORD, "abc");
-	
-	t_list	lst2 = LST((void *)&tok2, NULL);
-	t_list	lst1 = LST((void *)&tok1, &lst2);
-	t_list	tokens = LST((void *)&tok0, &lst1);
-
-	t_node *root = parse_tokens(&tokens);
-	ft_nodeclear(root);
+	t_list *tokens = lexer("cat << abc", &err);
+	t_node *tree = parse_tokens(tokens);
+	ft_nodeclear(tree);
+	free_tokens(tokens);
 	return (0);
 }

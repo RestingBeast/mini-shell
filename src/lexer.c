@@ -42,7 +42,7 @@ static int	add_token(t_list **tokens, t_token *tok)
 	node = ft_lstnew(tok);
 	if (!node)
 	{
-			free_token(tok);
+		free_token(tok);
 		free_tokens(*tokens);
 		*tokens = NULL;
 		return (0);

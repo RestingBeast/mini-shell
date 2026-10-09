@@ -20,6 +20,7 @@
 # include "lexer.h"
 # include "parser.h"
 
+void	clean_up(t_list *tokens, t_node *tree);
 void	fatal_error(int err);
 
 #endif
