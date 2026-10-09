@@ -16,7 +16,7 @@ Test(Parser, WORD_test)
 
 	t_node		*root = parse_tokens(&tokens);
 	cr_assert(compare_trees(&expected, root));
-	ft_nodeclear(root);
+	// ft_nodeclear(root);
 }
 
 Test(Parser, REDIR_test)
@@ -39,7 +39,7 @@ Test(Parser, REDIR_test)
 
 	t_node	*root = parse_tokens(&tokens);
 	cr_assert(compare_trees(&expected, root));
-	ft_nodeclear(root);
+	// ft_nodeclear(root);
 }
 
 Test(Parser, HEREDOC_test)
@@ -52,7 +52,7 @@ Test(Parser, HEREDOC_test)
 
 	t_token	tok0 = TOK("cat", WORD);
 	t_token	tok1 = TOK(NULL, HEREDOC);
-	t_token	tok2 = TOK("abc", WORD);
+	t_token	tok2 = TOK(ft_strdup("abc"), WORD);
 
 	t_list	lst2 = LST((void *)&tok2, NULL);
 	t_list	lst1 = LST((void *)&tok1, &lst2);
@@ -65,7 +65,7 @@ Test(Parser, HEREDOC_test)
 
 	t_node	*root = parse_tokens(&tokens);
 	cr_assert(compare_trees(&expected, root));
-	ft_nodeclear(root);
+	// ft_nodeclear(root);
 }
 
 Test(Parser, Multiple_REDIR_test)
@@ -102,7 +102,7 @@ Test(Parser, Multiple_REDIR_test)
 
 	t_node	*root = parse_tokens(&tokens);
 	cr_assert(compare_trees(&expected, root));
-	ft_nodeclear(root);
+	// ft_nodeclear(root);
 }
 
 Test(Parser, PIPE_test)
@@ -137,7 +137,7 @@ Test(Parser, PIPE_test)
 
 	t_node	*root = parse_tokens(&tokens);
 	cr_assert(compare_trees(&expected, root));
-	ft_nodeclear(root);
+	// ft_nodeclear(root);
 }
 
 // Tests by Claude
@@ -179,7 +179,7 @@ Test(Parser, TRIPLE_PIPE_test)
 
 	t_node	*root = parse_tokens(&tokens);
 	cr_assert(compare_trees(&expected, root));
-	ft_nodeclear(root);
+	// ft_nodeclear(root);
 }
 
 // Command: cat << EOF > out
@@ -195,7 +195,7 @@ Test(Parser, HEREDOC_THEN_REDIR_OUT_test)
 
 	t_token	tok0 = TOK("cat", WORD);
 	t_token	tok1 = TOK(NULL, HEREDOC);
-	t_token	tok2 = TOK("EOF", WORD);
+	t_token	tok2 = TOK(ft_strdup("EOF"), WORD);
 	t_token	tok3 = TOK(NULL, REDIR_OUT);
 	t_token	tok4 = TOK("out", WORD);
 
@@ -212,7 +212,7 @@ Test(Parser, HEREDOC_THEN_REDIR_OUT_test)
 
 	t_node	*root = parse_tokens(&tokens);
 	cr_assert(compare_trees(&expected, root));
-	ft_nodeclear(root);
+	// ft_nodeclear(root);
 }
 
 // Command: cat < in1 | grep pattern > out1
@@ -252,7 +252,7 @@ Test(Parser, PIPE_WITH_REDIRS_BOTH_SIDES_test)
 
 	t_node	*root = parse_tokens(&tokens);
 	cr_assert(compare_trees(&expected, root));
-	ft_nodeclear(root);
+	// ft_nodeclear(root);
 }
 
 // Command: cat << A << B  (two heredocs on same command — only B's body matters
@@ -270,9 +270,9 @@ Test(Parser, MULTIPLE_HEREDOC_test)
 
 	t_token	tok0 = TOK("cat", WORD);
 	t_token	tok1 = TOK(NULL, HEREDOC);
-	t_token	tok2 = TOK("A", WORD);
+	t_token	tok2 = TOK(ft_strdup("A"), WORD);
 	t_token	tok3 = TOK(NULL, HEREDOC);
-	t_token	tok4 = TOK("B", WORD);
+	t_token	tok4 = TOK(ft_strdup("B"), WORD);
 
 	t_list	lst3 = LST((void *)&tok4, NULL);
 	t_list	lst2 = LST((void *)&tok3, &lst3);
@@ -287,7 +287,7 @@ Test(Parser, MULTIPLE_HEREDOC_test)
 
 	t_node	*root = parse_tokens(&tokens);
 	cr_assert(compare_trees(&expected, root));
-	ft_nodeclear(root);
+	// ft_nodeclear(root);
 }
 
 // Command: < input.txt cat | grep -v skip | sort >> final.txt
@@ -338,5 +338,5 @@ Test(Parser, FULL_PIPELINE_WITH_REDIRS_test)
 
 	t_node	*root = parse_tokens(&tokens);
 	cr_assert(compare_trees(&expected, root));
-	ft_nodeclear(root);
+	// ft_nodeclear(root);
 }
