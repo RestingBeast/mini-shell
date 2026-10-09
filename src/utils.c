@@ -12,8 +12,14 @@
 
 #include "minishell.h"
 
+void	clean_up(t_list	*tokens, t_node *tree)
+{
+	ft_nodeclear(tree);
+	free_tokens(tokens);
+}
+
 void	fatal_error(int	err)
 {
-	//clean_up();
+	// clean_up();
 	exit(err);
 }

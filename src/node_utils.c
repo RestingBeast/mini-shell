@@ -17,10 +17,8 @@ static void	ft_redirclear(void * rdr)
 	t_redir	*redir;
 
 	redir = (t_redir *)rdr;
-	/*
 	if (redir->type != HEREDOC)
 		free(redir->target.file);
-	*/
 	free(redir);
 }
 
@@ -31,7 +29,7 @@ static void	ft_cmdclear(t_cmd *cmd)
 	i = 0;
 	while (cmd->args[i] != NULL)
 	{
-		// free(cmd->args[i]);
+		free(cmd->args[i]);
 		i++;
 	}
 	free(cmd->args);

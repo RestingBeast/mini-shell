@@ -51,27 +51,33 @@ t_redir	*handle_redir(t_list *tok)
 	return (res);
 }
 
-t_redir	*handle_heredoc(t_list *tok)
+static void capture_input(char *delimiter, int fd)
 {
-	t_redir	*res;
-	int		fds[2];
 	char	*line;
-	char	*delimiter;
 
-	if (pipe(fds) != 0)
-		return (NULL); // Error-handling should be here
-	delimiter = ((t_token *)tok->next->content)->lexeme;
 	line = readline(">");
 	while (line != NULL)
 	{
-		if (ft_memcmp((void *)delimiter, (void *)line, ft_strlen(delimiter) + 1) == 0)
+		if (ft_memcmp((void *)delimiter,
+			(void *)line, ft_strlen(delimiter) + 1) == 0)
 			break ;
-		write(fds[1], line, ft_strlen(line));
-		write(fds[1], "\n", 1);
+		write(fd, line, ft_strlen(line));
+		write(fd, "\n", 1);
 		free(line);
 		line = readline(">");
 	}
 	free(line);
+	free(delimiter);
+}
+
+t_redir	*handle_heredoc(t_list *tok)
+{
+	t_redir	*res;
+	int		fds[2];
+
+	if (pipe(fds) != 0)
+		return (NULL); // Error-handling should be here
+	capture_input(((t_token *)tok->next->content)->lexeme, fds[1]);
 	close(fds[1]);
 	res = ft_redirnew_fd(HEREDOC, fds[0]);
 	if (!res)
