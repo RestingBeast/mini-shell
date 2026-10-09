@@ -67,7 +67,6 @@ static void capture_input(char *delimiter, int fd)
 		line = readline(">");
 	}
 	free(line);
-	free(delimiter);
 }
 
 t_redir	*handle_heredoc(t_list *tok)
@@ -82,6 +81,7 @@ t_redir	*handle_heredoc(t_list *tok)
 	res = ft_redirnew_fd(HEREDOC, fds[0]);
 	if (!res)
 		return (NULL); // Error-handling should be here
+	free(((t_token *)tok->next->content)->lexeme);
 	((t_token *)tok->next->content)->lexeme = NULL;
 	return (res);
 }
