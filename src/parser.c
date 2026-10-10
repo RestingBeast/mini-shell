@@ -12,6 +12,12 @@
 
 #include "minishell.h"
 
+int	is_redir(t_type type)
+{
+	return (type == REDIR_IN || type == REDIR_OUT ||
+			type == APPEND || type == HEREDOC);
+}
+
 static char	**make_args(t_list **tokens)
 {
 	int		count;
@@ -22,7 +28,7 @@ static char	**make_args(t_list **tokens)
 	count = count_args(*tokens);
 	res = ft_calloc(count + 1, sizeof(char *));
 	if (!res)
-		return (NULL); // Error-handling should be here
+		return (NULL);
 	i = 0;
 	while (*tokens != NULL)
 	{
@@ -56,7 +62,7 @@ static t_list	*make_redirs(t_list *tokens)
 			else
 				tmp = ft_lstnew((void *)handle_redir(tokens));
 			if (!tmp)
-				return (NULL); // Error-handling should be here
+				return (NULL);
 			ft_lstadd_back(&lst, tmp);
 		}
 		tokens = tokens->next;
@@ -72,9 +78,17 @@ static t_node	*make_cmd_node(t_list **tokens)
 	t_list	*redirs;
 
 	redirs = make_redirs(*tokens);
+	if (!redirs)
+		return (NULL); // Error
 	args = make_args(tokens);
+	if (!args)
+		return (NULL); // Error
 	cmd = ft_cmdnew(args, redirs);
+	if (!cmd)
+		return (NULL); // Error
 	root = ft_nodenew((void *)cmd, COMMAND);
+	if (!root)
+		return (NULL); // Error handling should be here
 	return (root);
 }
 
@@ -89,6 +103,8 @@ t_node	*parse_tokens(t_list *tokens)
 		if (((t_token *)tokens->content)->type == PIPE)
 		{
 			tmp = ft_nodenew(NULL, PIPE);
+			if (!tmp)
+				return (NULL); // Error should be handle here
 			tmp->left = root;
 			root = tmp;
 			tokens = tokens->next;

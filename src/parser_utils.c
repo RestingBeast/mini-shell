@@ -12,12 +12,6 @@
 
 #include "minishell.h"
 
-int	is_redir(t_type type)
-{
-	return (type == REDIR_IN || type == REDIR_OUT ||
-			type == APPEND || type == HEREDOC);
-}
-
 int	count_args(t_list *tokens)
 {
 	int	res;
@@ -51,6 +45,35 @@ t_redir	*handle_redir(t_list *tok)
 	return (res);
 }
 
+static char	*strip_delimiter(char *str)
+{
+	char	*res;
+	int	i;
+	int	j;
+
+	i = -1;
+	j = 0;
+	while (str[++i] != '\0')
+	{
+		if (str[i] == '\"' || str[i] == '\'')
+			continue ;
+		j++;
+	}
+	res = ft_calloc(j + 1, sizeof(char));
+	if (!res)
+		return (NULL);
+	i = -1;
+	j = 0;
+	while (str[++i] != '\0')
+	{
+		if (str[i] == '\"' || str[i] == '\'')
+			continue ;
+		res[j++] = str[i];
+	}
+	free(str);
+	return (res);
+}
+
 static void capture_input(char *delimiter, int fd)
 {
 	char	*line;
@@ -72,16 +95,20 @@ static void capture_input(char *delimiter, int fd)
 t_redir	*handle_heredoc(t_list *tok)
 {
 	t_redir	*res;
+	char	*delimiter;
 	int		fds[2];
 
 	if (pipe(fds) != 0)
 		return (NULL); // Error-handling should be here
-	capture_input(((t_token *)tok->next->content)->lexeme, fds[1]);
+	delimiter = strip_delimiter(((t_token *)tok->next->content)->lexeme);
+	if (!delimiter)
+		return (NULL); // Error
+	capture_input(delimiter, fds[1]);
 	close(fds[1]);
 	res = ft_redirnew_fd(HEREDOC, fds[0]);
 	if (!res)
 		return (NULL); // Error-handling should be here
-	free(((t_token *)tok->next->content)->lexeme);
+	free(delimiter);
 	((t_token *)tok->next->content)->lexeme = NULL;
 	return (res);
 }
