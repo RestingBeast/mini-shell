@@ -20,8 +20,18 @@
 # include "libft.h"
 # include "lexer.h"
 # include "parser.h"
+# include "errors.h"
 
 extern volatile sig_atomic_t sig_captured;
+
+typedef struct s_data	t_data;
+
+struct s_data
+{
+	char	*line;
+	t_list	*tokens;
+	t_node	*tree;
+};
 
 void	set_sigaction(void);
 void	clean_up(t_list *tokens, t_node *tree);
