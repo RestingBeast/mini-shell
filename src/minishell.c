@@ -18,7 +18,7 @@ static void	init_shell(t_data *data)
 	data->tokens = NULL;
 	data->tree = NULL;
 	data->err_no = OK;
-	// set_sigaction();
+	set_sigaction();
 }
 
 int	main(void)
@@ -34,13 +34,8 @@ int	main(void)
 		if (*(data.line))
 			add_history(data.line);
 		data.tokens = lexer(data.line, &(data.err_no));
-		if (data.tokens == NULL)
-			printf("token's NULL\n");
-		printf("Lexing done...\n");
 		data.tree = parse_tokens(data.tokens, &(data.err_no));
-		printf("Parsing done...\n");
 		clean_up(&data);
-		printf("Cleaning up...\n");
 	}
 	rl_clear_history();
 	return (0);
