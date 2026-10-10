@@ -15,8 +15,8 @@ enum e_lex_err
 
 struct s_token
 {
-t_type	type;
-char		*lexeme;
+	t_type	type;
+	char	*lexeme;
 };
 
 // lexer.c
