@@ -43,7 +43,7 @@ static char	**make_args(t_list **tokens)
 	return (res);
 }
 
-static t_list	*make_redirs(t_list *tokens)
+static t_list	*make_redirs(t_list *tokens, t_err_no *err)
 {
 	t_token	*tok;
 	t_list	*lst;
@@ -62,23 +62,24 @@ static t_list	*make_redirs(t_list *tokens)
 			else
 				tmp = ft_lstnew((void *)handle_redir(tokens));
 			if (!tmp)
-				return (NULL);
+				return (*err = MALLOC_ERROR, NULL);
 			ft_lstadd_back(&lst, tmp);
 		}
 		tokens = tokens->next;
 	}
+	*err = OK;
 	return (lst);
 }
 
-static t_node	*make_cmd_node(t_list **tokens)
+static t_node	*make_cmd_node(t_list **tokens, t_err_no *err)
 {
 	t_node	*root;
 	t_cmd	*cmd;
 	char	**args;
 	t_list	*redirs;
 
-	redirs = make_redirs(*tokens);
-	if (!redirs)
+	redirs = make_redirs(*tokens, err);
+	if (*err != OK)
 		return (NULL); // Error
 	args = make_args(tokens);
 	if (!args)
@@ -92,7 +93,7 @@ static t_node	*make_cmd_node(t_list **tokens)
 	return (root);
 }
 
-t_node	*parse_tokens(t_list *tokens)
+t_node	*parse_tokens(t_list *tokens, t_err_no *err)
 {
 	t_node	*root;
 	t_node	*tmp;
@@ -107,13 +108,15 @@ t_node	*parse_tokens(t_list *tokens)
 				return (NULL); // Error should be handle here
 			tmp->left = root;
 			root = tmp;
+			if (!tokens)
+				printf("NULL\n");
 			tokens = tokens->next;
 			continue ;
 		}
 		if (!root)
-			root = make_cmd_node(&tokens);
+			root = make_cmd_node(&tokens, err);
 		else
-			root->right = make_cmd_node(&tokens);
+			root->right = make_cmd_node(&tokens, err);
 	}
 	return (root);
 }

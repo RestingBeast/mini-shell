@@ -14,7 +14,8 @@ Test(Parser, WORD_test)
 	t_list		lst = LST((void *) &tok2, NULL);
 	t_list		tokens = LST((void *) &tok1, &lst);
 
-	t_node		*root = parse_tokens(&tokens);
+	t_err_no	err;
+	t_node		*root = parse_tokens(&tokens, &err);
 	cr_assert(compare_trees(&expected, root));
 	// ft_nodeclear(root);
 }
@@ -37,7 +38,8 @@ Test(Parser, REDIR_test)
 	t_list	lst1 = LST((void *)&tok2, &lst2);
 	t_list	tokens = LST((void *)&tok1, &lst1);
 
-	t_node	*root = parse_tokens(&tokens);
+	t_err_no	err;
+	t_node		*root = parse_tokens(&tokens, &err);
 	cr_assert(compare_trees(&expected, root));
 	// ft_nodeclear(root);
 }
@@ -63,7 +65,8 @@ Test(Parser, HEREDOC_test)
 	fprintf(f_stdin, "abc\n");
 	fclose(f_stdin);
 
-	t_node	*root = parse_tokens(&tokens);
+	t_err_no	err;
+	t_node		*root = parse_tokens(&tokens, &err);
 	cr_assert(compare_trees(&expected, root));
 	// ft_nodeclear(root);
 }
@@ -100,7 +103,8 @@ Test(Parser, Multiple_REDIR_test)
 	t_list	lst1 = LST((void *)&t1, &lst2);
 	t_list	tokens = LST((void *)&t0, &lst1);
 
-	t_node	*root = parse_tokens(&tokens);
+	t_err_no	err;
+	t_node		*root = parse_tokens(&tokens, &err);
 	cr_assert(compare_trees(&expected, root));
 	// ft_nodeclear(root);
 }
@@ -135,7 +139,8 @@ Test(Parser, PIPE_test)
 	t_list	lst1 = LST((void *)&t1, &lst2);
 	t_list	tokens = LST((void *)&t0, &lst1);
 
-	t_node	*root = parse_tokens(&tokens);
+	t_err_no	err;
+	t_node		*root = parse_tokens(&tokens, &err);
 	cr_assert(compare_trees(&expected, root));
 	// ft_nodeclear(root);
 }
@@ -177,7 +182,8 @@ Test(Parser, TRIPLE_PIPE_test)
 	t_list	lst1 = LST((void *)&t1, &lst2);
 	t_list	tokens = LST((void *)&t0, &lst1);
 
-	t_node	*root = parse_tokens(&tokens);
+	t_err_no	err;
+	t_node		*root = parse_tokens(&tokens, &err);
 	cr_assert(compare_trees(&expected, root));
 	// ft_nodeclear(root);
 }
@@ -210,7 +216,8 @@ Test(Parser, HEREDOC_THEN_REDIR_OUT_test)
 	fprintf(f_stdin, "heredoc body line 1\nheredoc body line 2\nEOF\n");
 	fclose(f_stdin);
 
-	t_node	*root = parse_tokens(&tokens);
+	t_err_no	err;
+	t_node		*root = parse_tokens(&tokens, &err);
 	cr_assert(compare_trees(&expected, root));
 	// ft_nodeclear(root);
 }
@@ -250,7 +257,8 @@ Test(Parser, PIPE_WITH_REDIRS_BOTH_SIDES_test)
 	t_list	lst1 = LST((void *)&t1, &lst2);
 	t_list	tokens = LST((void *)&t0, &lst1);
 
-	t_node	*root = parse_tokens(&tokens);
+	t_err_no	err;
+	t_node		*root = parse_tokens(&tokens, &err);
 	cr_assert(compare_trees(&expected, root));
 	// ft_nodeclear(root);
 }
@@ -285,7 +293,8 @@ Test(Parser, MULTIPLE_HEREDOC_test)
 	fprintf(f_stdin, "first block\nA\nsecond block\nB\n");
 	fclose(f_stdin);
 
-	t_node	*root = parse_tokens(&tokens);
+	t_err_no	err;
+	t_node		*root = parse_tokens(&tokens, &err);
 	cr_assert(compare_trees(&expected, root));
 	// ft_nodeclear(root);
 }
@@ -336,7 +345,8 @@ Test(Parser, FULL_PIPELINE_WITH_REDIRS_test)
 	t_list	lst1 = LST((void *)&t1, &lst2);
 	t_list	tokens = LST((void *)&t0, &lst1);
 
-	t_node	*root = parse_tokens(&tokens);
+	t_err_no	err;
+	t_node		*root = parse_tokens(&tokens, &err);
 	cr_assert(compare_trees(&expected, root));
 	// ft_nodeclear(root);
 }

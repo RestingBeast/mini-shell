@@ -47,7 +47,7 @@ struct s_redir
 };
 
 // parser.c
-t_node	*parse_tokens(t_list *head);
+t_node	*parse_tokens(t_list *tokens, t_err_no *err);
 int		is_redir(t_type type);
 int		count_args(t_list *tokens);
 

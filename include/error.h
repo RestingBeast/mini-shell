@@ -10,15 +10,16 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef ERRORS_H
-# define ERRORS_H
+#ifndef ERROR_H
+# define ERROR_H
 
 typedef enum e_err_no t_err_no;
 
 enum	e_err_no
 {
-	SYNTAX_ERROR = 2;
-	MALLOC_ERROR = ;
+	OK = 0,
+	SYNTAX_ERROR = 2,
+	MALLOC_ERROR = -1,
 };
 
 #endif
