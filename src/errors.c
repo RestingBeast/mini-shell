@@ -12,9 +12,9 @@
 
 #include "minishell.h"
 
-int	malloc_failure()
+int	malloc_failure(t_data *data)
 {
-	// clean_up();
+	clean_up(data);
 	ft_putstr_fd("malloc: failed to allocated memory\n", STDERR_FILENO);
 	exit(1);
 }

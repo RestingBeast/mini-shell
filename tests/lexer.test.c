@@ -10,10 +10,10 @@ Test(Lexer, basic_test)
 	t_list lst2 = LST((void *) &tok2, NULL);
 	t_list expected = LST((void *) &tok1, &lst2);
 
-	t_lex_err err;
+	t_err_no err;
 	t_list *tokens = lexer("echo \"Hello, World\"", &err);
 
-	cr_assert_eq(err, LEX_OK);
+	cr_assert_eq(err, OK);
 	cr_assert(compare_tokens(tokens, &expected));
 	free_tokens(tokens);
 }
@@ -27,10 +27,10 @@ Test(Lexer, single_quoted_word)
 	t_list lst2 = LST((void *) &tok2, NULL);
 	t_list expected = LST((void *) &tok1, &lst2);
 
-	t_lex_err err;
+	t_err_no err;
 	t_list *tokens = lexer("echo 'He\"llo Wo\"rld'", &err);
 
-	cr_assert_eq(err, LEX_OK);
+	cr_assert_eq(err, OK);
 	cr_assert(compare_tokens(tokens, &expected));
 	free_tokens(tokens);
 }
@@ -46,10 +46,10 @@ Test(Lexer, mixed_quotes)
 	t_list lst2 = LST((void *) &tok2, &lst3);
 	t_list expected = LST((void *) &tok1, &lst2);
 
-	t_lex_err err;
+	t_err_no err;
 	t_list *tokens = lexer("echo He\"llo\" Wo'rld'", &err);
 
-	cr_assert_eq(err, LEX_OK);
+	cr_assert_eq(err, OK);
 	cr_assert(compare_tokens(tokens, &expected));
 	free_tokens(tokens);
 }
@@ -71,10 +71,10 @@ Test(Lexer, pipe_and_quotes)
 	t_list lst2 = LST((void *) &tok2, &lst3);
 	t_list expected = LST((void *) &tok1, &lst2);
 
-	t_lex_err err;
+	t_err_no err;
 	t_list *tokens = lexer("echo Hello World | grep \"Hello\"", &err);
 
-	cr_assert_eq(err, LEX_OK);
+	cr_assert_eq(err, OK);
 	cr_assert(compare_tokens(tokens, &expected));
 	free_tokens(tokens);
 }
@@ -92,10 +92,10 @@ Test(Lexer, output_redirect_no_space)
 	t_list lst2 = LST((void *) &tok2, &lst3);
 	t_list expected = LST((void *) &tok1, &lst2);
 
-	t_lex_err err;
+	t_err_no err;
 	t_list *tokens = lexer("echo Hello >text", &err);
 
-	cr_assert_eq(err, LEX_OK);
+	cr_assert_eq(err, OK);
 	cr_assert(compare_tokens(tokens, &expected));
 	free_tokens(tokens);
 }
@@ -111,10 +111,10 @@ Test(Lexer, input_redirect_space)
 	t_list lst2 = LST((void *) &tok2, &lst3);
 	t_list expected = LST((void *) &tok1, &lst2);
 
-	t_lex_err err;
+	t_err_no err;
 	t_list *tokens = lexer("< \"$FILE\" cat", &err);
 
-	cr_assert_eq(err, LEX_OK);
+	cr_assert_eq(err, OK);
 	cr_assert(compare_tokens(tokens, &expected));
 	free_tokens(tokens);
 }
@@ -130,10 +130,10 @@ Test(Lexer, heredoc_before_command)
 	t_list lst2 = LST((void *) &tok2, &lst3);
 	t_list expected = LST((void *) &tok1, &lst2);
 
-	t_lex_err err;
+	t_err_no err;
 	t_list *tokens = lexer("<<\'EO F\' cat", &err);
 
-	cr_assert_eq(err, LEX_OK);
+	cr_assert_eq(err, OK);
 	cr_assert(compare_tokens(tokens, &expected));
 	free_tokens(tokens);
 }
@@ -151,10 +151,10 @@ Test(Lexer, append_after_command)
 	t_list lst2 = LST((void *) &tok2, &lst3);
 	t_list expected = LST((void *) &tok1, &lst2);
 
-	t_lex_err err;
+	t_err_no err;
 	t_list *tokens = lexer("echo \'World!\'>>\"$OUT\"", &err);
 
-	cr_assert_eq(err, LEX_OK);
+	cr_assert_eq(err, OK);
 	cr_assert(compare_tokens(tokens, &expected));
 	free_tokens(tokens);
 }
@@ -168,10 +168,10 @@ Test(Lexer, adjacent_quotes_with_space)
 	t_list lst2 = LST((void *) &tok2, NULL);
 	t_list expected = LST((void *) &tok1, &lst2);
 
-	t_lex_err err;
+	t_err_no err;
 	t_list *tokens = lexer("echo Hell\"o wo\"'rld'", &err);
 
-	cr_assert_eq(err, LEX_OK);
+	cr_assert_eq(err, OK);
 	cr_assert(compare_tokens(tokens, &expected));
 	free_tokens(tokens);
 }
@@ -179,30 +179,30 @@ Test(Lexer, adjacent_quotes_with_space)
 // Command: echo "unclosed
 Test(Lexer, unclosed_double_quote)
 {
-	t_lex_err err;
+	t_err_no err;
 	t_list *tokens = lexer("echo \"unclosed", &err);
 
 	cr_assert_null(tokens);
-	cr_assert_eq(err, LEX_UNCLOSED_QUOTE);
+	cr_assert_eq(err, SYNTAX_ERROR);
 }
 
 // Command: echo 'it"s | cat
 Test(Lexer, unclosed_single_quote)
 {
-	t_lex_err err;
+	t_err_no err;
 	t_list *tokens = lexer("echo 'it\"s | cat", &err);
 
 	cr_assert_null(tokens);
-	cr_assert_eq(err, LEX_UNCLOSED_QUOTE);
+	cr_assert_eq(err, SYNTAX_ERROR);
 }
 
 // Command: (empty and whitespace-only lines)
 Test(Lexer, empty_input)
 {
-	t_lex_err err;
+	t_err_no err;
 
 	cr_assert_null(lexer("", &err));
-	cr_assert_eq(err, LEX_OK);
+	cr_assert_eq(err, OK);
 	cr_assert_null(lexer("  \t ", &err));
-	cr_assert_eq(err, LEX_OK);
+	cr_assert_eq(err, OK);
 }

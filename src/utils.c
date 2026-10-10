@@ -12,7 +12,7 @@
 
 #include "minishell.h"
 
-void	clean_up(t_list	*tokens, t_node *tree)
+void	clean_up(t_data *data)
 {
 	ft_nodeclear(tree);
 	free_tokens(tokens);
