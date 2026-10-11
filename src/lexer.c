@@ -1,8 +1,9 @@
 #include "minishell.h"
 
-static t_token	*read_operator(char *line, int *i)
+static t_token	*read_operator(char *line, int *i, t_err *err)
 {
 	t_type	type;
+	t_token	*tok;
 
 	if (line[*i] == '|')
 		type = PIPE;
@@ -17,7 +18,10 @@ static t_token	*read_operator(char *line, int *i)
 	if (type == HEREDOC || type == APPEND)
 		(*i)++;
 	(*i)++;
-	return (new_token(type, NULL));
+	tok = new_token(type, NULL);
+	if (!tok)
+		return (set_malloc_err(err), NULL);
+	return (tok);
 }
 
 static int	add_token(t_list **tokens, t_token *tok, t_err *err)
@@ -46,11 +50,9 @@ static t_token	*read_token(char *line, int *i, t_err *err)
 	t_token	*tok;
 
 	if (is_operator(line[*i]))
-		tok = read_operator(line, i);
+		tok = read_operator(line, i, err);
 	else
 		tok = read_word(line, i, err);
-	if (!tok)
-		return (set_malloc_err(err), NULL);
 	return (tok);
 }
 
@@ -78,6 +80,6 @@ t_list	*lexer(char *line, t_err *err)
 				return (NULL);
 		}
 	}
-	last_token_check(tokens, err);
+	last_token_check(&tokens, err);
 	return (tokens);
 }

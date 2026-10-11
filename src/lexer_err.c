@@ -14,14 +14,19 @@ int	syntax_check(t_list **tokens, t_token *tok, t_err *err)
 	return (1);
 }
 
-void	last_token_check(t_list *tokens, t_err *err)
+void	last_token_check(t_list **tokens, t_err *err)
 {
 	t_token	*last;
 
-	last = (t_token *)(ft_lstlast(tokens))->content;
+	if (*tokens == NULL)
+		return ;
+	last = (t_token *)(ft_lstlast(*tokens))->content;
 	if (last->type == WORD)
 		return ;
 	if (last->type == PIPE)
 		set_end_pipe_err(err);
-	set_end_redir_err(err);
+	else
+		set_end_redir_err(err);
+	free_tokens(*tokens);
+	*tokens = NULL;
 }

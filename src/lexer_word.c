@@ -2,6 +2,7 @@
 
 static char	*extract_lexeme(char *line, int *i, t_err *err)
 {
+	char	*res;
 	int		start;
 	char	quote;
 
@@ -18,9 +19,11 @@ static char	*extract_lexeme(char *line, int *i, t_err *err)
 		}
 		(*i)++;
 	}
-	return (ft_substr(line, start, *i - start));
+	res = ft_substr(line, start, *i - start);
+	if (!res)
+		return (set_malloc_err(err), NULL);
+	return (res);
 }
-
 
 t_token	*read_word(char *line, int *i, t_err *err)
 {
@@ -29,7 +32,7 @@ t_token	*read_word(char *line, int *i, t_err *err)
 
 	lexeme = extract_lexeme(line, i, err);
 	if (!lexeme)
-		return (set_malloc_err(err), NULL);
+		return (NULL);
 	tok = new_token(WORD, lexeme);
 	if (!tok)
 		return (set_malloc_err(err), free(lexeme), NULL);

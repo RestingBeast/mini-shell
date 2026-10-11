@@ -26,6 +26,6 @@ void	free_tokens(t_list *tokens);
 
 // lexer_err.c
 int		syntax_check(t_list **tokens, t_token *tok, t_err *err);
-void	last_token_check(t_list *tokens, t_err *err);
+void	last_token_check(t_list **tokens, t_err *err);
 
 #endif
