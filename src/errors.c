@@ -38,7 +38,7 @@ int	check_error(t_data *data)
 {
 	if (data->err.err_no == OK)
 		return (1);
-	data->return_status = data->err.err_no;
+//	data->return_status = data->err.err_no;
 	ft_putstr_fd("minishell: ", STDERR_FILENO);
 	if (data->err.err_no == SYNTAX_ERROR)
 		ft_putstr_fd(data->err.msg, STDERR_FILENO);

@@ -1,17 +1,5 @@
 #include "minishell.h"
 
-t_token	*new_token(t_type type, char *lexeme)
-{
-	t_token	*tok;
-
-	tok = malloc(sizeof(t_token));
-	if (!tok)
-		return (NULL);
-	tok->lexeme = lexeme;
-	tok->type = type;
-	return (tok);
-}
-
 static t_token	*read_operator(char *line, int *i)
 {
 	t_type	type;
@@ -32,13 +20,28 @@ static t_token	*read_operator(char *line, int *i)
 	return (new_token(type, NULL));
 }
 
-static int	add_token(t_list **tokens, t_token *tok)
+static int	syntax_check(t_list **tokens, t_token *tok, t_err *err)
+{
+	t_token	*last;
+
+	if (*tokens == NULL && tok->type == PIPE)
+		return (set_syntax_err(err, "|"), 0);
+	last = (t_token *)(ft_lstlast(*tokens))->content;
+	if (tok->type != WORD && last->type != WORD)
+		return (set_syntax_err(err, get_type(last->type)), 0);
+	return (1);
+}
+
+static int	add_token(t_list **tokens, t_token *tok, t_err *err)
 {
 	t_list	*node;
 
 	node = NULL;
+	err->err_no = MALLOC_ERROR;
 	if (!tok)
 	        return (0);
+	if (!syntax_check(tokens, tok, err))
+		return (free(tok), 0);
 	node = ft_lstnew(tok);
 	if (!node)
 	{
@@ -48,6 +51,7 @@ static int	add_token(t_list **tokens, t_token *tok)
 		return (0);
 	}
 	ft_lstadd_back(tokens, node);
+	err->err_no = OK;
 	return (1);
 }
 
@@ -85,8 +89,8 @@ t_list	*lexer(char *line, t_err *err)
 			tok = read_token(line, &i, err);
 			if (!tok)
 				return (free_tokens(tokens), NULL);
-			if (!add_token(&tokens, tok))
-				return (err->err_no = MALLOC_ERROR, NULL);
+			if (!add_token(&tokens, tok, err))
+				return (NULL);
 		}
 	}
 	return (tokens);

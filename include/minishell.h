@@ -40,5 +40,6 @@ void	set_sigaction(void);
 int		is_space(char c);
 int		init_shell(t_data *data);
 void	clean_up(t_list *tokens, t_node *tree);
+char	*get_type(t_type type);
 
 #endif
