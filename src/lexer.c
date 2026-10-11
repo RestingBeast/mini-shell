@@ -20,40 +20,24 @@ static t_token	*read_operator(char *line, int *i)
 	return (new_token(type, NULL));
 }
 
-static int	syntax_check(t_list **tokens, t_token *tok, t_err *err)
-{
-	t_token	*last;
-
-	if (*tokens == NULL && tok->type == PIPE)
-		return (set_syntax_err(err, "|"), 0);	
-	if (*tokens == NULL) 
-		return (1);
-	last = (t_token *)(ft_lstlast(*tokens))->content;
-	if (tok->type != WORD && last->type != WORD)
-		return (set_syntax_err(err, get_type(last->type)), 0);
-	return (1);
-}
-
 static int	add_token(t_list **tokens, t_token *tok, t_err *err)
 {
 	t_list	*node;
 
 	node = NULL;
-	err->err_no = MALLOC_ERROR;
 	if (!tok)
 	        return (0);
 	if (!syntax_check(tokens, tok, err))
-		return (free(tok), 0);
+		return (free_token(tok), free_tokens(*tokens), 0);
 	node = ft_lstnew(tok);
 	if (!node)
 	{
 		free_token(tok);
 		free_tokens(*tokens);
-		*tokens = NULL;
+		set_malloc_err(err);
 		return (0);
 	}
 	ft_lstadd_back(tokens, node);
-	err->err_no = OK;
 	return (1);
 }
 
@@ -61,13 +45,12 @@ static t_token	*read_token(char *line, int *i, t_err *err)
 {
 	t_token	*tok;
 
-	err->err_no = MALLOC_ERROR;
 	if (is_operator(line[*i]))
 		tok = read_operator(line, i);
 	else
 		tok = read_word(line, i, err);
-	if (tok)
-		err->err_no = OK;
+	if (!tok)
+		return (set_malloc_err(err), NULL);
 	return (tok);
 }
 
@@ -95,5 +78,6 @@ t_list	*lexer(char *line, t_err *err)
 				return (NULL);
 		}
 	}
+	last_token_check(tokens, err);
 	return (tokens);
 }

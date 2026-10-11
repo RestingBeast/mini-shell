@@ -14,11 +14,10 @@ static char	*extract_lexeme(char *line, int *i, t_err *err)
 			while (line[*i] && line[*i] != quote)
 				(*i)++;
 			if (!line[*i])
-				return (set_syntax_err(err, NULL), NULL);
+				return (set_quote_err(err, quote), NULL);
 		}
 		(*i)++;
 	}
-	err->err_no = MALLOC_ERROR;
 	return (ft_substr(line, start, *i - start));
 }
 
@@ -30,10 +29,9 @@ t_token	*read_word(char *line, int *i, t_err *err)
 
 	lexeme = extract_lexeme(line, i, err);
 	if (!lexeme)
-		return (NULL);
+		return (set_malloc_err(err), NULL);
 	tok = new_token(WORD, lexeme);
 	if (!tok)
-		return (err->err_no = MALLOC_ERROR, free(lexeme), NULL);
-	err->err_no = OK;
+		return (set_malloc_err(err), free(lexeme), NULL);
 	return (tok);
 }

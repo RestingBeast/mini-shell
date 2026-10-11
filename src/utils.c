@@ -12,6 +12,12 @@
 
 #include "minishell.h"
 
+int	is_space(char c)
+{
+	return (c == ' ' || (c >= '\t' && c <= '\r'));
+}
+
+
 void	init_shell(t_data *data)
 {
 	data->line = NULL;
@@ -24,22 +30,6 @@ void	init_shell(t_data *data)
 void	clean_up(t_data *data)
 {
 	free(data->line);
-	free(data->err.msg);
 	free_tokens(data->tokens);
 	ft_nodeclear(data->tree);
-}
-
-char	*get_type(t_type type)
-{
-	if (type == PIPE)
-		return ("|");
-	if (type == REDIR_IN)
-		return ("<");
-	if (type == HEREDOC)
-		return ("<<");
-	if (type == REDIR_OUT)
-		return (">");
-	if (type == APPEND)
-		return (">>");
-	return (NULL);
 }

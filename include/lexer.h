@@ -24,4 +24,8 @@ t_token	*new_token(t_type type, char *lexeme);
 void	free_token(void *content);
 void	free_tokens(t_list *tokens);
 
+// lexer_err.c
+int		syntax_check(t_list **tokens, t_token *tok, t_err *err);
+void	last_token_check(t_list *tokens, t_err *err);
+
 #endif

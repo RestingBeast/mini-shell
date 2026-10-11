@@ -21,7 +21,10 @@ enum	e_err_no
 {
 	OK = 0,
 	MALLOC_ERROR = 1,
-	SYNTAX_ERROR = 2,
+	UNCLOSED_QUOTE = 2,
+	UNEXPECTED_TOK = 3,
+	END_PIPE = 4,
+	END_REDIR = 5,
 };
 
 struct	s_err
@@ -30,7 +33,14 @@ struct	s_err
 	char		*msg;
 };
 
-void	set_syntax_err(t_err *err, char *lexeme);
+// errors.c
+void	set_malloc_err(t_err *err);
 int		check_error(t_data *data);
+
+// syntac_err.c
+void	set_quote_err(t_err *err, char quote);
+void	set_unexp_tok_err(t_err *err, t_type tok);
+void	set_end_pipe_err(t_err *err);
+void	set_end_redir_err(t_err *err);
 
 #endif

@@ -32,7 +32,8 @@ SRC = src/minishell.c \
 	  src/node_utils.c \
 	  src/utils.c \
 	  src/signals.c \
-	  src/errors.c
+	  src/errors.c \
+	  src/syntax_err.c
 OBJ = $(SRC:.c=.o)
 
 TEST = run-tests

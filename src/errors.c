@@ -12,26 +12,10 @@
 
 #include "minishell.h"
 
-static char	*get_err_msg(t_err_no err_no)
+void	set_malloc_err(t_err *err)
 {
-	if (err_no == MALLOC_ERROR)
-		return ("malloc: failed to allocated memory\n");
-	return (NULL);
-}
-
-void	set_syntax_err(t_err *err, char *lexeme)
-{
-	char	*str;
-
-	err->err_no = SYNTAX_ERROR;
-	if (!lexeme)
-		err->msg = ft_strdup("syntax error: unclosed quote\n");
-	else
-	{
-		str = ft_strjoin("syntax error near unexpected token `", lexeme);
-		err->msg = ft_strjoin(str, "\'\n");
-		free(str);
-	}
+	err->err_no = MALLOC_ERROR;
+	err->msg = "malloc: failed to allocated memory\n";
 }
 
 int	check_error(t_data *data)
@@ -40,10 +24,14 @@ int	check_error(t_data *data)
 		return (1);
 //	data->return_status = data->err.err_no;
 	ft_putstr_fd("minishell: ", STDERR_FILENO);
-	if (data->err.err_no == SYNTAX_ERROR)
+	if (data->err.err_no == UNEXPECTED_TOK)
+	{
+		ft_putstr_fd("syntax error near unexpected token `", STDERR_FILENO);
 		ft_putstr_fd(data->err.msg, STDERR_FILENO);
+		ft_putstr_fd("\'\n", STDERR_FILENO);
+	}
 	else
-		ft_putstr_fd(get_err_msg(data->err.err_no), STDERR_FILENO);
+		ft_putstr_fd(data->err.msg, STDERR_FILENO);
 	clean_up(data);
 	if (data->err.err_no == MALLOC_ERROR)
 		exit(1);
