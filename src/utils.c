@@ -12,19 +12,19 @@
 
 #include "minishell.h"
 
+void	init_shell(t_data *data)
+{
+	data->line = NULL;
+	data->tokens = NULL;
+	data->tree = NULL;
+	data->err.err_no = OK;
+	data->err.msg = NULL;
+}
+
 void	clean_up(t_data *data)
 {
-	ft_nodeclear(tree);
-	free_tokens(tokens);
-}
-
-int	is_space(char c)
-{
-	return (c == ' ' || (c >= '\t' && c <= '\r'));
-}
-
-void	fatal_error(int	err)
-{
-	// clean_up();
-	exit(err);
+	free(data->line);
+	free(data->err.msg);
+	free_tokens(data->tokens);
+	ft_nodeclear(data->tree);
 }

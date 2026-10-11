@@ -51,27 +51,27 @@ static int	add_token(t_list **tokens, t_token *tok)
 	return (1);
 }
 
-static t_token	*read_token(char *line, int *i, t_err_no *err)
+static t_token	*read_token(char *line, int *i, t_err *err)
 {
 	t_token	*tok;
 
-	*err = MALLOC_ERROR;
+	err->err_no = MALLOC_ERROR;
 	if (is_operator(line[*i]))
 		tok = read_operator(line, i);
 	else
 		tok = read_word(line, i, err);
 	if (tok)
-		*err = OK;
+		err->err_no = OK;
 	return (tok);
 }
 
-t_list	*lexer(char *line, t_err_no *err)
+t_list	*lexer(char *line, t_err *err)
 {
 	t_list	*tokens;
 	t_token	*tok;
 	int		i;
 
-	*err = OK;
+	err->err_no = OK;
 	if (!line)
 		return (NULL);
 	tokens = NULL;
@@ -86,7 +86,7 @@ t_list	*lexer(char *line, t_err_no *err)
 			if (!tok)
 				return (free_tokens(tokens), NULL);
 			if (!add_token(&tokens, tok))
-				return (*err = MALLOC_ERROR, NULL);
+				return (err->err_no = MALLOC_ERROR, NULL);
 		}
 	}
 	return (tokens);

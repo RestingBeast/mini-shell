@@ -43,7 +43,7 @@ static char	**make_args(t_list **tokens)
 	return (res);
 }
 
-static t_list	*make_redirs(t_list *tokens, t_err_no *err)
+static t_list	*make_redirs(t_list *tokens, t_err *err)
 {
 	t_token	*tok;
 	t_list	*lst;
@@ -62,16 +62,16 @@ static t_list	*make_redirs(t_list *tokens, t_err_no *err)
 			else
 				tmp = ft_lstnew((void *)handle_redir(tokens));
 			if (!tmp)
-				return (*err = MALLOC_ERROR, NULL);
+				return (err->err_no = MALLOC_ERROR, NULL);
 			ft_lstadd_back(&lst, tmp);
 		}
 		tokens = tokens->next;
 	}
-	*err = OK;
+	err->err_no = OK;
 	return (lst);
 }
 
-static t_node	*make_cmd_node(t_list **tokens, t_err_no *err)
+static t_node	*make_cmd_node(t_list **tokens, t_err *err)
 {
 	t_node	*root;
 	t_cmd	*cmd;
@@ -79,7 +79,7 @@ static t_node	*make_cmd_node(t_list **tokens, t_err_no *err)
 	t_list	*redirs;
 
 	redirs = make_redirs(*tokens, err);
-	if (*err != OK)
+	if (err->err_no != OK)
 		return (NULL); // Error
 	args = make_args(tokens);
 	if (!args)
@@ -93,7 +93,7 @@ static t_node	*make_cmd_node(t_list **tokens, t_err_no *err)
 	return (root);
 }
 
-t_node	*parse_tokens(t_list *tokens, t_err_no *err)
+t_node	*parse_tokens(t_list *tokens, t_err *err)
 {
 	t_node	*root;
 	t_node	*tmp;

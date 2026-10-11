@@ -13,11 +13,11 @@ struct s_token
 };
 
 // lexer.c
-t_list	*lexer(char *line, t_err_no *err);
+t_list	*lexer(char *line, t_err *err);
 t_token	*new_token(t_type type, char *lexeme);
 
 // lexer_word.c
-t_token	*read_word(char *line, int *i, t_err_no *err);
+t_token	*read_word(char *line, int *i, t_err *err);
 
 // lexer_utils.c
 int		is_operator(char c);

@@ -30,15 +30,15 @@ typedef struct s_data	t_data;
 
 struct s_data
 {
-	char		*line;
-	t_list		*tokens;
-	t_node		*tree;
-	t_err_no	err_no;
+	char	*line;
+	t_list	*tokens;
+	t_node	*tree;
+	t_err	err;
 };
 
 void	set_sigaction(void);
 int		is_space(char c);
+int		init_shell(t_data *data);
 void	clean_up(t_list *tokens, t_node *tree);
-void	fatal_error(int err);
 
 #endif
