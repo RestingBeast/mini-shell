@@ -48,17 +48,20 @@ t_redir	*handle_redir(t_list *tok)
 static void capture_input(char *delimiter, int fd)
 {
 	char	*line;
+	int		len;
 
-	line = readline(">");
+	set_heredoc_sig();
+	write(STDERR_FILENO, "> ", 2);
+	line = get_next_line(STDIN_FILENO);
 	while (line != NULL)
 	{
-		if (ft_memcmp((void *)delimiter,
-			(void *)line, ft_strlen(delimiter) + 1) == 0)
+		len = ft_strlen(delimiter);
+		if (ft_strncmp(delimiter, line, len) == 0 && line[len] == '\n')
 			break ;
 		write(fd, line, ft_strlen(line));
-		write(fd, "\n", 1);
 		free(line);
-		line = readline(">");
+		write(STDERR_FILENO, "> ", 2);
+		line = get_next_line(STDIN_FILENO);
 	}
 	free(line);
 }

@@ -36,7 +36,11 @@ struct s_data
 	t_err	err;
 };
 
+// signals.c
 void	set_sigaction(void);
+void	set_heredoc_sig(void);
+
+// utils.c
 int		is_space(char c);
 int		init_shell(t_data *data);
 void	clean_up(t_list *tokens, t_node *tree);

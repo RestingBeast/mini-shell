@@ -24,6 +24,7 @@ void	init_shell(t_data *data)
 	data->tree = NULL;
 	data->err.err_no = OK;
 	data->err.msg = NULL;
+	set_sigaction();
 }
 
 void	clean_up(t_data *data)
