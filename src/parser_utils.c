@@ -45,35 +45,6 @@ t_redir	*handle_redir(t_list *tok)
 	return (res);
 }
 
-static char	*strip_delimiter(char *str)
-{
-	char	*res;
-	int	i;
-	int	j;
-
-	i = -1;
-	j = 0;
-	while (str[++i] != '\0')
-	{
-		if (str[i] == '\"' || str[i] == '\'')
-			continue ;
-		j++;
-	}
-	res = ft_calloc(j + 1, sizeof(char));
-	if (!res)
-		return (NULL);
-	i = -1;
-	j = 0;
-	while (str[++i] != '\0')
-	{
-		if (str[i] == '\"' || str[i] == '\'')
-			continue ;
-		res[j++] = str[i];
-	}
-	free(str);
-	return (res);
-}
-
 static void capture_input(char *delimiter, int fd)
 {
 	char	*line;
@@ -100,7 +71,7 @@ t_redir	*handle_heredoc(t_list *tok)
 
 	if (pipe(fds) != 0)
 		return (NULL); // Error-handling should be here
-	delimiter = strip_delimiter(((t_token *)tok->next->content)->lexeme);
+	delimiter = strip_quotes(((t_token *)tok->next->content)->lexeme);
 	if (!delimiter)
 		return (NULL); // Error
 	capture_input(delimiter, fds[1]);

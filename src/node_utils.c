@@ -19,6 +19,8 @@ static void	ft_redirclear(void * rdr)
 	redir = (t_redir *)rdr;
 	if (redir->type != HEREDOC)
 		free(redir->target.file);
+	else
+		close(redir->target.fd);
 	free(redir);
 }
 
