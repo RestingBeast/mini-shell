@@ -25,7 +25,9 @@ static int	syntax_check(t_list **tokens, t_token *tok, t_err *err)
 	t_token	*last;
 
 	if (*tokens == NULL && tok->type == PIPE)
-		return (set_syntax_err(err, "|"), 0);
+		return (set_syntax_err(err, "|"), 0);	
+	if (*tokens == NULL) 
+		return (1);
 	last = (t_token *)(ft_lstlast(*tokens))->content;
 	if (tok->type != WORD && last->type != WORD)
 		return (set_syntax_err(err, get_type(last->type)), 0);
