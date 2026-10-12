@@ -2,7 +2,6 @@
 #include <criterion/criterion.h>
 #include <criterion/redirect.h>
 
-/*
 Test(Parser, WORD_test)
 {
 	char		*arg1[] = {"echo", "hell\'o wo\'\"rld\"", NULL};
@@ -361,4 +360,3 @@ Test(Parser, FULL_PIPELINE_WITH_REDIRS_test)
 	cr_assert(compare_trees(&expected, root));
 	// ft_nodeclear(root);
 }
-*/
