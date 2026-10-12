@@ -3,22 +3,27 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kkhant-z <kkhant-z@student.42singapor      +#+  +:+       +#+        */
+/*   By: psoe <psoe@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/07 20:44:16 by kkhant-z          #+#    #+#             */
-/*   Updated: 2026/06/07 20:44:17 by kkhant-z         ###   ########.fr       */
+/*   Updated: 2026/08/12 22:54:58 by psoe             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	main(void)
+int	main(int argc, char **argv, char **envp)
 {
-	t_lex_err err;
+	t_list	*env;
 
-	t_list *tokens = lexer("cat << \"ab\"c", &err);
-	t_node *tree = parse_tokens(tokens);
-	ft_nodeclear(tree);
-	free_tokens(tokens);
+	(void)argc;
+	(void)argv;
+	if (env_init(&env, envp) == -1)
+	{
+		ft_putendl_fd("minishell: out of memory", STDERR_FILENO);
+		return (1);
+	}
+	env_print(&env);
+	ft_lstclear(&env, free);
 	return (0);
 }

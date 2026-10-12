@@ -6,20 +6,38 @@ LIBFT_DIR = libft
 LIBFT = $(LIBFT_DIR)/libft.a
 READLINE = -lreadline
 INCLUDE = -Iinclude -I$(LIBFT_DIR)
-SRC =	src/minishell.c \
-	src/lexer.c \
-	src/lexer_word.c \
-	src/lexer_utils.c \
-	src/parser.c \
-	src/parser_utils.c \
-	src/node.c \
-	src/node_utils.c \
-	src/utils.c
+SRC = src/minishell.c \
+      src/lexer.c \
+	  src/envp.c \
+	  src/envp_init.c \
+	  src/envp_utils.c \
+	  src/shlvl.c \
+	  src/pwd.c \
+	  src/builtins/builtin.c \
+	  src/builtins/builtin_utils.c \
+	  src/builtins/builtin_echo.c \
+	  src/builtins/builtin_cd.c \
+	  src/builtins/builtin_pwd.c \
+	  src/builtins/builtin_env.c \
+	  src/builtins/builtin_export.c \
+	  src/builtins/export_sort.c \
+	  src/builtins/export_print.c \
+	  src/builtins/builtin_unset.c \
+	  src/builtins/builtin_exit.c \
+	  src/lexer_word.c \
+  	src/lexer_utils.c \
+	  src/parser.c \
+	  src/parser_utils.c \
+	  src/node.c \
+	  src/node_utils.c \
+	  src/utils.c
 OBJ = $(SRC:.c=.o)
 
 TEST = run-tests
 TEST_LIB_OBJ = $(filter-out src/minishell.o, $(OBJ))
 TEST_SRC = tests/lexer.test.c \
+	   tests/envp.test.c \
+	   tests/builtins.test.c \
 	   tests/lexer_helpers.c \
 	   tests/parser.test.c \
 	   tests/parser_helpers.c \
@@ -52,9 +70,10 @@ image:
 	docker build -t minishell-criterion .
 
 # This target must be run inside the Docker container created by `make image`.
+# malloc is wrapped so tests/envp.test.c can make it fail on purpose.
 test: $(TEST_OBJ) $(TEST_LIB_OBJ) $(LIBFT)
 	$(CC) $(CFLAGS) $(INCLUDE) -o $(TEST) \
-	$(TEST_OBJ) $(TEST_LIB_OBJ) $(LIBFT) $(READLINE) -lcriterion \
+	$(TEST_OBJ) $(TEST_LIB_OBJ) $(LIBFT) $(READLINE) -lcriterion -Wl,--wrap=malloc \
 	&& ./$(TEST) \
 	-S --always-succeed --color=always;
 
