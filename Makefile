@@ -8,6 +8,14 @@ READLINE = -lreadline
 INCLUDE = -Iinclude -I$(LIBFT_DIR)
 SRC = src/minishell.c \
       src/lexer.c \
+	  src/lexer_err.c \
+	  src/lexer_word.c \
+	  src/lexer_utils.c \
+	  src/parser.c \
+	  src/parser_utils.c \
+	  src/node.c \
+	  src/node_utils.c \
+	  src/utils.c \
 	  src/envp.c \
 	  src/envp_init.c \
 	  src/envp_utils.c \
@@ -24,13 +32,6 @@ SRC = src/minishell.c \
 	  src/builtins/export_print.c \
 	  src/builtins/builtin_unset.c \
 	  src/builtins/builtin_exit.c \
-	  src/lexer_word.c \
-	  src/lexer_utils.c \
-	  src/parser.c \
-	  src/parser_utils.c \
-	  src/node.c \
-	  src/node_utils.c \
-	  src/utils.c \
 	  src/signals.c \
 	  src/errors.c \
 	  src/syntax_err.c

@@ -43,8 +43,8 @@ void	set_heredoc_sig(void);
 // utils.c
 int		is_space(char c);
 int		is_redir(t_type type);
-int		init_shell(t_data *data);
-void	clean_up(t_list *tokens, t_node *tree);
+void	init_shell(t_data *data);
+void	clean_up(t_data *data);
 char	*strip_quotes(char *str);
 
 #endif
