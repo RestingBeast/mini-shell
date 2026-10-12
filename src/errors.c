@@ -24,24 +24,33 @@ void	set_pipe_err(t_err *err)
 	err->msg = "pipe failed\n";
 }
 
-int	check_error(t_data *data)
+static void	print_err_msg(t_err *err)
+{
+	ft_putstr_fd("minishell: ", STDERR_FILENO);
+	if (err->err_no == UNEXPECTED_TOK)
+	{
+		ft_putstr_fd("syntax error near unexpected token `", STDERR_FILENO);
+		ft_putstr_fd(err->msg, STDERR_FILENO);
+		ft_putstr_fd("\'\n", STDERR_FILENO);
+	}
+	else
+		ft_putstr_fd(err->msg, STDERR_FILENO);
+}
+
+int	check_error(t_data *data, t_list *env)
 {
 	if (data->err.err_no == OK)
 		return (1);
 	if (data->err.err_no == HEREDOC_ABORT)
 		return (clean_up(data), 0);
-//	data->return_status = data->err.err_no;
-	ft_putstr_fd("minishell: ", STDERR_FILENO);
-	if (data->err.err_no == UNEXPECTED_TOK)
-	{
-		ft_putstr_fd("syntax error near unexpected token `", STDERR_FILENO);
-		ft_putstr_fd(data->err.msg, STDERR_FILENO);
-		ft_putstr_fd("\'\n", STDERR_FILENO);
-	}
-	else
-		ft_putstr_fd(data->err.msg, STDERR_FILENO);
+	// data->return_status = data->err.err_no;
+	print_err_msg(&(data->err));
 	clean_up(data);
 	if (data->err.err_no == MALLOC_ERROR)
+	{
+		ft_lstclear(&env, free);
+		rl_clear_history();
 		exit(1);
+	}
 	return (0);
 }

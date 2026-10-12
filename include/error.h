@@ -38,7 +38,7 @@ struct	s_err
 // errors.c
 void	set_malloc_err(t_err *err);
 void	set_pipe_err(t_err *err);
-int		check_error(t_data *data);
+int		check_error(t_data *data, t_list *env);
 
 // syntac_err.c
 void	set_quote_err(t_err *err, char quote);
