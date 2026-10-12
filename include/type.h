@@ -13,7 +13,7 @@
 #ifndef TYPE_H
 # define TYPE_H
 
-typedef enum e_type t_type;
+typedef enum e_type	t_type;
 
 enum e_type
 {

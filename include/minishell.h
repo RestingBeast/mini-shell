@@ -17,7 +17,7 @@
 # include "libft.h"
 # include "lexer.h"
 # include "parser.h"
+# include "envp.h"
+# include "builtins.h"
 
-void print_list(t_list* node);
-t_list *copy_envp(char** envp);
 #endif

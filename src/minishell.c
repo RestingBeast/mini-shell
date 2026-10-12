@@ -12,13 +12,18 @@
 
 #include "minishell.h"
 
-int	main(int argc,char** argv, char** envp)
+int	main(int argc, char **argv, char **envp)
 {
-	t_list* head;
-	argc++;
+	t_list	*env;
+
+	(void)argc;
 	(void)argv;
-	head = copy_envp(envp);
-	print_list(head);
-	ft_lstclear(&head, free);
-	return(0);
+	if (env_init(&env, envp) == -1)
+	{
+		ft_putendl_fd("minishell: out of memory", STDERR_FILENO);
+		return (1);
+	}
+	env_print(&env);
+	ft_lstclear(&env, free);
+	return (0);
 }
