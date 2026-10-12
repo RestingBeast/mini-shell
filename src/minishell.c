@@ -16,7 +16,6 @@ int	main(void)
 {
 	t_data	data;
 
-	set_sigaction();
 	while (1)
 	{
 		init_shell(&data);
@@ -31,6 +30,7 @@ int	main(void)
 		data.tree = parse_tokens(data.tokens, &(data.err));
 		clean_up(&data);
 	}
+	printf("exit\n");
 	rl_clear_history();
 	return (0);
 }
