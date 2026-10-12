@@ -12,10 +12,12 @@
 
 #include "minishell.h"
 
-static void	ft_redirclear(void * rdr)
+void	ft_redirclear(void *rdr)
 {
 	t_redir	*redir;
 
+	if (!rdr)
+		return ;
 	redir = (t_redir *)rdr;
 	if (redir->type != HEREDOC)
 		free(redir->target.file);
@@ -24,23 +26,29 @@ static void	ft_redirclear(void * rdr)
 	free(redir);
 }
 
-static void	ft_cmdclear(t_cmd *cmd)
+void	ft_argclear(char **args)
 {
 	int	i;
 
+	if (!args)
+		return ;
 	i = 0;
-	while (cmd->args[i] != NULL)
-	{
-		free(cmd->args[i]);
-		i++;
-	}
-	free(cmd->args);
+	while (args[i] != NULL)
+		free(args[i++]);
+	free(args);
+}
+
+void	ft_cmdclear(t_cmd *cmd)
+{
+	if (!cmd)
+		return ;
+	ft_argclear(cmd->args);
 	ft_lstclear(&(cmd->redir), ft_redirclear);
 }
 
 void	ft_nodeclear(t_node *root)
 {
-	if (root == NULL)
+	if (!root)
 		return ;
 	ft_nodeclear(root->left);
 	ft_nodeclear(root->right);

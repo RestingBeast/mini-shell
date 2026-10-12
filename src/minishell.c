@@ -28,6 +28,8 @@ int	main(void)
 		if (!check_error(&data))
 			continue ;
 		data.tree = parse_tokens(data.tokens, &(data.err));
+		if (!check_error(&data))
+			continue ;
 		clean_up(&data);
 	}
 	printf("exit\n");

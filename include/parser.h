@@ -48,18 +48,22 @@ struct s_redir
 
 // parser.c
 t_node	*parse_tokens(t_list *tokens, t_err *err);
-int		is_redir(t_type type);
-int		count_args(t_list *tokens);
 
 // parser_utils.c
-t_redir	*handle_redir(t_list *tok);
-t_redir	*handle_heredoc(t_list *tok);
+int		count_args(t_list *tokens);
+t_redir	*handle_redir(t_list *tok, t_err *err);
+t_redir	*handle_heredoc(t_list *tok, t_err *err);
 
 // node.c
 t_cmd	*ft_cmdnew(char **args, t_list *redir);
 t_redir	*ft_redirnew_fd(t_type type, int fd);
 t_redir	*ft_redirnew_file(t_type type, char *file);
 t_node	*ft_nodenew(void *data, t_type type);
+
+// node_utils.c
+void	ft_redirclear(void *rdr);
+void	ft_argclear(char **args);
+void	ft_cmdclear(t_cmd *cmd);
 void	ft_nodeclear(t_node *root);
 
 #endif

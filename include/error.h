@@ -20,11 +20,13 @@ typedef struct s_err	t_err;
 enum	e_err_no
 {
 	OK = 0,
-	MALLOC_ERROR = 1,
-	UNCLOSED_QUOTE = 2,
-	UNEXPECTED_TOK = 3,
-	END_PIPE = 4,
-	END_REDIR = 5,
+	MALLOC_ERROR,
+	UNCLOSED_QUOTE,
+	UNEXPECTED_TOK,
+	END_PIPE,
+	END_REDIR,
+	PIPE_ERROR,
+	HEREDOC_ABORT,
 };
 
 struct	s_err
@@ -35,6 +37,7 @@ struct	s_err
 
 // errors.c
 void	set_malloc_err(t_err *err);
+void	set_pipe_err(t_err *err);
 int		check_error(t_data *data);
 
 // syntac_err.c

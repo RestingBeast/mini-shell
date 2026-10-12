@@ -18,10 +18,18 @@ void	set_malloc_err(t_err *err)
 	err->msg = "malloc: failed to allocated memory\n";
 }
 
+void	set_pipe_err(t_err *err)
+{
+	err->err_no = PIPE_ERROR;
+	err->msg = "pipe failed\n";
+}
+
 int	check_error(t_data *data)
 {
 	if (data->err.err_no == OK)
 		return (1);
+	if (data->err.err_no == HEREDOC_ABORT)
+		return (clean_up(data), 0);
 //	data->return_status = data->err.err_no;
 	ft_putstr_fd("minishell: ", STDERR_FILENO);
 	if (data->err.err_no == UNEXPECTED_TOK)
