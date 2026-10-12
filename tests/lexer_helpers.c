@@ -1,58 +1,10 @@
 #include "test.h"
 
-static const char	*quote_name(t_quote q)
+static int	compare_lexemes(char *out, char *exp)
 {
-	switch (q)
-	{
-		case NONE: return ("NONE");
-		case SINGLE: return ("SINGLE");
-		case DOUBLE: return ("DOUBLE");
-	}
-	return (NULL);
-}
-
-static int	compare_segments(t_list *out, t_list *exp)
-{
-	t_segment	*s1;
-	t_segment	*s2;
-	int			i;
-
-	i = 0;
-	while (out != NULL || exp != NULL)
-	{
-		if ((out && !exp) || (!out && exp))
-			return (0);
-		s1 = (t_segment *)out->content;
-		s2 = (t_segment *)exp->content;
-		if (s1->quote != s2->quote)
-		{
-			printf(
-				"Segment #%d\n"
-				"    Expected quote: %s\n"
-				"    Actual quote:   %s\n",
-				i + 1,
-				quote_name(s2->quote),
-				quote_name(s1->quote)
-			);
-			return (0);
-		}
-		if (strcmp(s1->text, s2->text) != 0)
-		{
-			printf(
-				"Segment #%d\n"
-				"    Expected text: %s\n"
-				"    Actual text:   %s\n",
-				i + 1,
-				s2->text,
-				s1->text
-			);
-			return (0);
-		}
-		out = out->next;
-		exp = exp->next;
-		i++;
-	}
-	return (1);
+	if (out == NULL || exp == NULL)
+		return (out == exp);
+	return (strcmp(out, exp) == 0);
 }
 
 int	compare_tokens(t_list *out, t_list *exp)
@@ -82,8 +34,18 @@ int	compare_tokens(t_list *out, t_list *exp)
 			);
 			return (0);
 		}
-		if (!compare_segments(t1->lexeme, t2->lexeme))
+		if (!compare_lexemes(t1->lexeme, t2->lexeme))
+		{
+			printf(
+				"Token #%d\n"
+				"    Expected lexeme: %s\n"
+				"    Actual lexeme:   %s\n",
+				i + 1,
+				t2->lexeme ? t2->lexeme : "(null)",
+				t1->lexeme ? t1->lexeme : "(null)"
+			);
 			return (0);
+		}
 		out = out->next;
 		exp = exp->next;
 		i++;

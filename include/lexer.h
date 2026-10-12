@@ -3,29 +3,33 @@
 # include "type.h"
 # include "libft.h"
 
-typedef struct s_segment t_segment;
 typedef struct s_token t_token;
-typedef enum e_quote t_quote;
+typedef enum e_lex_err t_lex_err;
 
-enum e_quote
+enum e_lex_err
 {
-	NONE,
-	SINGLE,
-	DOUBLE,
-};
-
-struct s_segment
-{
-	char	*text;
-	t_quote	quote;
+	LEX_OK,
+	LEX_UNCLOSED_QUOTE,
+	LEX_ALLOC,
 };
 
 struct s_token
 {
-	t_list	*lexeme;
-	t_type	type;
+t_type	type;
+char		*lexeme;
 };
 
-t_list *lexer(char *line);
+// lexer.c
+t_list	*lexer(char *line, t_lex_err *err);
+t_token	*new_token(t_type type, char *lexeme);
+
+// lexer_word.c
+t_token	*read_word(char *line, int *i, t_lex_err *err);
+
+// lexer_utils.c
+int		is_space(char c);
+int		is_operator(char c);
+void	free_token(void *content);
+void	free_tokens(t_list *tokens);
 
 #endif

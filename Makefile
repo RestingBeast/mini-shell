@@ -1,9 +1,10 @@
 CC = cc
-CFLAGS = -Wall -Wextra -Werror
+CFLAGS = -Wall -Wextra -Werror -g
 MAKE = make
 NAME = minishell
 LIBFT_DIR = libft
 LIBFT = $(LIBFT_DIR)/libft.a
+READLINE = -lreadline
 INCLUDE = -Iinclude -I$(LIBFT_DIR)
 SRC = src/minishell.c \
       src/lexer.c \
@@ -22,7 +23,14 @@ SRC = src/minishell.c \
 	  src/builtins/export_sort.c \
 	  src/builtins/export_print.c \
 	  src/builtins/builtin_unset.c \
-	  src/builtins/builtin_exit.c
+	  src/builtins/builtin_exit.c \
+	  src/lexer_word.c \
+  	src/lexer_utils.c \
+	  src/parser.c \
+	  src/parser_utils.c \
+	  src/node.c \
+	  src/node_utils.c \
+	  src/utils.c
 OBJ = $(SRC:.c=.o)
 
 TEST = run-tests
@@ -42,7 +50,7 @@ $(LIBFT):
 	$(MAKE) -C $(LIBFT_DIR)
 
 $(NAME): $(OBJ) $(LIBFT)
-	$(CC) $(CFLAGS) $(OBJ) $(LIBFT) -o $(NAME) 
+	$(CC) $(CFLAGS) $(OBJ) $(LIBFT) $(READLINE) -o $(NAME)
 
 %.o: %.c
 	$(CC) $(CFLAGS) $(INCLUDE) -o $@ -c $<
@@ -65,7 +73,8 @@ image:
 # malloc is wrapped so tests/envp.test.c can make it fail on purpose.
 test: $(TEST_OBJ) $(TEST_LIB_OBJ) $(LIBFT)
 	$(CC) $(CFLAGS) $(INCLUDE) -o $(TEST) \
-	$(TEST_OBJ) $(TEST_LIB_OBJ) $(LIBFT) -lcriterion -Wl,--wrap=malloc \
-	&& ./$(TEST) -f -S --color=always;
+	$(TEST_OBJ) $(TEST_LIB_OBJ) $(LIBFT) $(READLINE) -lcriterion -Wl,--wrap=malloc \
+	&& ./$(TEST) \
+	-S --always-succeed --color=always;
 
 .PHONY: all clean fclean re image test

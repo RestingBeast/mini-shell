@@ -2,3 +2,4 @@ minishell
 *.o
 run-tests
 libft.a
+.DS_Store
