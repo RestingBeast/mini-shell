@@ -44,9 +44,7 @@ SRCS := ft_isalpha.c \
 	ft_lstdelone.c \
 	ft_lstclear.c \
 	ft_lstiter.c \
-	ft_lstmap.c \
-	get_next_line/get_next_line.c \
-	get_next_line/get_next_line_utils.c
+	ft_lstmap.c
 
 OBJS := $(SRCS:.c=.o)
 

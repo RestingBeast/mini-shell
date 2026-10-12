@@ -36,9 +36,7 @@ struct s_data
 	t_err	err;
 };
 
-// signals.c
 void	set_sigaction(void);
-void	set_heredoc_sig(void);
 
 // utils.c
 int		is_space(char c);

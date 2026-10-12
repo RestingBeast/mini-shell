@@ -18,19 +18,10 @@ static void	handle_sigint(int signum)
 {
 	if (signum != SIGINT)
 		return ;
-	sig_captured = SIGINT;
 	write(1, "\n", 1);
 	rl_replace_line("", 0);
 	rl_on_new_line();
 	rl_redisplay();
-}
-
-static void	handle_heredoc_sigint(int signum)
-{
-	if (signum != SIGINT)
-		return ;
-	sig_captured = SIGINT;
-	write(STDERR_FILENO, "\n", 1);
 }
 
 void	set_sigaction(void)
@@ -40,19 +31,6 @@ void	set_sigaction(void)
 
 	ft_bzero(&int_act, sizeof(int_act));
 	int_act.sa_handler = &handle_sigint;
-	sigaction(SIGINT, &int_act, NULL);
-	ft_bzero(&quit_act, sizeof(quit_act));
-	quit_act.sa_handler = SIG_IGN;
-	sigaction(SIGQUIT, &quit_act, NULL);
-}
-
-void	set_heredoc_sig(void)
-{
-	struct sigaction	int_act;
-	struct sigaction	quit_act;
-
-	ft_bzero(&int_act, sizeof(int_act));
-	int_act.sa_handler = &handle_heredoc_sigint;
 	sigaction(SIGINT, &int_act, NULL);
 	ft_bzero(&quit_act, sizeof(quit_act));
 	quit_act.sa_handler = SIG_IGN;
