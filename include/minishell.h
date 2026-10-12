@@ -6,7 +6,7 @@
 /*   By: psoe <psoe@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/07 20:43:58 by kkhant-z          #+#    #+#             */
-/*   Updated: 2026/08/12 22:50:55 by psoe             ###   ########.fr       */
+/*   Updated: 2026/10/12 19:29:29 by psoe             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@
 # include "envp.h"
 # include "builtins.h"
 
+int	is_space(char c);
 void	clean_up(t_list *tokens, t_node *tree);
 void	fatal_error(int err);
 

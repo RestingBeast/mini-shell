@@ -27,7 +27,6 @@ t_token	*new_token(t_type type, char *lexeme);
 t_token	*read_word(char *line, int *i, t_lex_err *err);
 
 // lexer_utils.c
-int		is_space(char c);
 int		is_operator(char c);
 void	free_token(void *content);
 void	free_tokens(t_list *tokens);

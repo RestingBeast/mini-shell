@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kkhant-z <kkhant-z@student.42singapor      +#+  +:+       +#+        */
+/*   By: psoe <psoe@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/14 15:50:55 by kkhant-z          #+#    #+#             */
-/*   Updated: 2026/08/14 15:50:56 by kkhant-z         ###   ########.fr       */
+/*   Updated: 2026/10/12 19:30:12 by psoe             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,11 @@ void	clean_up(t_list	*tokens, t_node *tree)
 {
 	ft_nodeclear(tree);
 	free_tokens(tokens);
+}
+
+int	is_space(char c)
+{
+	return (c == ' ' || (c >= '\t' && c <= '\r'));
 }
 
 void	fatal_error(int	err)

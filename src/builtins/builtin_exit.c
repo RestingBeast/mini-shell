@@ -6,17 +6,12 @@
 /*   By: psoe <psoe@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/10/12 10:36:10 by psoe              #+#    #+#             */
-/*   Updated: 2026/10/12 10:36:10 by psoe             ###   ########.fr       */
+/*   Updated: 2026/10/12 19:29:02 by psoe             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 #include <limits.h>
-
-static int	is_space(char c)
-{
-	return (c == ' ' || (c >= '\t' && c <= '\r'));
-}
 
 /*
 ** Reads ARG as a whole number, the way bash does for exit:
