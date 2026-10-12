@@ -45,12 +45,21 @@ t_redir	*handle_redir(t_list *tok)
 	return (res);
 }
 
+int	rl_check(void)
+{
+	if (sig_captured == SIGINT)
+		rl_done = 1;
+	return (0);
+}
+
 static void capture_input(char *delimiter, int fd)
 {
 	char	*line;
 
-	line = readline(">");
-	while (line != NULL)
+	set_heredoc_sig();
+	rl_event_hook = rl_check;
+	line = readline("> ");
+	while (line != NULL && sig_captured == 0)
 	{
 		if (ft_memcmp((void *)delimiter,
 			(void *)line, ft_strlen(delimiter) + 1) == 0)
@@ -58,9 +67,13 @@ static void capture_input(char *delimiter, int fd)
 		write(fd, line, ft_strlen(line));
 		write(fd, "\n", 1);
 		free(line);
-		line = readline(">");
+		line = readline("> ");
 	}
+	if (line == NULL)
+		printf("minishell: warning: here-document delimited by end-of-file (wanted `%s')\n", delimiter);
 	free(line);
+	rl_event_hook = NULL;
+	sig_captured = 0;
 }
 
 t_redir	*handle_heredoc(t_list *tok)
