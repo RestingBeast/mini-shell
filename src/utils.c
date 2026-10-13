@@ -39,32 +39,3 @@ void	clean_up(t_data *data)
 	free_tokens(data->tokens);
 	ft_nodeclear(data->tree);
 }
-
-char	*strip_quotes(char *str)
-{
-	char	*res;
-	int	i;
-	int	j;
-
-	i = -1;
-	j = 0;
-	while (str[++i] != '\0')
-	{
-		if (str[i] == '\"' || str[i] == '\'')
-			continue ;
-		j++;
-	}
-	res = ft_calloc(j + 1, sizeof(char));
-	if (!res)
-		return (NULL);
-	i = -1;
-	j = 0;
-	while (str[++i] != '\0')
-	{
-		if (str[i] == '\"' || str[i] == '\'')
-			continue ;
-		res[j++] = str[i];
-	}
-	free(str);
-	return (res);
-}

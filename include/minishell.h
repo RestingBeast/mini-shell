@@ -46,10 +46,9 @@ int		is_space(char c);
 int		is_redir(t_type type);
 void	init_shell(t_data *data);
 void	clean_up(t_data *data);
-char	*strip_quotes(char *str);
 
 // quotes.c
-int	is_quote_mark(char c, char *quote);
+int		is_quote_mark(char c, char *quote);
 char	*strip_quotes(char *str);
 
 #endif

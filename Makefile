@@ -32,20 +32,13 @@ SRC = src/minishell.c \
 	  src/builtins/export_print.c \
 	  src/builtins/builtin_unset.c \
 	  src/builtins/builtin_exit.c \
-	  src/lexer_word.c \
-  	src/lexer_utils.c \
-	  src/parser.c \
-	  src/parser_utils.c \
-	  src/node.c \
-	  src/node_utils.c \
-	  src/utils.c \
+	  src/signals.c \
+	  src/errors.c \
+	  src/syntax_err.c \
 	  src/quotes.c \
 	  src/expand.c \
 	  src/expand_word.c \
 	  src/expand_dollar.c
-	  src/signals.c \
-	  src/errors.c \
-	  src/syntax_err.c
 OBJ = $(SRC:.c=.o)
 
 TEST = run-tests
