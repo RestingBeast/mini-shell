@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   lexer.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: kkhant-z <kkhant-z@student.42singapore.sg  +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/07/16 06:41:04 by kkhant-z          #+#    #+#             */
+/*   Updated: 2026/10/13 14:43:59 by kkhant-z         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
 static t_token	*read_operator(char *line, int *i, t_err *err)
@@ -30,7 +42,7 @@ static int	add_token(t_list **tokens, t_token *tok, t_err *err)
 
 	node = NULL;
 	if (!tok)
-	        return (0);
+		return (0);
 	if (!syntax_check(tokens, tok, err))
 		return (free_token(tok), free_tokens(*tokens), 0);
 	node = ft_lstnew(tok);

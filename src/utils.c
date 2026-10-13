@@ -19,8 +19,8 @@ int	is_space(char c)
 
 int	is_redir(t_type type)
 {
-	return (type == REDIR_IN || type == REDIR_OUT ||
-			type == APPEND || type == HEREDOC);
+	return (type == REDIR_IN || type == REDIR_OUT
+		|| type == APPEND || type == HEREDOC);
 }
 
 void	init_shell(t_data *data)

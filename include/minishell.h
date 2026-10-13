@@ -25,9 +25,9 @@
 # include "expand.h"
 # include "error.h"
 
-extern volatile sig_atomic_t sig_captured;
+extern volatile sig_atomic_t	g_sig_captured;
 
-typedef struct s_data	t_data;
+typedef struct s_data			t_data;
 
 struct s_data
 {
@@ -40,6 +40,7 @@ struct s_data
 // signals.c
 void	set_sigaction(void);
 void	set_heredoc_sig(void);
+int		rl_check(void);
 
 // utils.c
 int		is_space(char c);

@@ -58,6 +58,8 @@ t_node	*parse_tokens(t_list *tokens, t_err *err);
 // parser_utils.c
 int		count_args(t_list *tokens);
 t_redir	*handle_redir(t_list *tok, t_err *err);
+
+// heredoc.c
 t_redir	*handle_heredoc(t_list *tok, t_err *err);
 
 // node.c

@@ -13,8 +13,6 @@ int	compare_tokens(t_list *out, t_list *exp)
 	t_token	*t2;
 	int		i;
 
-	if (out == NULL)
-		return (0);
 	i = 0;
 	while (out != NULL || exp != NULL)
 	{

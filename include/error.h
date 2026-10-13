@@ -27,6 +27,7 @@ enum	e_err_no
 	END_REDIR,
 	PIPE_ERROR,
 	HEREDOC_ABORT,
+	TMPFILE_ERROR,
 };
 
 struct	s_err
@@ -38,6 +39,7 @@ struct	s_err
 // errors.c
 void	set_malloc_err(t_err *err);
 void	set_pipe_err(t_err *err);
+void	set_tmpfile_err(t_err *err);
 int		check_error(t_data *data, t_list *env);
 
 // syntac_err.c

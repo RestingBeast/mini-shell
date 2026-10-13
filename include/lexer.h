@@ -1,10 +1,22 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   lexer.h                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: kkhant-z <kkhant-z@student.42singapore.sg  +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/07/17 23:48:45 by kkhant-z          #+#    #+#             */
+/*   Updated: 2026/10/13 14:43:59 by kkhant-z         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef LEXER_H
 # define LEXER_H
 # include "type.h"
 # include "libft.h"
 # include "error.h"
 
-typedef struct s_token t_token;
+typedef struct s_token	t_token;
 
 struct s_token
 {
