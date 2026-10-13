@@ -5,6 +5,17 @@ int	is_operator(char c)
 	return (c == '|' || c == '<' || c == '>');
 }
 
+t_token	*new_token(t_type type, char *lexeme)
+{
+	t_token	*tok;
+
+	tok = malloc(sizeof(t_token));
+	if (!tok)
+		return (NULL);
+	tok->lexeme = lexeme;
+	tok->type = type;
+	return (tok);
+}
 
 void	free_token(void *content)
 {
