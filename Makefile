@@ -35,7 +35,11 @@ SRC = src/minishell.c \
 	  src/builtins/builtin_exit.c \
 	  src/signals.c \
 	  src/errors.c \
-	  src/syntax_err.c
+	  src/syntax_err.c \
+	  src/quotes.c \
+	  src/expand.c \
+	  src/expand_word.c \
+	  src/expand_dollar.c
 OBJ = $(SRC:.c=.o)
 
 TEST = run-tests
@@ -46,7 +50,9 @@ TEST_SRC = tests/lexer.test.c \
 	   tests/lexer_helpers.c \
 	   tests/parser.test.c \
 	   tests/parser_helpers.c \
-	   tests/test_utils.c
+	   tests/test_utils.c \
+	   tests/expand.test.c \
+	   tests/malloc_wrap.c
 TEST_OBJ = $(TEST_SRC:.c=.o)
 
 all: $(LIBFT) $(NAME)

@@ -33,6 +33,7 @@ t_redir	*ft_redirnew_fd(t_type type, int fd)
 		return (NULL);
 	rdr->type = type;
 	rdr->target.fd = fd;
+	rdr->ambiguous = 0;
 	return (rdr);
 }
 
@@ -45,6 +46,7 @@ t_redir	*ft_redirnew_file(t_type type, char *file)
 		return (NULL);
 	rdr->type = type;
 	rdr->target.file = file;
+	rdr->ambiguous = 0;
 	return (rdr);
 }
 
