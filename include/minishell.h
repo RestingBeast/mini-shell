@@ -21,9 +21,14 @@
 # include "parser.h"
 # include "envp.h"
 # include "builtins.h"
+# include "expand.h"
 
 int	is_space(char c);
 void	clean_up(t_list *tokens, t_node *tree);
 void	fatal_error(int err);
+
+// quotes.c
+int	is_quote_mark(char c, char *quote);
+char	*strip_quotes(char *str);
 
 #endif
