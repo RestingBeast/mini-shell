@@ -95,10 +95,10 @@ static t_node	*make_cmd_node(t_list **tokens, t_err *err)
 	cmd = ft_cmdnew(args, redirs);
 	if (!cmd)
 		return (set_malloc_err(err), ft_lstclear(&redirs, ft_redirclear),
-					ft_argclear(args), NULL);
+			ft_argclear(args), NULL);
 	root = ft_nodenew((void *)cmd, COMMAND);
 	if (!root)
-		return (ft_cmdclear(cmd), set_malloc_err(err), NULL);
+		return (ft_cmdclear(cmd), free(cmd), set_malloc_err(err), NULL);
 	return (root);
 }
 
@@ -115,7 +115,7 @@ t_node	*parse_tokens(t_list *tokens, t_err *err)
 		{
 			tmp = ft_nodenew(NULL, PIPE);
 			if (!tmp)
-				return (set_malloc_err(err), NULL); // Error should be handle here
+				return (ft_nodeclear(root), set_malloc_err(err), NULL);
 			tmp->left = root;
 			root = tmp;
 			tokens = tokens->next;

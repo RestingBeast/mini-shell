@@ -12,13 +12,13 @@
 
 #include "minishell.h"
 
-volatile sig_atomic_t sig_captured = 0;
+volatile sig_atomic_t	g_sig_captured = 0;
 
 static void	handle_sigint(int signum)
 {
 	if (signum != SIGINT)
 		return ;
-	sig_captured = SIGINT;
+	g_sig_captured = SIGINT;
 	write(1, "\n", 1);
 	rl_replace_line("", 0);
 	rl_on_new_line();
@@ -29,7 +29,18 @@ static void	handle_heredoc_int(int signum)
 {
 	if (signum != SIGINT)
 		return ;
-	sig_captured = SIGINT;
+	g_sig_captured = SIGINT;
+}
+
+/*
+** readline calls this about 10 times a second while it waits for input
+** (when it is set as rl_event_hook). After Ctrl-C it makes readline stop.
+*/
+int	rl_check(void)
+{
+	if (g_sig_captured == SIGINT)
+		rl_done = 1;
+	return (0);
 }
 
 void	set_heredoc_sig(void)

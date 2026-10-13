@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   lexer_word.c                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: psoe <psoe@student.42.fr>                  +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/09/30 20:19:44 by psoe              #+#    #+#             */
+/*   Updated: 2026/10/13 14:43:59 by psoe             ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
 static char	*extract_lexeme(char *line, int *i, t_err *err)
@@ -27,8 +39,8 @@ static char	*extract_lexeme(char *line, int *i, t_err *err)
 
 t_token	*read_word(char *line, int *i, t_err *err)
 {
-	t_token		*tok;
-	char *lexeme;
+	t_token	*tok;
+	char	*lexeme;
 
 	lexeme = extract_lexeme(line, i, err);
 	if (!lexeme)

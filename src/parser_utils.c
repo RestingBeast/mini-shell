@@ -14,7 +14,7 @@
 
 int	count_args(t_list *tokens)
 {
-	int	res;
+	int		res;
 	t_token	*tok;
 
 	res = 0;

@@ -14,23 +14,24 @@
 #include <fcntl.h>
 #include <errno.h>
 
-int	rl_check(void)
+static void	warn_eof(char *delimiter)
 {
-	if (sig_captured == SIGINT)
-		rl_done = 1;
-	return (0);
+	ft_putstr_fd("minishell: warning: here-document delimited by "
+		"end-of-file (wanted `", STDERR_FILENO);
+	ft_putstr_fd(delimiter, STDERR_FILENO);
+	ft_putendl_fd("')", STDERR_FILENO);
 }
 
 static void	capture_input(char *delimiter, int fd, t_err *err)
 {
 	char	*line;
 
-	sig_captured = 0;
+	g_sig_captured = 0;
 	set_heredoc_sig();
 	if (isatty(STDIN_FILENO))
 		rl_event_hook = rl_check;
 	line = readline("> ");
-	while (line != NULL && sig_captured == 0)
+	while (line != NULL && g_sig_captured == 0)
 	{
 		if (ft_memcmp((void *)delimiter,
 				(void *)line, ft_strlen(delimiter) + 1) == 0)
@@ -40,14 +41,13 @@ static void	capture_input(char *delimiter, int fd, t_err *err)
 		free(line);
 		line = readline("> ");
 	}
-	if (sig_captured == SIGINT)
+	if (g_sig_captured == SIGINT)
 		err->err_no = HEREDOC_ABORT;
 	if (line == NULL)
-		printf("minishell: warning: here-document delimited by end-of-file "
-			"(wanted `%s')\n", delimiter);
+		warn_eof(delimiter);
 	free(line);
 	rl_event_hook = NULL;
-	sig_captured = 0;
+	g_sig_captured = 0;
 }
 
 static char	*make_tmp_path(int n)

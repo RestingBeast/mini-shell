@@ -18,10 +18,23 @@ static int	init_envlst(t_list **env)
 
 	if (env_init(env, environ) == -1)
 	{
-		printf("minishell: malloc: failed to allocate memory\n");
+		ft_putendl_fd("minishell: malloc: failed to allocate memory",
+			STDERR_FILENO);
 		return (1);
 	}
 	return (0);
+}
+
+/*
+** Ctrl-D at the prompt. Like bash, "exit" is printed only when
+** someone is typing (stdin is a terminal), and on stderr.
+*/
+static void	end_shell(t_list **env)
+{
+	if (isatty(STDIN_FILENO))
+		ft_putendl_fd("exit", STDERR_FILENO);
+	ft_lstclear(env, free);
+	rl_clear_history();
 }
 
 int	main(void)
@@ -36,7 +49,7 @@ int	main(void)
 		init_shell(&data);
 		data.line = readline("minishell$ ");
 		if (!data.line)
-			break;
+			break ;
 		if (*(data.line))
 			add_history(data.line);
 		data.tokens = lexer(data.line, &(data.err));
@@ -47,8 +60,6 @@ int	main(void)
 			continue ;
 		clean_up(&data);
 	}
-	printf("exit\n");
-	ft_lstclear(&env, free);
-	rl_clear_history();
+	end_shell(&env);
 	return (0);
 }
