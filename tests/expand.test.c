@@ -101,16 +101,47 @@ static void	check_args(char *line, char **expected)
 }
 
 /*
-** The file name of the N-th redirection (counting from 0) of CMD.
+** The N-th redirection (counting from 0) of CMD.
 */
-static char	*redir_file(t_cmd *cmd, int n)
+static t_redir	*redir_at(t_cmd *cmd, int n)
 {
 	t_list	*lst = cmd->redir;
 
 	while (n-- > 0 && lst != NULL)
 		lst = lst->next;
 	cr_assert_not_null(lst, "redirection is missing");
-	return (((t_redir *)lst->content)->target.file);
+	return ((t_redir *)lst->content);
+}
+
+/*
+** The file name of the N-th redirection (counting from 0) of CMD.
+*/
+static char	*redir_file(t_cmd *cmd, int n)
+{
+	return (redir_at(cmd, n)->target.file);
+}
+
+/*
+** Parses and expands LINE (one command, no pipe), then checks the file
+** name of its first redirection and if it is ambiguous.
+*/
+static void	check_redir(char *line, char *file, int ambiguous)
+{
+	t_list	*env = make_env();
+	t_list	*tokens;
+	t_node	*tree = parse_line(line, &tokens);
+	t_err	err;
+	t_redir	*redir;
+
+	cr_assert_eq(expand_tree(tree, env, STATUS, &err), 0);
+	redir = redir_at((t_cmd *)tree->data, 0);
+	cr_assert_str_eq(redir->target.file, file,
+		"%s: file should be [%s], got [%s]", line, file, redir->target.file);
+	cr_assert_eq(redir->ambiguous, ambiguous,
+		"%s: ambiguous should be %d", line, ambiguous);
+	ft_nodeclear(tree);
+	free_tokens(tokens);
+	ft_lstclear(&env, free);
 }
 
 static void	check_strip(char *str, char *expected)
@@ -475,9 +506,30 @@ Test(ExpandTree, empty_redirection_file_is_kept)
 	cmd = (t_cmd *)tree->data;
 	check_cmd_args(cmd, expected, line);
 	cr_assert_str_eq(redir_file(cmd, 0), "");
+	cr_assert_eq(redir_at(cmd, 0)->ambiguous, 0);
 	ft_nodeclear(tree);
 	free_tokens(tokens);
 	ft_lstclear(&env, free);
+}
+
+// Command: echo hi > $NOPE   (bash: "$NOPE: ambiguous redirect")
+// The file keeps the word as it was typed, for the error message.
+Test(ExpandTree, empty_unquoted_redirection_file_is_ambiguous)
+{
+	check_redir("echo hi > $NOPE", "$NOPE", 1);
+	check_redir("echo hi >> $NOPE", "$NOPE", 1);
+	check_redir("cat < $NOPE", "$NOPE", 1);
+	check_redir("echo hi > $E", "$E", 1);
+	check_redir("echo hi > $NOPE$E", "$NOPE$E", 1);
+}
+
+// Command: echo hi > "$NOPE"   (bash: ": No such file or directory")
+Test(ExpandTree, quoted_or_not_empty_redirection_file_is_not_ambiguous)
+{
+	check_redir("echo hi > \"$NOPE\"", "", 0);
+	check_redir("echo hi > $NOPE\"\"", "", 0);
+	check_redir("echo hi > ''", "", 0);
+	check_redir("echo hi > $USER", "psoe", 0);
 }
 
 // Command: cat << $USER   then the lines "line" and "$USER"
@@ -582,7 +634,7 @@ Test(ExpandMalloc, expand_word_handles_every_failure)
 
 Test(ExpandMalloc, expand_tree_handles_every_failure)
 {
-	char	*line = "echo $USER\"$HOME\" $NOPE '' | cat > $HOME/f";
+	char	*line = "echo $USER\"$HOME\" $NOPE '' | cat > $HOME/f < $NOPE";
 	char	*expected_left[] = {"echo", "psoe/home/psoe", "", NULL};
 	char	*expected_right[] = {"cat", NULL};
 	t_list	*env = make_env();
@@ -615,6 +667,8 @@ Test(ExpandMalloc, expand_tree_handles_every_failure)
 	check_cmd_args((t_cmd *)tree->right->data, expected_right, line);
 	cr_assert_str_eq(redir_file((t_cmd *)tree->right->data, 0),
 		"/home/psoe/f");
+	cr_assert_str_eq(redir_file((t_cmd *)tree->right->data, 1), "$NOPE");
+	cr_assert_eq(redir_at((t_cmd *)tree->right->data, 1)->ambiguous, 1);
 	ft_nodeclear(tree);
 	free_tokens(tokens);
 	ft_lstclear(&env, free);

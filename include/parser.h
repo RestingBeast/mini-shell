@@ -40,10 +40,16 @@ union u_tgt
 	char	*file;
 };
 
+/*
+** AMBIGUOUS is set by the expander when the file name became empty
+** without quotes, like "> $NOPE". FILE then keeps the word as it was
+** typed, so the executor can print "minishell: $NOPE: ambiguous redirect".
+*/
 struct s_redir
 {
 	t_type	type;
 	t_tgt	target;
+	int		ambiguous;
 };
 
 // parser.c

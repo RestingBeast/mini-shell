@@ -72,6 +72,9 @@ static int	expand_args(t_cmd *cmd, t_list *env, int status, t_err *err)
 ** Expands the file name of every redirection of the list.
 ** A heredoc is skipped: the parser has already read its text,
 ** and bash never expands a heredoc delimiter.
+** Like bash, a name without quotes that becomes empty is ambiguous:
+** > $NOPE keeps the file "$NOPE" and sets AMBIGUOUS, for the executor.
+** But > "$NOPE" gives the file "", and opening it fails later, like bash.
 */
 static int	expand_redirs(t_list *redirs, t_list *env, int status, t_err *err)
 {
@@ -86,8 +89,16 @@ static int	expand_redirs(t_list *redirs, t_list *env, int status, t_err *err)
 			file = expand_word(redir->target.file, env, status, err);
 			if (file == NULL)
 				return (-1);
-			free(redir->target.file);
-			redir->target.file = file;
+			if (file[0] == '\0' && !has_quotes(redir->target.file))
+			{
+				free(file);
+				redir->ambiguous = 1;
+			}
+			else
+			{
+				free(redir->target.file);
+				redir->target.file = file;
+			}
 		}
 		redirs = redirs->next;
 	}
