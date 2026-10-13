@@ -49,7 +49,9 @@ TEST_SRC = tests/lexer.test.c \
 	   tests/lexer_helpers.c \
 	   tests/parser.test.c \
 	   tests/parser_helpers.c \
-	   tests/test_utils.c
+	   tests/test_utils.c \
+	   tests/expand.test.c \
+	   tests/malloc_wrap.c
 TEST_OBJ = $(TEST_SRC:.c=.o)
 
 all: $(LIBFT) $(NAME)
