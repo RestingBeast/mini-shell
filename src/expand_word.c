@@ -47,9 +47,9 @@ static int	is_dollar_before_quote(char *word, int i, char quote)
 **   - a $ is expanded, except inside '...'
 **   - every other char is copied as it is
 ** Quotes that come from a variable's value are copied, not removed.
-** Returns NULL if malloc failed. WORD itself is not changed.
+** Returns NULL and sets ERR if malloc failed. WORD itself is not changed.
 */
-char	*expand_word(char *word, t_list *env, int status)
+char	*expand_word(char *word, t_list *env, int status, t_err *err)
 {
 	char	*res;
 	char	quote;
@@ -72,5 +72,7 @@ char	*expand_word(char *word, t_list *env, int status)
 			i++;
 		}
 	}
+	if (res == NULL)
+		set_malloc_err(err);
 	return (res);
 }

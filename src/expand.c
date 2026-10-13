@@ -40,7 +40,7 @@ static int	count_strs(char **strs)
 ** The old array is freed only when everything worked, so after an
 ** error CMD is unchanged and can be freed as usual.
 */
-static int	expand_args(t_cmd *cmd, t_list *env, int status)
+static int	expand_args(t_cmd *cmd, t_list *env, int status, t_err *err)
 {
 	char	**new_args;
 	char	*arg;
@@ -49,12 +49,12 @@ static int	expand_args(t_cmd *cmd, t_list *env, int status)
 
 	new_args = ft_calloc(count_strs(cmd->args) + 1, sizeof(char *));
 	if (new_args == NULL)
-		return (-1);
+		return (set_malloc_err(err), -1);
 	i = 0;
 	j = 0;
 	while (cmd->args[i] != NULL)
 	{
-		arg = expand_word(cmd->args[i], env, status);
+		arg = expand_word(cmd->args[i], env, status, err);
 		if (arg == NULL)
 			return (free_array(new_args), -1);
 		if (arg[0] == '\0' && !has_quotes(cmd->args[i]))
@@ -73,7 +73,7 @@ static int	expand_args(t_cmd *cmd, t_list *env, int status)
 ** A heredoc is skipped: the parser has already read its text,
 ** and bash never expands a heredoc delimiter.
 */
-static int	expand_redirs(t_list *redirs, t_list *env, int status)
+static int	expand_redirs(t_list *redirs, t_list *env, int status, t_err *err)
 {
 	t_redir	*redir;
 	char	*file;
@@ -83,7 +83,7 @@ static int	expand_redirs(t_list *redirs, t_list *env, int status)
 		redir = (t_redir *)redirs->content;
 		if (redir->type != HEREDOC)
 		{
-			file = expand_word(redir->target.file, env, status);
+			file = expand_word(redir->target.file, env, status, err);
 			if (file == NULL)
 				return (-1);
 			free(redir->target.file);
@@ -97,23 +97,23 @@ static int	expand_redirs(t_list *redirs, t_list *env, int status)
 /*
 ** Expands every command of the tree. STATUS is the exit status of the
 ** last command: it is what $? becomes.
-** Returns 0, or -1 if malloc failed. Even then, the tree is still
-** valid and is freed as usual with ft_nodeclear().
+** Returns 0, or -1 and sets ERR if malloc failed. Even then, the tree
+** is still valid and is freed as usual with ft_nodeclear().
 */
-int	expand_tree(t_node *root, t_list *env, int status)
+int	expand_tree(t_node *root, t_list *env, int status, t_err *err)
 {
 	t_cmd	*cmd;
 
 	if (root == NULL)
 		return (0);
-	if (expand_tree(root->left, env, status) == -1
-		|| expand_tree(root->right, env, status) == -1)
+	if (expand_tree(root->left, env, status, err) == -1
+		|| expand_tree(root->right, env, status, err) == -1)
 		return (-1);
 	if (root->type != COMMAND)
 		return (0);
 	cmd = (t_cmd *)root->data;
-	if (expand_args(cmd, env, status) == -1
-		|| expand_redirs(cmd->redir, env, status) == -1)
+	if (expand_args(cmd, env, status, err) == -1
+		|| expand_redirs(cmd->redir, env, status, err) == -1)
 		return (-1);
 	return (0);
 }

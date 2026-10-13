@@ -35,7 +35,8 @@ static t_list	*make_env(void)
 static void	check_word(char *word, char *expected)
 {
 	t_list	*env = make_env();
-	char	*res = expand_word(word, env, STATUS);
+	t_err	err;
+	char	*res = expand_word(word, env, STATUS, &err);
 
 	cr_assert_not_null(res, "expand_word(%s) returned NULL", word);
 	cr_assert_str_eq(res, expected, "%s should give [%s], got [%s]",
@@ -88,8 +89,9 @@ static void	check_args(char *line, char **expected)
 	t_list	*env = make_env();
 	t_list	*tokens;
 	t_node	*tree = parse_line(line, &tokens);
+	t_err	err;
 
-	cr_assert_eq(expand_tree(tree, env, STATUS), 0);
+	cr_assert_eq(expand_tree(tree, env, STATUS, &err), 0);
 	cr_assert_not_null(tree);
 	cr_assert_eq(tree->type, COMMAND);
 	check_cmd_args((t_cmd *)tree->data, expected, line);
@@ -190,7 +192,8 @@ Test(ExpandVar, original_word_is_not_changed)
 {
 	char	word[] = "\"$USER\"";
 	t_list	*env = make_env();
-	char	*res = expand_word(word, env, STATUS);
+	t_err	err;
+	char	*res = expand_word(word, env, STATUS, &err);
 
 	cr_assert_str_eq(res, "psoe");
 	cr_assert_str_eq(word, "\"$USER\"");
@@ -225,9 +228,10 @@ Test(ExpandStatus, inside_words)
 Test(ExpandStatus, other_status_values)
 {
 	t_list	*env = make_env();
-	char	*res0 = expand_word("$?", env, 0);
-	char	*res127 = expand_word("$?", env, 127);
-	char	*res255 = expand_word("$?", env, 255);
+	t_err	err;
+	char	*res0 = expand_word("$?", env, 0, &err);
+	char	*res127 = expand_word("$?", env, 127, &err);
+	char	*res255 = expand_word("$?", env, 255, &err);
 
 	cr_assert_str_eq(res0, "0");
 	cr_assert_str_eq(res127, "127");
@@ -385,8 +389,9 @@ Test(ExpandArgs, command_name_is_expanded)
 Test(ExpandTree, empty_tree)
 {
 	t_list	*env = make_env();
+	t_err	err;
 
-	cr_assert_eq(expand_tree(NULL, env, STATUS), 0);
+	cr_assert_eq(expand_tree(NULL, env, STATUS, &err), 0);
 	ft_lstclear(&env, free);
 }
 
@@ -400,8 +405,9 @@ Test(ExpandTree, every_command_of_a_pipeline_is_expanded)
 	t_list	*env = make_env();
 	t_list	*tokens;
 	t_node	*tree = parse_line(line, &tokens);
+	t_err	err;
 
-	cr_assert_eq(expand_tree(tree, env, STATUS), 0);
+	cr_assert_eq(expand_tree(tree, env, STATUS, &err), 0);
 	cr_assert_eq(tree->type, PIPE);
 	cr_assert_eq(tree->left->type, PIPE);
 	check_cmd_args((t_cmd *)tree->left->left->data, expected1, line);
@@ -421,8 +427,9 @@ Test(ExpandTree, empty_command_in_a_pipeline)
 	t_list	*env = make_env();
 	t_list	*tokens;
 	t_node	*tree = parse_line(line, &tokens);
+	t_err	err;
 
-	cr_assert_eq(expand_tree(tree, env, STATUS), 0);
+	cr_assert_eq(expand_tree(tree, env, STATUS, &err), 0);
 	cr_assert_eq(tree->type, PIPE);
 	check_cmd_args((t_cmd *)tree->left->data, expected_left, line);
 	cr_assert_not_null(tree->right);
@@ -440,8 +447,9 @@ Test(ExpandTree, redirection_files_are_expanded)
 	t_list	*tokens;
 	t_node	*tree = parse_line(line, &tokens);
 	t_cmd	*cmd;
+	t_err	err;
 
-	cr_assert_eq(expand_tree(tree, env, STATUS), 0);
+	cr_assert_eq(expand_tree(tree, env, STATUS, &err), 0);
 	cmd = (t_cmd *)tree->data;
 	cr_assert_str_eq(redir_file(cmd, 0), "/home/psoe/out");
 	cr_assert_str_eq(redir_file(cmd, 1), "psoe.log");
@@ -461,8 +469,9 @@ Test(ExpandTree, empty_redirection_file_is_kept)
 	t_list	*tokens;
 	t_node	*tree = parse_line(line, &tokens);
 	t_cmd	*cmd;
+	t_err	err;
 
-	cr_assert_eq(expand_tree(tree, env, STATUS), 0);
+	cr_assert_eq(expand_tree(tree, env, STATUS, &err), 0);
 	cmd = (t_cmd *)tree->data;
 	check_cmd_args(cmd, expected, line);
 	cr_assert_str_eq(redir_file(cmd, 0), "");
@@ -483,13 +492,14 @@ Test(ExpandTree, heredoc_delimiter_is_not_expanded,
 	char	buf[64];
 	ssize_t	len;
 	FILE	*input;
+	t_err	err;
 
 	cr_redirect_stdin();
 	input = cr_get_redirected_stdin();
 	fprintf(input, "line\n$USER\n");
 	fclose(input);
 	tree = parse_line("cat << $USER", &tokens);
-	cr_assert_eq(expand_tree(tree, env, STATUS), 0);
+	cr_assert_eq(expand_tree(tree, env, STATUS, &err), 0);
 	redir = (t_redir *)((t_cmd *)tree->data)->redir->content;
 	cr_assert_eq(redir->type, HEREDOC);
 	len = read(redir->target.fd, buf, sizeof(buf) - 1);
@@ -536,28 +546,35 @@ Test(StripQuotes, null_gives_null)
 /*
 ** These tests make each malloc fail in turn: the 1st, then the 2nd...
 ** until a run where no malloc failed. Each failed run must return
-** NULL (or -1) and leak nothing (AddressSanitizer checks the leaks).
+** NULL (or -1), set err to MALLOC_ERROR and leak nothing
+** (AddressSanitizer checks the leaks). The run that works must
+** leave err at OK.
 */
 
 Test(ExpandMalloc, expand_word_handles_every_failure)
 {
 	char	*word = "a\"$USER\"'$HOME'$?$NOPE$1x";
 	t_list	*env = make_env();
+	t_err	err;
 	char	*res;
 	int		n;
 
 	n = 1;
 	while (1)
 	{
+		err.err_no = OK;
 		fail_malloc_at(n);
-		res = expand_word(word, env, STATUS);
+		res = expand_word(word, env, STATUS, &err);
 		if (stop_failing() < n)
 			break ;
 		cr_assert_null(res, "malloc #%d failed but the result is [%s]",
 			n, res);
+		cr_assert_eq(err.err_no, MALLOC_ERROR,
+			"malloc #%d failed but err is not MALLOC_ERROR", n);
 		n++;
 	}
 	cr_assert_gt(n, 1);
+	cr_assert_eq(err.err_no, OK);
 	cr_assert_str_eq(res, "apsoe$HOME42x");
 	free(res);
 	ft_lstclear(&env, free);
@@ -571,6 +588,7 @@ Test(ExpandMalloc, expand_tree_handles_every_failure)
 	t_list	*env = make_env();
 	t_list	*tokens;
 	t_node	*tree;
+	t_err	err;
 	int		ret;
 	int		n;
 
@@ -578,17 +596,21 @@ Test(ExpandMalloc, expand_tree_handles_every_failure)
 	while (1)
 	{
 		tree = parse_line(line, &tokens);
+		err.err_no = OK;
 		fail_malloc_at(n);
-		ret = expand_tree(tree, env, STATUS);
+		ret = expand_tree(tree, env, STATUS, &err);
 		if (stop_failing() < n)
 			break ;
 		cr_assert_eq(ret, -1, "malloc #%d failed but expand_tree worked", n);
+		cr_assert_eq(err.err_no, MALLOC_ERROR,
+			"malloc #%d failed but err is not MALLOC_ERROR", n);
 		ft_nodeclear(tree);
 		free_tokens(tokens);
 		n++;
 	}
 	cr_assert_gt(n, 1);
 	cr_assert_eq(ret, 0);
+	cr_assert_eq(err.err_no, OK);
 	check_cmd_args((t_cmd *)tree->left->data, expected_left, line);
 	check_cmd_args((t_cmd *)tree->right->data, expected_right, line);
 	cr_assert_str_eq(redir_file((t_cmd *)tree->right->data, 0),
