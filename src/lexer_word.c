@@ -1,9 +1,8 @@
 #include "minishell.h"
 
-
-
-static char	*extract_lexeme(char *line, int *i, t_lex_err *err)
+static char	*extract_lexeme(char *line, int *i, t_err *err)
 {
+	char	*res;
 	int		start;
 	char	quote;
 
@@ -16,16 +15,17 @@ static char	*extract_lexeme(char *line, int *i, t_lex_err *err)
 			while (line[*i] && line[*i] != quote)
 				(*i)++;
 			if (!line[*i])
-				return (*err = LEX_UNCLOSED_QUOTE, NULL);
+				return (set_quote_err(err, quote), NULL);
 		}
 		(*i)++;
 	}
-	*err = LEX_ALLOC;
-	return (ft_substr(line, start, *i - start));
+	res = ft_substr(line, start, *i - start);
+	if (!res)
+		return (set_malloc_err(err), NULL);
+	return (res);
 }
 
-
-t_token	*read_word(char *line, int *i, t_lex_err *err)
+t_token	*read_word(char *line, int *i, t_err *err)
 {
 	t_token		*tok;
 	char *lexeme;
@@ -35,7 +35,6 @@ t_token	*read_word(char *line, int *i, t_lex_err *err)
 		return (NULL);
 	tok = new_token(WORD, lexeme);
 	if (!tok)
-		return (*err = LEX_ALLOC, free(lexeme), NULL);
-	*err = LEX_OK;
+		return (set_malloc_err(err), free(lexeme), NULL);
 	return (tok);
 }

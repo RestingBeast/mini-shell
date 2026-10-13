@@ -16,14 +16,35 @@
 # include <stdlib.h>
 # include <readline/readline.h>
 # include <readline/history.h>
+# include <signal.h>
 # include "libft.h"
 # include "lexer.h"
 # include "parser.h"
 # include "envp.h"
 # include "builtins.h"
+# include "error.h"
 
-int	is_space(char c);
-void	clean_up(t_list *tokens, t_node *tree);
-void	fatal_error(int err);
+extern volatile sig_atomic_t sig_captured;
+
+typedef struct s_data	t_data;
+
+struct s_data
+{
+	char	*line;
+	t_list	*tokens;
+	t_node	*tree;
+	t_err	err;
+};
+
+// signals.c
+void	set_sigaction(void);
+void	set_heredoc_sig(void);
+
+// utils.c
+int		is_space(char c);
+int		is_redir(t_type type);
+void	init_shell(t_data *data);
+void	clean_up(t_data *data);
+char	*strip_quotes(char *str);
 
 #endif

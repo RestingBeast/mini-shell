@@ -9,7 +9,7 @@ docker run --rm -v "$(pwd):/src" -w /src minishell-criterion make test
 ```
 Check memory leak
 ```sh
-valgrind --suppressions=readline.supp --leak-check=full \
+valgrind --suppressions=readline.supp --leak-check=full --trace-children=yes \
 --show-leak-kinds=all --track-fds=yes ./minishell
 ```
 

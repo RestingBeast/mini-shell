@@ -12,18 +12,43 @@
 
 #include "minishell.h"
 
-int	main(int argc, char **argv, char **envp)
+static int	init_envlst(t_list **env)
 {
-	t_list	*env;
+	extern char	**environ;
 
-	(void)argc;
-	(void)argv;
-	if (env_init(&env, envp) == -1)
+	if (env_init(env, environ) == -1)
 	{
-		ft_putendl_fd("minishell: out of memory", STDERR_FILENO);
+		printf("minishell: malloc: failed to allocate memory\n");
 		return (1);
 	}
-	env_print(&env);
+	return (0);
+}
+
+int	main(void)
+{
+	t_data	data;
+	t_list	*env;
+
+	if (init_envlst(&env) == 1)
+		return (1);
+	while (1)
+	{
+		init_shell(&data);
+		data.line = readline("minishell$ ");
+		if (!data.line)
+			break;
+		if (*(data.line))
+			add_history(data.line);
+		data.tokens = lexer(data.line, &(data.err));
+		if (!check_error(&data, env))
+			continue ;
+		data.tree = parse_tokens(data.tokens, &(data.err));
+		if (!check_error(&data, env))
+			continue ;
+		clean_up(&data);
+	}
+	printf("exit\n");
 	ft_lstclear(&env, free);
+	rl_clear_history();
 	return (0);
 }

@@ -12,13 +12,7 @@
 
 #include "minishell.h"
 
-int	is_redir(t_type type)
-{
-	return (type == REDIR_IN || type == REDIR_OUT ||
-			type == APPEND || type == HEREDOC);
-}
-
-static char	**make_args(t_list **tokens)
+static char	**make_args(t_list **tokens, t_err *err)
 {
 	int		count;
 	int		i;
@@ -28,7 +22,7 @@ static char	**make_args(t_list **tokens)
 	count = count_args(*tokens);
 	res = ft_calloc(count + 1, sizeof(char *));
 	if (!res)
-		return (NULL);
+		return (set_malloc_err(err), NULL);
 	i = 0;
 	while (*tokens != NULL)
 	{
@@ -43,13 +37,31 @@ static char	**make_args(t_list **tokens)
 	return (res);
 }
 
-static t_list	*make_redirs(t_list *tokens)
+static t_list	*make_redir(t_list *tok, t_type type, t_err *err)
+{
+	t_redir	*redir;
+	t_list	*res;
+
+	if (type == HEREDOC)
+		redir = handle_heredoc(tok, err);
+	else
+		redir = handle_redir(tok, err);
+	if (err->err_no != OK)
+		return (ft_redirclear(redir), NULL);
+	res = ft_lstnew((void *)redir);
+	if (!res)
+		return (ft_redirclear((void *) redir), set_malloc_err(err), NULL);
+	return (res);
+}
+
+static t_list	*make_redirs(t_list *tokens, t_err *err)
 {
 	t_token	*tok;
 	t_list	*lst;
 	t_list	*tmp;
 
 	lst = NULL;
+	err->err_no = OK;
 	while (tokens)
 	{
 		tok = (t_token *)tokens->content;
@@ -57,12 +69,9 @@ static t_list	*make_redirs(t_list *tokens)
 			break ;
 		if (is_redir(tok->type))
 		{
-			if (tok->type == HEREDOC)
-				tmp = ft_lstnew((void *)handle_heredoc(tokens));
-			else
-				tmp = ft_lstnew((void *)handle_redir(tokens));
+			tmp = make_redir(tokens, tok->type, err);
 			if (!tmp)
-				return (NULL);
+				return (ft_lstclear(&lst, ft_redirclear), NULL);
 			ft_lstadd_back(&lst, tmp);
 		}
 		tokens = tokens->next;
@@ -70,50 +79,54 @@ static t_list	*make_redirs(t_list *tokens)
 	return (lst);
 }
 
-static t_node	*make_cmd_node(t_list **tokens)
+static t_node	*make_cmd_node(t_list **tokens, t_err *err)
 {
 	t_node	*root;
 	t_cmd	*cmd;
 	char	**args;
 	t_list	*redirs;
 
-	redirs = make_redirs(*tokens);
-	if (!redirs)
-		return (NULL); // Error
-	args = make_args(tokens);
+	redirs = make_redirs(*tokens, err);
+	if (err->err_no != OK)
+		return (NULL);
+	args = make_args(tokens, err);
 	if (!args)
-		return (NULL); // Error
+		return (ft_lstclear(&redirs, ft_redirclear), NULL);
 	cmd = ft_cmdnew(args, redirs);
 	if (!cmd)
-		return (NULL); // Error
+		return (set_malloc_err(err), ft_lstclear(&redirs, ft_redirclear),
+					ft_argclear(args), NULL);
 	root = ft_nodenew((void *)cmd, COMMAND);
 	if (!root)
-		return (NULL); // Error handling should be here
+		return (ft_cmdclear(cmd), set_malloc_err(err), NULL);
 	return (root);
 }
 
-t_node	*parse_tokens(t_list *tokens)
+t_node	*parse_tokens(t_list *tokens, t_err *err)
 {
 	t_node	*root;
 	t_node	*tmp;
 
 	root = NULL;
+	err->err_no = OK;
 	while (tokens != NULL)
 	{
 		if (((t_token *)tokens->content)->type == PIPE)
 		{
 			tmp = ft_nodenew(NULL, PIPE);
 			if (!tmp)
-				return (NULL); // Error should be handle here
+				return (set_malloc_err(err), NULL); // Error should be handle here
 			tmp->left = root;
 			root = tmp;
 			tokens = tokens->next;
 			continue ;
 		}
 		if (!root)
-			root = make_cmd_node(&tokens);
+			root = make_cmd_node(&tokens, err);
 		else
-			root->right = make_cmd_node(&tokens);
+			root->right = make_cmd_node(&tokens, err);
+		if (err->err_no != OK)
+			return (ft_nodeclear(root), NULL);
 	}
 	return (root);
 }
