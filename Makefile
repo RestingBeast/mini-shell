@@ -13,6 +13,7 @@ SRC = src/minishell.c \
 	  src/lexer_utils.c \
 	  src/parser.c \
 	  src/parser_utils.c \
+	  src/heredoc.c \
 	  src/node.c \
 	  src/node_utils.c \
 	  src/utils.c \

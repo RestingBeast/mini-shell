@@ -24,6 +24,12 @@ void	set_pipe_err(t_err *err)
 	err->msg = "pipe failed\n";
 }
 
+void	set_tmpfile_err(t_err *err)
+{
+	err->err_no = TMPFILE_ERROR;
+	err->msg = "cannot create temp file for here-document\n";
+}
+
 static void	print_err_msg(t_err *err)
 {
 	ft_putstr_fd("minishell: ", STDERR_FILENO);
