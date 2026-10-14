@@ -12,24 +12,6 @@
 
 #include "minishell.h"
 
-void	set_malloc_err(t_err *err)
-{
-	err->err_no = MALLOC_ERROR;
-	err->msg = "malloc: failed to allocate memory\n";
-}
-
-void	set_pipe_err(t_err *err)
-{
-	err->err_no = PIPE_ERROR;
-	err->msg = "pipe failed\n";
-}
-
-void	set_tmpfile_err(t_err *err)
-{
-	err->err_no = TMPFILE_ERROR;
-	err->msg = "cannot create temp file for here-document\n";
-}
-
 static void	print_err_msg(t_err *err)
 {
 	ft_putstr_fd("minishell: ", STDERR_FILENO);
@@ -43,13 +25,23 @@ static void	print_err_msg(t_err *err)
 		ft_putstr_fd(err->msg, STDERR_FILENO);
 }
 
-// TODO: data->return_status = data->err.err_no; (after print_err_msg)
+static int	get_status(t_err_no no)
+{
+	if (no == UNCLOSED_QUOTE || no == UNEXPECTED_TOK || no == END_PIPE
+			|| no == END_REDIR)
+		return (2);
+	if (no == MALLOC_ERROR || no == PIPE_ERROR || no == TMPFILE_ERROR)
+		return (1);
+	return (0);
+}
+
 int	check_error(t_data *data, t_list *env)
 {
 	if (data->err.err_no == OK)
 		return (1);
 	if (data->err.err_no == HEREDOC_ABORT)
 		return (clean_up(data), 0);
+	data->status = get_status(data->err.err_no);
 	print_err_msg(&(data->err));
 	clean_up(data);
 	if (data->err.err_no == MALLOC_ERROR)

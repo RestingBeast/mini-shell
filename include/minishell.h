@@ -17,6 +17,8 @@
 # include <readline/readline.h>
 # include <readline/history.h>
 # include <signal.h>
+# include <sys/types.h>
+# include <sys/wait.h>
 # include "libft.h"
 # include "lexer.h"
 # include "parser.h"
@@ -24,6 +26,7 @@
 # include "builtins.h"
 # include "expand.h"
 # include "error.h"
+# include "exe.h"
 
 extern volatile sig_atomic_t	g_sig_captured;
 
@@ -31,6 +34,7 @@ typedef struct s_data			t_data;
 
 struct s_data
 {
+	int	status;
 	char	*line;
 	t_list	*tokens;
 	t_node	*tree;

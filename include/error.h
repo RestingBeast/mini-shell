@@ -28,6 +28,7 @@ enum	e_err_no
 	PIPE_ERROR,
 	HEREDOC_ABORT,
 	TMPFILE_ERROR,
+	FORK_ERROR,
 };
 
 struct	s_err
@@ -37,10 +38,13 @@ struct	s_err
 };
 
 // errors.c
+int		check_error(t_data *data, t_list *env);
+
+// syscall_err.c
 void	set_malloc_err(t_err *err);
 void	set_pipe_err(t_err *err);
 void	set_tmpfile_err(t_err *err);
-int		check_error(t_data *data, t_list *env);
+void	set_fork_err(t_err *err);
 
 // syntac_err.c
 void	set_quote_err(t_err *err, char quote);

@@ -44,6 +44,7 @@ int	main(void)
 
 	if (init_envlst(&env) == 1)
 		return (1);
+	data.status = 0;
 	while (1)
 	{
 		init_shell(&data);
@@ -61,6 +62,7 @@ int	main(void)
 		expand_tree(data.tree, env, 0, &(data.err));
 		if (!check_error(&data, env))
 			continue ;
+		execute_tree(data.tree, &data, env);
 		clean_up(&data);
 	}
 	end_shell(&env);
