@@ -23,21 +23,26 @@ static void	print_err_msg(t_err *err)
 	}
 	else
 	{
-		if (err->err_no == PIPE_ERROR || err->err_no == TMPFILE_ERROR
-				|| err->err_no == FORK_ERROR)
+		if (err->err_no == SYSCALL_ERR || err->err_no == CMD_ERROR
+				|| err->err_no == CMD_NOT_FOUND)
 			ft_putstr_fd(strerror(err->payload.err_no), STDERR_FILENO);
 		else
 			ft_putstr_fd(err->payload.msg, STDERR_FILENO);
+		ft_putstr_fd("\n", STDERR_FILENO);
 	}
 }
 
 static int	get_status(t_err_no no)
 {
+	if (no == MALLOC_ERROR || no == SYSCALL_ERR)
+		return (1);
 	if (no == UNCLOSED_QUOTE || no == UNEXPECTED_TOK || no == END_PIPE
 			|| no == END_REDIR)
 		return (2);
-	if (no == MALLOC_ERROR || no == PIPE_ERROR || no == TMPFILE_ERROR)
-		return (1);
+	if (no == CMD_ERROR || no == IS_DIR_ERR)
+		return (126);
+	if (no == CMD_NOT_FOUND)
+		return (127);
 	return (0);
 }
 

@@ -18,20 +18,26 @@ void	set_malloc_err(t_err *err)
 	err->payload.msg = "malloc: failed to allocate memory\n";
 }
 
-void	set_pipe_err(t_err *err)
+void	set_syscall_err(t_err *err)
 {
-	err->err_no = PIPE_ERROR;
+	err->err_no = SYSCALL_ERR;
 	err->payload.err_no = errno;
 }
 
-void	set_tmpfile_err(t_err *err)
+void	set_cmd_err(t_err *err)
 {
-	err->err_no = TMPFILE_ERROR;
+	err->err_no = CMD_ERROR;
 	err->payload.err_no = errno;
 }
 
-void	set_fork_err(t_err *err)
+void	set_cmd_not_found_err(t_err *err)
 {
-	err->err_no = FORK_ERROR;
+	err->err_no = CMD_NOT_FOUND;
 	err->payload.err_no = errno;
+}
+
+void	set_dir_err(t_err *err)
+{
+	err->err_no = IS_DIR_ERR;
+	err->payload.msg = "Is a directory";
 }
