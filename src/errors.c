@@ -25,7 +25,7 @@ static void	print_err_msg(t_err *err)
 	{
 		if (err->err_no == PIPE_ERROR || err->err_no == TMPFILE_ERROR
 				|| err->err_no == FORK_ERROR)
-			ft_putstr_fd(strerror(err->payload.errno), STDERR_FILENO);
+			ft_putstr_fd(strerror(err->payload.err_no), STDERR_FILENO);
 		else
 			ft_putstr_fd(err->payload.msg, STDERR_FILENO);
 	}
