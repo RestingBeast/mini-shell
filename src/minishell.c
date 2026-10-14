@@ -63,6 +63,8 @@ int	main(void)
 		if (!check_error(&data, env))
 			continue ;
 		execute_tree(data.tree, &data, env);
+		if (!check_error(&data, env))
+			continue ;
 		clean_up(&data);
 	}
 	end_shell(&env);

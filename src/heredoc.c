@@ -85,7 +85,7 @@ static int	open_tmp_file(char **path, t_err *err)
 		free(*path);
 		*path = NULL;
 		if (errno != EEXIST)
-			return (set_tmpfile_err(err), -1);
+			return (set_syscall_err(err), -1);
 		n++;
 	}
 }
@@ -118,7 +118,7 @@ t_redir	*handle_heredoc(t_list *tok, t_err *err)
 	unlink(path);
 	free(path);
 	if (fd == -1)
-		return (set_tmpfile_err(err), NULL);
+		return (set_syscall_err(err), NULL);
 	res = ft_redirnew_fd(HEREDOC, fd);
 	if (!res)
 		return (close(fd), set_malloc_err(err), NULL);

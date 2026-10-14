@@ -12,36 +12,29 @@
 
 #include "minishell.h"
 
-/*
-if (ft_strchr(cmd, '/') != NULL)
-		return (cmd);
-	filename = ft_strjoin("/", cmd);
-	path = get_env_path(envp);
-	while (path[i] != NULL)
-	{
-		res = ft_strjoin(path[i], filename);
-		if (access(res, F_OK | X_OK) == 0)
-			return (free(filename), free_double_ptr(path), res);
-		free(res);
-		i++;
-	}
-*/
-
 static int	access_file(char *file, t_err *err)
 {
-	if (!res)
+	int	perm_denied;
+
+	perm_denied = 0;
+	if (!file)
 		return (set_malloc_err(err), 0);
 	if (access(file, F_OK | X_OK) == 0)
 		return (err->err_no = OK, 1);
 	else
 	{
-		if (errno =
+		set_cmd_err(err);
+		if (errno == EACCES)
+			perm_denied = 1;
+		if (!perm_denied && errno == ENOENT)
+			return (set_cmd_not_found_err(err), 0);
 	}
 	return (0);
 }
 
-static char	*find_path(t_list *env, char *cmd, t_err *err)
+static char	*find_path(char *cmd, t_data *data, t_list *env)
 {
+	char	*res;
 	char	*file;
 	char	**path_env;
 	int		i;
@@ -50,37 +43,53 @@ static char	*find_path(t_list *env, char *cmd, t_err *err)
 		return (cmd);
 	file = ft_strjoin("/", cmd);
 	if (!file)
-		return (set_malloc_err(err), NULL);
+		return (set_malloc_err(&(data->err)), NULL);
 	path_env = ft_split(env_get(env, "PATH"), ':');
 	if (!path_env)
-		return (set_malloc_err(err), free(file), NULL);
+		return (set_malloc_err(&(data->err)), free(file), NULL);
 	i = -1;
 	while (path_env[++i] != NULL)
 	{
 		res = ft_strjoin(path_env[i], file);
-		if (access_file(res, err) == 1)
+		if (access_file(res, &(data->err)) == 1)
 			return (free(file), ft_argclear(path_env), res);
+		free(res);
 	}
-	return (free(file), ft_argclear(path_env), free(res), NULL);
+	return (free(file), ft_argclear(path_env), NULL);
 }
 
 static void	exe_other_cmd(t_cmd *cmd, t_data *data, t_list *env)
 {
-	pid_t	pid;
+	pid_t		pid;
+	char		*full_path;
+	struct stat	statbuf;
 
-	find_path(env, cmd->args[0], &(data->err));
+	full_path = find_path(cmd->args[0], data, env);
+	if (!full_path)
+		return ;
+	if (stat(full_path, &statbuf) == -1)
+	{
+		set_syscall_err(&(data->err));
+		return ;
+	}
+	if (S_ISDIR(statbuf.st_mode))
+	{
+		set_dir_err(&(data->err));
+		return ;
+	}
 	pid = fork();
 	if (pid == -1)
-		set_fork_err(&(data->err));
+		set_syscall_err(&(data->err));
 	if (pid == 0)
 	{
-		if (execve("/usr/bin/cat", cmd->args, env_to_array(env)) == -1)
+		if (execve(full_path, cmd->args, env_to_array(env)) == -1)
 			return ; // Should handle error
 	}
 	else
 	{
 		waitpid(pid, &(data->status), 0);
 	}
+	free(full_path);
 }
 
 static int	exe_cmd(t_node *root, t_data *data, t_list *env)

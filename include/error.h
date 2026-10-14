@@ -26,10 +26,11 @@ enum	e_err_no
 	UNEXPECTED_TOK,
 	END_PIPE,
 	END_REDIR,
-	PIPE_ERROR,
 	HEREDOC_ABORT,
-	TMPFILE_ERROR,
-	FORK_ERROR,
+	SYSCALL_ERR,
+	CMD_ERROR,
+	CMD_NOT_FOUND,
+	IS_DIR_ERR,
 };
 
 union u_payload
@@ -49,9 +50,10 @@ int		check_error(t_data *data, t_list *env);
 
 // syscall_err.c
 void	set_malloc_err(t_err *err);
-void	set_pipe_err(t_err *err);
-void	set_tmpfile_err(t_err *err);
-void	set_fork_err(t_err *err);
+void	set_syscall_err(t_err *err);
+void	set_cmd_err(t_err *err);
+void	set_cmd_not_found_err(t_err *err);
+void	set_dir_err(t_err *err);
 
 // syntac_err.c
 void	set_quote_err(t_err *err, char quote);
