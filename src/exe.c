@@ -12,11 +12,63 @@
 
 #include "minishell.h"
 
+/*
+if (ft_strchr(cmd, '/') != NULL)
+		return (cmd);
+	filename = ft_strjoin("/", cmd);
+	path = get_env_path(envp);
+	while (path[i] != NULL)
+	{
+		res = ft_strjoin(path[i], filename);
+		if (access(res, F_OK | X_OK) == 0)
+			return (free(filename), free_double_ptr(path), res);
+		free(res);
+		i++;
+	}
+*/
+
+static int	access_file(char *file, t_err *err)
+{
+	if (!res)
+		return (set_malloc_err(err), 0);
+	if (access(file, F_OK | X_OK) == 0)
+		return (err->err_no = OK, 1);
+	else
+	{
+		if (errno =
+	}
+	return (0);
+}
+
+static char	*find_path(t_list *env, char *cmd, t_err *err)
+{
+	char	*file;
+	char	**path_env;
+	int		i;
+
+	if (ft_strchr(cmd, '/') != NULL)
+		return (cmd);
+	file = ft_strjoin("/", cmd);
+	if (!file)
+		return (set_malloc_err(err), NULL);
+	path_env = ft_split(env_get(env, "PATH"), ':');
+	if (!path_env)
+		return (set_malloc_err(err), free(file), NULL);
+	i = -1;
+	while (path_env[++i] != NULL)
+	{
+		res = ft_strjoin(path_env[i], file);
+		if (access_file(res, err) == 1)
+			return (free(file), ft_argclear(path_env), res);
+	}
+	return (free(file), ft_argclear(path_env), free(res), NULL);
+}
+
 static void	exe_other_cmd(t_cmd *cmd, t_data *data, t_list *env)
 {
 	pid_t	pid;
 
-	(void) data;
+	find_path(env, cmd->args[0], &(data->err));
 	pid = fork();
 	if (pid == -1)
 		set_fork_err(&(data->err));
