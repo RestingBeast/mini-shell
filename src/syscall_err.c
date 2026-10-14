@@ -15,23 +15,23 @@
 void	set_malloc_err(t_err *err)
 {
 	err->err_no = MALLOC_ERROR;
-	err->msg = "malloc: failed to allocate memory\n";
+	err->payload.msg = "malloc: failed to allocate memory\n";
 }
 
 void	set_pipe_err(t_err *err)
 {
 	err->err_no = PIPE_ERROR;
-	err->msg = "pipe failed\n";
+	err->payload.err_no = errno;
 }
 
 void	set_tmpfile_err(t_err *err)
 {
 	err->err_no = TMPFILE_ERROR;
-	err->msg = "cannot create temp file for here-document\n";
+	err->payload.err_no = errno;
 }
 
 void	set_fork_err(t_err *err)
 {
 	err->err_no = FORK_ERROR;
-	err->msg = "fork failed\n";
+	err->payload.err_no = errno;
 }

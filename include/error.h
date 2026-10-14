@@ -15,6 +15,7 @@
 
 typedef struct s_data	t_data;
 typedef enum e_err_no	t_err_no;
+typedef union u_payload	t_payload;
 typedef struct s_err	t_err;
 
 enum	e_err_no
@@ -31,10 +32,16 @@ enum	e_err_no
 	FORK_ERROR,
 };
 
+union u_payload
+{
+	char	*msg;
+	int		err_no;
+};
+
 struct	s_err
 {
 	t_err_no	err_no;
-	char		*msg;
+	t_payload	payload;
 };
 
 // errors.c

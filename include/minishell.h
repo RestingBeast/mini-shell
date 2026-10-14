@@ -19,6 +19,8 @@
 # include <signal.h>
 # include <sys/types.h>
 # include <sys/wait.h>
+# include <string.h>
+# include <errno.h>
 # include "libft.h"
 # include "lexer.h"
 # include "parser.h"

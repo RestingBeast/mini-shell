@@ -29,7 +29,8 @@ void	init_shell(t_data *data)
 	data->tokens = NULL;
 	data->tree = NULL;
 	data->err.err_no = OK;
-	data->err.msg = NULL;
+	data->err.payload.msg = NULL;
+	data->err.payload.errno = 0;
 	set_sigaction();
 }
 
