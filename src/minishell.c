@@ -59,7 +59,7 @@ int	main(void)
 		data.tree = parse_tokens(data.tokens, &(data.err));
 		if (!check_error(&data, env))
 			continue ;
-		expand_tree(data.tree, env, 0, &(data.err));
+		expand_tree(data.tree, env, data.status, &(data.err));
 		if (!check_error(&data, env))
 			continue ;
 		execute_tree(data.tree, &data, env);
