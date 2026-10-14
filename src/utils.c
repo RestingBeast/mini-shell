@@ -30,7 +30,7 @@ void	init_shell(t_data *data)
 	data->tree = NULL;
 	data->err.err_no = OK;
 	data->err.payload.msg = NULL;
-	data->err.payload.errno = 0;
+	data->err.payload.err_no = 0;
 	set_sigaction();
 }
 
