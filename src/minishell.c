@@ -58,6 +58,9 @@ int	main(void)
 		data.tree = parse_tokens(data.tokens, &(data.err));
 		if (!check_error(&data, env))
 			continue ;
+		expand_tree(data.tree, env, 0, &(data.err));
+		if (!check_error(&data, env))
+			continue ;
 		clean_up(&data);
 	}
 	end_shell(&env);
