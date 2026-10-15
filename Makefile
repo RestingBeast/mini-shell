@@ -34,6 +34,7 @@ SRC = src/minishell.c \
 	  src/builtins/builtin_unset.c \
 	  src/builtins/builtin_exit.c \
 	  src/signals.c \
+	  src/signals_exec.c \
 	  src/errors.c \
 	  src/syntax_err.c \
 	  src/syscall_err.c \

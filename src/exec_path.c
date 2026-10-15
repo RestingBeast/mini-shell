@@ -1,62 +1,77 @@
 #include "minishell.h"
 
-static int	access_file(char *file, t_err *err, char *cmd)
+static int	is_exec_file(char *file)
 {
-	int	perm_denied;
+	struct stat	statbuf;
 
-	perm_denied = 0;
-	if (!file)
-		return (set_malloc_err(err), 0);
-	if (access(file, F_OK | X_OK) == 0)
-		return (err->type = OK, 1);
-	else
-	{
-		set_cmd_err(err, cmd);
-		if (errno == EACCES)
-			perm_denied = 1;
-		if (!perm_denied && errno == ENOENT)
-			return (set_cmd_not_found_err(err, cmd), 0);
-	}
-	return (0);
+	if (access(file, X_OK) != 0)
+		return (0);
+	if (stat(file, &statbuf) == -1 || S_ISDIR(statbuf.st_mode))
+		return (0);
+	return (1);
 }
 
-static char	*find_path(char *cmd, t_data *data, t_list *env)
+static char	*search_path(char *cmd, char *path, t_err *err)
 {
+	char	**dirs;
+	char	*dir;
 	char	*res;
-	char	*file;
-	char	**path_env;
 	int		i;
 
-	if (ft_strchr(cmd, '/') != NULL)
-		return (cmd);
-	file = ft_strjoin("/", cmd);
-	if (!file)
-		return (set_malloc_err(&(data->err)), NULL);
-	path_env = ft_split(env_get(env, "PATH"), ':');
-	if (!path_env)
-		return (set_malloc_err(&(data->err)), free(file), NULL);
+	dirs = ft_split(path, ':');
+	if (!dirs)
+		return (set_malloc_err(err), NULL);
 	i = -1;
-	while (path_env[++i] != NULL)
+	while (dirs[++i] != NULL)
 	{
-		res = ft_strjoin(path_env[i], file);
-		if (access_file(res, &(data->err), cmd) == 1)
-			return (free(file), ft_argclear(path_env), res);
+		dir = ft_strjoin(dirs[i], "/");
+		if (!dir)
+			return (ft_argclear(dirs), set_malloc_err(err), NULL);
+		res = ft_strjoin(dir, cmd);
+		free(dir);
+		if (!res)
+			return (ft_argclear(dirs), set_malloc_err(err), NULL);
+		if (is_exec_file(res))
+			return (ft_argclear(dirs), res);
 		free(res);
 	}
-	return (free(file), ft_argclear(path_env), NULL);
+	ft_argclear(dirs);
+	return (set_cmd_not_found_err(err, cmd), NULL);
+}
+
+/*
+** A command with a '/' is used as it is, no PATH search.
+** Returns a copy, so the caller can always free the result.
+*/
+static char	*check_slash_cmd(char *cmd, t_err *err)
+{
+	struct stat	statbuf;
+	char		*res;
+
+	if (stat(cmd, &statbuf) == -1)
+	{
+		if (errno == ENOENT)
+			return (set_cmd_not_found_err(err, cmd), NULL);
+		return (set_cmd_err(err, cmd), NULL);
+	}
+	if (S_ISDIR(statbuf.st_mode))
+		return (set_dir_err(err, cmd), NULL);
+	res = ft_strdup(cmd);
+	if (!res)
+		return (set_malloc_err(err), NULL);
+	return (res);
 }
 
 char	*find_command(char *cmd, t_data *data, t_list *env)
 {
-	char	*res;
-	struct stat	statbuf;
+	char	*path;
 
-	res = find_path(cmd, data, env);
-	if (!res)
-		return (NULL);
-	if (stat(res, &statbuf) == -1)
+	if (cmd[0] == '\0')
 		return (set_cmd_not_found_err(&(data->err), cmd), NULL);
-	if (S_ISDIR(statbuf.st_mode))
-		return (set_dir_err(&(data->err), cmd), NULL);
-	return (res);
+	if (ft_strchr(cmd, '/') != NULL)
+		return (check_slash_cmd(cmd, &(data->err)));
+	path = env_get(env, "PATH");
+	if (!path)
+		return (set_cmd_not_found_err(&(data->err), cmd), NULL);
+	return (search_path(cmd, path, &(data->err)));
 }
