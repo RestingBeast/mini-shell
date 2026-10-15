@@ -15,47 +15,55 @@
 static void	print_err_msg(t_err *err)
 {
 	ft_putstr_fd("minishell: ", STDERR_FILENO);
-	if (err->err_no == UNEXPECTED_TOK)
+	if (err->type == UNEXPECTED_TOK)
 	{
 		ft_putstr_fd("syntax error near unexpected token `", STDERR_FILENO);
-		ft_putstr_fd(err->payload.msg, STDERR_FILENO);
+		ft_putstr_fd(err->msg, STDERR_FILENO);
 		ft_putstr_fd("\'\n", STDERR_FILENO);
+		return ;
 	}
-	else
+	if (err->type == CMD_ERROR || err->type == CMD_NOT_FOUND 
+			|| err->type == IS_DIR_ERR)
 	{
-		if (err->err_no == SYSCALL_ERR || err->err_no == CMD_ERROR
-				|| err->err_no == CMD_NOT_FOUND)
-			ft_putstr_fd(strerror(err->payload.err_no), STDERR_FILENO);
+		ft_putstr_fd(err->msg, STDERR_FILENO);
+		ft_putstr_fd(": ", STDERR_FILENO);
+		if (err->type == IS_DIR_ERR)
+			ft_putstr_fd("Is a directory", STDERR_FILENO);
+		else if (ft_strchr(err->msg, '/') == NULL)
+			ft_putstr_fd("command not found...", STDERR_FILENO);
 		else
-			ft_putstr_fd(err->payload.msg, STDERR_FILENO);
+			ft_putstr_fd(strerror(err->err_no), STDERR_FILENO);
 		ft_putstr_fd("\n", STDERR_FILENO);
+		return ;
 	}
+	ft_putstr_fd(err->msg, STDERR_FILENO);
+	ft_putstr_fd("\n", STDERR_FILENO);
 }
 
-static int	get_status(t_err_no no)
+static int	get_status(t_err_type type)
 {
-	if (no == MALLOC_ERROR || no == SYSCALL_ERR)
+	if (type == MALLOC_ERROR || type == SYSCALL_ERR)
 		return (1);
-	if (no == UNCLOSED_QUOTE || no == UNEXPECTED_TOK || no == END_PIPE
-			|| no == END_REDIR)
+	if (type == UNCLOSED_QUOTE || type == UNEXPECTED_TOK || type == END_PIPE
+			|| type == END_REDIR)
 		return (2);
-	if (no == CMD_ERROR || no == IS_DIR_ERR)
+	if (type == CMD_ERROR || type == IS_DIR_ERR)
 		return (126);
-	if (no == CMD_NOT_FOUND)
+	if (type == CMD_NOT_FOUND)
 		return (127);
 	return (0);
 }
 
 int	check_error(t_data *data, t_list *env)
 {
-	if (data->err.err_no == OK)
+	if (data->err.type == OK)
 		return (1);
-	if (data->err.err_no == HEREDOC_ABORT)
+	if (data->err.type == HEREDOC_ABORT)
 		return (clean_up(data), 0);
-	data->status = get_status(data->err.err_no);
+	data->status = get_status(data->err.type);
 	print_err_msg(&(data->err));
 	clean_up(data);
-	if (data->err.err_no == MALLOC_ERROR)
+	if (data->err.type == MALLOC_ERROR)
 	{
 		ft_lstclear(&env, free);
 		rl_clear_history();

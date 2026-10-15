@@ -29,27 +29,27 @@ static char	*get_type(t_type type)
 
 void	set_quote_err(t_err *err, char quote)
 {
-	err->err_no = UNCLOSED_QUOTE;
+	err->type = UNCLOSED_QUOTE;
 	if (quote == '\'')
-		err->payload.msg = "unexpected EOF while looking for matching `\'\'";
+		err->msg = "unexpected EOF while looking for matching `\'\'";
 	else
-		err->payload.msg = "unexpected EOF while looking for matching `\"\'";
+		err->msg = "unexpected EOF while looking for matching `\"\'";
 }
 
 void	set_unexp_tok_err(t_err *err, t_type tok)
 {
-	err->err_no = UNEXPECTED_TOK;
-	err->payload.msg = get_type(tok);
+	err->type = UNEXPECTED_TOK;
+	err->msg = get_type(tok);
 }
 
 void	set_end_pipe_err(t_err *err)
 {
-	err->err_no = END_PIPE;
-	err->payload.msg = "syntax error: unexpected end of file";
+	err->type = END_PIPE;
+	err->msg = "syntax error: unexpected end of file";
 }
 
 void	set_end_redir_err(t_err *err)
 {
-	err->err_no = END_REDIR;
-	err->payload.msg = "syntax error near unexpected token `newline\'";
+	err->type = END_REDIR;
+	err->msg = "syntax error near unexpected token `newline\'";
 }
