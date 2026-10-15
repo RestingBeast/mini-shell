@@ -41,7 +41,8 @@ SRC = src/minishell.c \
 	  src/expand.c \
 	  src/expand_word.c \
 	  src/expand_dollar.c \
-	  src/exe.c
+	  src/exec.c \
+	  src/exec_path.c
 OBJ = $(SRC:.c=.o)
 
 TEST = run-tests

@@ -13,5 +13,10 @@
 #ifndef EXE_H
 # define EXE_H
 
+// exec.c
 void	execute_tree(t_node *root, t_data *data, t_list *env);
+
+// exec_path.c
+char	*find_command(char *cmd, t_data *data, t_list *env);
+
 #endif
