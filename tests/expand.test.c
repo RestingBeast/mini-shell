@@ -54,9 +54,9 @@ static t_node	*parse_line(char *line, t_list **tokens)
 	t_node	*tree;
 
 	*tokens = lexer(line, &err);
-	cr_assert_eq(err.err_no, OK, "lexer failed on: %s", line);
+	cr_assert_eq(err.type, OK, "lexer failed on: %s", line);
 	tree = parse_tokens(*tokens, &err);
-	cr_assert_eq(err.err_no, OK, "parser failed on: %s", line);
+	cr_assert_eq(err.type, OK, "parser failed on: %s", line);
 	return (tree);
 }
 
@@ -614,19 +614,19 @@ Test(ExpandMalloc, expand_word_handles_every_failure)
 	n = 1;
 	while (1)
 	{
-		err.err_no = OK;
+		err.type = OK;
 		fail_malloc_at(n);
 		res = expand_word(word, env, STATUS, &err);
 		if (stop_failing() < n)
 			break ;
 		cr_assert_null(res, "malloc #%d failed but the result is [%s]",
 			n, res);
-		cr_assert_eq(err.err_no, MALLOC_ERROR,
+		cr_assert_eq(err.type, MALLOC_ERROR,
 			"malloc #%d failed but err is not MALLOC_ERROR", n);
 		n++;
 	}
 	cr_assert_gt(n, 1);
-	cr_assert_eq(err.err_no, OK);
+	cr_assert_eq(err.type, OK);
 	cr_assert_str_eq(res, "apsoe$HOME42x");
 	free(res);
 	ft_lstclear(&env, free);
@@ -648,13 +648,13 @@ Test(ExpandMalloc, expand_tree_handles_every_failure)
 	while (1)
 	{
 		tree = parse_line(line, &tokens);
-		err.err_no = OK;
+		err.type = OK;
 		fail_malloc_at(n);
 		ret = expand_tree(tree, env, STATUS, &err);
 		if (stop_failing() < n)
 			break ;
 		cr_assert_eq(ret, -1, "malloc #%d failed but expand_tree worked", n);
-		cr_assert_eq(err.err_no, MALLOC_ERROR,
+		cr_assert_eq(err.type, MALLOC_ERROR,
 			"malloc #%d failed but err is not MALLOC_ERROR", n);
 		ft_nodeclear(tree);
 		free_tokens(tokens);
@@ -662,7 +662,7 @@ Test(ExpandMalloc, expand_tree_handles_every_failure)
 	}
 	cr_assert_gt(n, 1);
 	cr_assert_eq(ret, 0);
-	cr_assert_eq(err.err_no, OK);
+	cr_assert_eq(err.type, OK);
 	check_cmd_args((t_cmd *)tree->left->data, expected_left, line);
 	check_cmd_args((t_cmd *)tree->right->data, expected_right, line);
 	cr_assert_str_eq(redir_file((t_cmd *)tree->right->data, 0),

@@ -12,6 +12,19 @@
 
 #include "minishell.h"
 
+static void	print_cmd_err_msg(t_err *err)
+{
+	ft_putstr_fd(err->msg, STDERR_FILENO);
+	ft_putstr_fd(": ", STDERR_FILENO);
+	if (err->type == IS_DIR_ERR)
+		ft_putstr_fd("Is a directory", STDERR_FILENO);
+	else if (ft_strchr(err->msg, '/') == NULL)
+		ft_putstr_fd("command not found...", STDERR_FILENO);
+	else
+		ft_putstr_fd(strerror(err->err_no), STDERR_FILENO);
+	ft_putstr_fd("\n", STDERR_FILENO);
+}
+
 static void	print_err_msg(t_err *err)
 {
 	ft_putstr_fd("minishell: ", STDERR_FILENO);
@@ -25,18 +38,11 @@ static void	print_err_msg(t_err *err)
 	if (err->type == CMD_ERROR || err->type == CMD_NOT_FOUND 
 			|| err->type == IS_DIR_ERR)
 	{
-		ft_putstr_fd(err->msg, STDERR_FILENO);
-		ft_putstr_fd(": ", STDERR_FILENO);
-		if (err->type == IS_DIR_ERR)
-			ft_putstr_fd("Is a directory", STDERR_FILENO);
-		else if (ft_strchr(err->msg, '/') == NULL)
-			ft_putstr_fd("command not found...", STDERR_FILENO);
-		else
-			ft_putstr_fd(strerror(err->err_no), STDERR_FILENO);
-		ft_putstr_fd("\n", STDERR_FILENO);
+		print_cmd_err_msg(err);
 		return ;
 	}
 	ft_putstr_fd(err->msg, STDERR_FILENO);
+	ft_putstr_fd(strerror(err->err_no), STDERR_FILENO);
 	ft_putstr_fd("\n", STDERR_FILENO);
 }
 
