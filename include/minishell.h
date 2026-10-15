@@ -49,6 +49,11 @@ void	set_sigaction(void);
 void	set_heredoc_sig(void);
 int		rl_check(void);
 
+// signals_exec.c
+void	set_handler(int signum, void (*handler)(int));
+void	set_child_sig(void);
+void	set_wait_sig(void);
+
 // utils.c
 int		is_space(char c);
 int		is_redir(t_type type);

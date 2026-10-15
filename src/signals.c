@@ -45,26 +45,12 @@ int	rl_check(void)
 
 void	set_heredoc_sig(void)
 {
-	struct sigaction	int_act;
-	struct sigaction	quit_act;
-
-	ft_bzero(&int_act, sizeof(int_act));
-	int_act.sa_handler = &handle_heredoc_int;
-	sigaction(SIGINT, &int_act, NULL);
-	ft_bzero(&quit_act, sizeof(quit_act));
-	quit_act.sa_handler = SIG_IGN;
-	sigaction(SIGQUIT, &quit_act, NULL);
+	set_handler(SIGINT, handle_heredoc_int);
+	set_handler(SIGQUIT, SIG_IGN);
 }
 
 void	set_sigaction(void)
 {
-	struct sigaction	int_act;
-	struct sigaction	quit_act;
-
-	ft_bzero(&int_act, sizeof(int_act));
-	int_act.sa_handler = &handle_sigint;
-	sigaction(SIGINT, &int_act, NULL);
-	ft_bzero(&quit_act, sizeof(quit_act));
-	quit_act.sa_handler = SIG_IGN;
-	sigaction(SIGQUIT, &quit_act, NULL);
+	set_handler(SIGINT, handle_sigint);
+	set_handler(SIGQUIT, SIG_IGN);
 }
