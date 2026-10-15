@@ -14,30 +14,32 @@
 
 void	set_malloc_err(t_err *err)
 {
-	err->err_no = MALLOC_ERROR;
-	err->payload.msg = "malloc: failed to allocate memory\n";
+	err->type = MALLOC_ERROR;
+	err->msg = "malloc: failed to allocate memory\n";
 }
 
 void	set_syscall_err(t_err *err)
 {
-	err->err_no = SYSCALL_ERR;
-	err->payload.err_no = errno;
+	err->type = SYSCALL_ERR;
+	err->err_no = errno;
 }
 
-void	set_cmd_err(t_err *err)
+void	set_cmd_err(t_err *err, char *cmd)
 {
-	err->err_no = CMD_ERROR;
-	err->payload.err_no = errno;
+	err->type = CMD_ERROR;
+	err->err_no = errno;
+	err->msg = cmd;
 }
 
-void	set_cmd_not_found_err(t_err *err)
+void	set_cmd_not_found_err(t_err *err, char *cmd)
 {
-	err->err_no = CMD_NOT_FOUND;
-	err->payload.err_no = errno;
+	err->type = CMD_NOT_FOUND;
+	err->err_no = errno;
+	err->msg = cmd;
 }
 
-void	set_dir_err(t_err *err)
+void	set_dir_err(t_err *err, char *cmd)
 {
-	err->err_no = IS_DIR_ERR;
-	err->payload.msg = "Is a directory";
+	err->type = IS_DIR_ERR;
+	err->msg = cmd;
 }

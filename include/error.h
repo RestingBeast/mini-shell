@@ -14,11 +14,11 @@
 # define ERROR_H
 
 typedef struct s_data	t_data;
-typedef enum e_err_no	t_err_no;
+typedef enum e_err_type	t_err_type;
 typedef union u_payload	t_payload;
 typedef struct s_err	t_err;
 
-enum	e_err_no
+enum	e_err_type
 {
 	OK = 0,
 	MALLOC_ERROR,
@@ -33,16 +33,11 @@ enum	e_err_no
 	IS_DIR_ERR,
 };
 
-union u_payload
-{
-	char	*msg;
-	int		err_no;
-};
-
 struct	s_err
 {
-	t_err_no	err_no;
-	t_payload	payload;
+	int			err_no;
+	t_err_type	type;
+	char		*msg;
 };
 
 // errors.c
@@ -51,9 +46,9 @@ int		check_error(t_data *data, t_list *env);
 // syscall_err.c
 void	set_malloc_err(t_err *err);
 void	set_syscall_err(t_err *err);
-void	set_cmd_err(t_err *err);
-void	set_cmd_not_found_err(t_err *err);
-void	set_dir_err(t_err *err);
+void	set_cmd_err(t_err *err, char *cmd);
+void	set_cmd_not_found_err(t_err *err, char *cmd);
+void	set_dir_err(t_err *err, char *cmd);
 
 // syntac_err.c
 void	set_quote_err(t_err *err, char quote);

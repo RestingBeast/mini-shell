@@ -12,7 +12,7 @@
 
 #include "minishell.h"
 
-static int	access_file(char *file, t_err *err)
+static int	access_file(char *file, t_err *err, char *cmd)
 {
 	int	perm_denied;
 
@@ -23,11 +23,11 @@ static int	access_file(char *file, t_err *err)
 		return (err->err_no = OK, 1);
 	else
 	{
-		set_cmd_err(err);
+		set_cmd_err(err, cmd);
 		if (errno == EACCES)
 			perm_denied = 1;
 		if (!perm_denied && errno == ENOENT)
-			return (set_cmd_not_found_err(err), 0);
+			return (set_cmd_not_found_err(err, cmd), 0);
 	}
 	return (0);
 }
@@ -51,7 +51,7 @@ static char	*find_path(char *cmd, t_data *data, t_list *env)
 	while (path_env[++i] != NULL)
 	{
 		res = ft_strjoin(path_env[i], file);
-		if (access_file(res, &(data->err)) == 1)
+		if (access_file(res, &(data->err), cmd) == 1)
 			return (free(file), ft_argclear(path_env), res);
 		free(res);
 	}
@@ -69,12 +69,12 @@ static void	exe_other_cmd(t_cmd *cmd, t_data *data, t_list *env)
 		return ;
 	if (stat(full_path, &statbuf) == -1)
 	{
-		set_syscall_err(&(data->err));
+		set_cmd_not_found_err(&(data->err), cmd->args[0]);
 		return ;
 	}
 	if (S_ISDIR(statbuf.st_mode))
 	{
-		set_dir_err(&(data->err));
+		set_dir_err(&(data->err), cmd->args[0]);
 		return ;
 	}
 	pid = fork();
