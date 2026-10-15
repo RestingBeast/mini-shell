@@ -13,7 +13,7 @@ Test(Lexer, basic_test)
 	t_err	err;
 	t_list *tokens = lexer("echo \"Hello, World\"", &err);
 
-	cr_assert_eq(err.err_no, OK);
+	cr_assert_eq(err.type, OK);
 	cr_assert(compare_tokens(tokens, &expected));
 	free_tokens(tokens);
 }
@@ -30,7 +30,7 @@ Test(Lexer, single_quoted_word)
 	t_err	err;
 	t_list *tokens = lexer("echo 'He\"llo Wo\"rld'", &err);
 
-	cr_assert_eq(err.err_no, OK);
+	cr_assert_eq(err.type, OK);
 	cr_assert(compare_tokens(tokens, &expected));
 	free_tokens(tokens);
 }
@@ -49,7 +49,7 @@ Test(Lexer, mixed_quotes)
 	t_err	err;
 	t_list *tokens = lexer("echo He\"llo\" Wo'rld'", &err);
 
-	cr_assert_eq(err.err_no, OK);
+	cr_assert_eq(err.type, OK);
 	cr_assert(compare_tokens(tokens, &expected));
 	free_tokens(tokens);
 }
@@ -74,7 +74,7 @@ Test(Lexer, pipe_and_quotes)
 	t_err	err;
 	t_list *tokens = lexer("echo Hello World | grep \"Hello\"", &err);
 
-	cr_assert_eq(err.err_no, OK);
+	cr_assert_eq(err.type, OK);
 	cr_assert(compare_tokens(tokens, &expected));
 	free_tokens(tokens);
 }
@@ -95,7 +95,7 @@ Test(Lexer, output_redirect_no_space)
 	t_err	err;
 	t_list *tokens = lexer("echo Hello >text", &err);
 
-	cr_assert_eq(err.err_no, OK);
+	cr_assert_eq(err.type, OK);
 	cr_assert(compare_tokens(tokens, &expected));
 	free_tokens(tokens);
 }
@@ -114,7 +114,7 @@ Test(Lexer, input_redirect_space)
 	t_err	err;
 	t_list *tokens = lexer("< \"$FILE\" cat", &err);
 
-	cr_assert_eq(err.err_no, OK);
+	cr_assert_eq(err.type, OK);
 	cr_assert(compare_tokens(tokens, &expected));
 	free_tokens(tokens);
 }
@@ -133,7 +133,7 @@ Test(Lexer, heredoc_before_command)
 	t_err	err;
 	t_list *tokens = lexer("<<\'EO F\' cat", &err);
 
-	cr_assert_eq(err.err_no, OK);
+	cr_assert_eq(err.type, OK);
 	cr_assert(compare_tokens(tokens, &expected));
 	free_tokens(tokens);
 }
@@ -154,7 +154,7 @@ Test(Lexer, append_after_command)
 	t_err	err;
 	t_list *tokens = lexer("echo \'World!\'>>\"$OUT\"", &err);
 
-	cr_assert_eq(err.err_no, OK);
+	cr_assert_eq(err.type, OK);
 	cr_assert(compare_tokens(tokens, &expected));
 	free_tokens(tokens);
 }
@@ -171,7 +171,7 @@ Test(Lexer, adjacent_quotes_with_space)
 	t_err	err;
 	t_list *tokens = lexer("echo Hell\"o wo\"'rld'", &err);
 
-	cr_assert_eq(err.err_no, OK);
+	cr_assert_eq(err.type, OK);
 	cr_assert(compare_tokens(tokens, &expected));
 	free_tokens(tokens);
 }
@@ -183,7 +183,7 @@ Test(Lexer, unclosed_double_quote)
 	t_list *tokens = lexer("echo \"unclosed", &err);
 
 	cr_assert_null(tokens);
-	cr_assert_eq(err.err_no, UNCLOSED_QUOTE);
+	cr_assert_eq(err.type, UNCLOSED_QUOTE);
 }
 
 // Command: echo 'it"s | cat
@@ -193,7 +193,7 @@ Test(Lexer, unclosed_single_quote)
 	t_list *tokens = lexer("echo 'it\"s | cat", &err);
 
 	cr_assert_null(tokens);
-	cr_assert_eq(err.err_no, UNCLOSED_QUOTE);
+	cr_assert_eq(err.type, UNCLOSED_QUOTE);
 }
 
 // Command: (empty and whitespace-only lines)
@@ -202,9 +202,9 @@ Test(Lexer, empty_input)
 	t_err	err;
 
 	cr_assert_null(lexer("", &err));
-	cr_assert_eq(err.err_no, OK);
+	cr_assert_eq(err.type, OK);
 	// cr_assert_null(lexer("  \t ", &err));
-	// cr_assert_eq(err.err_no, OK);
+	// cr_assert_eq(err.type, OK);
 }
 
 // Command: echo |
@@ -214,7 +214,7 @@ Test(Lexer, end_pipe)
 	t_list	*tokens = lexer("echo |", &err);
 	
 	cr_assert_null(tokens);
-	cr_assert_eq(err.err_no, END_PIPE);
+	cr_assert_eq(err.type, END_PIPE);
 }
 
 // Command: echo >
@@ -224,7 +224,7 @@ Test(Lexer, end_redir)
 	t_list	*tokens = lexer("echo >", &err);
 	
 	cr_assert_null(tokens);
-	cr_assert_eq(err.err_no, END_REDIR);
+	cr_assert_eq(err.type, END_REDIR);
 }
 
 // Command: cat >>> file
@@ -234,5 +234,5 @@ Test(Lexer, end_unexp_tok)
 	t_list	*tokens = lexer("cat >>> file", &err);
 	
 	cr_assert_null(tokens);
-	cr_assert_eq(err.err_no, UNEXPECTED_TOK);
+	cr_assert_eq(err.type, UNEXPECTED_TOK);
 }

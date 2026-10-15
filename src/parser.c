@@ -46,7 +46,7 @@ static t_list	*make_redir(t_list *tok, t_type type, t_err *err)
 		redir = handle_heredoc(tok, err);
 	else
 		redir = handle_redir(tok, err);
-	if (err->err_no != OK)
+	if (err->type != OK)
 		return (ft_redirclear(redir), NULL);
 	res = ft_lstnew((void *)redir);
 	if (!res)
@@ -61,7 +61,7 @@ static t_list	*make_redirs(t_list *tokens, t_err *err)
 	t_list	*tmp;
 
 	lst = NULL;
-	err->err_no = OK;
+	err->type = OK;
 	while (tokens)
 	{
 		tok = (t_token *)tokens->content;
@@ -87,7 +87,7 @@ static t_node	*make_cmd_node(t_list **tokens, t_err *err)
 	t_list	*redirs;
 
 	redirs = make_redirs(*tokens, err);
-	if (err->err_no != OK)
+	if (err->type != OK)
 		return (NULL);
 	args = make_args(tokens, err);
 	if (!args)
@@ -108,7 +108,7 @@ t_node	*parse_tokens(t_list *tokens, t_err *err)
 	t_node	*tmp;
 
 	root = NULL;
-	err->err_no = OK;
+	err->type = OK;
 	while (tokens != NULL)
 	{
 		if (((t_token *)tokens->content)->type == PIPE)
@@ -125,7 +125,7 @@ t_node	*parse_tokens(t_list *tokens, t_err *err)
 			root = make_cmd_node(&tokens, err);
 		else
 			root->right = make_cmd_node(&tokens, err);
-		if (err->err_no != OK)
+		if (err->type != OK)
 			return (ft_nodeclear(root), NULL);
 	}
 	return (root);

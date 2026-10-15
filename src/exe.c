@@ -20,7 +20,7 @@ static int	access_file(char *file, t_err *err, char *cmd)
 	if (!file)
 		return (set_malloc_err(err), 0);
 	if (access(file, F_OK | X_OK) == 0)
-		return (err->err_no = OK, 1);
+		return (err->type = OK, 1);
 	else
 	{
 		set_cmd_err(err, cmd);

@@ -16,7 +16,7 @@ Test(Parser, WORD_test)
 
 	t_err	err;
 	t_node		*root = parse_tokens(&tokens, &err);
-	cr_assert_eq(err.err_no, OK);
+	cr_assert_eq(err.type, OK);
 	cr_assert(compare_trees(&expected, root));
 	// ft_nodeclear(root);
 }
@@ -41,7 +41,7 @@ Test(Parser, REDIR_test)
 
 	t_err	err;
 	t_node		*root = parse_tokens(&tokens, &err);
-	cr_assert_eq(err.err_no, OK);
+	cr_assert_eq(err.type, OK);
 	cr_assert(compare_trees(&expected, root));
 	// ft_nodeclear(root);
 }
@@ -69,7 +69,7 @@ Test(Parser, HEREDOC_test)
 
 	t_err	err;
 	t_node		*root = parse_tokens(&tokens, &err);
-	cr_assert_eq(err.err_no, OK);
+	cr_assert_eq(err.type, OK);
 	cr_assert(compare_trees(&expected, root));
 	// ft_nodeclear(root);
 }
@@ -108,7 +108,7 @@ Test(Parser, Multiple_REDIR_test)
 
 	t_err	err;
 	t_node		*root = parse_tokens(&tokens, &err);
-	cr_assert_eq(err.err_no, OK);
+	cr_assert_eq(err.type, OK);
 	cr_assert(compare_trees(&expected, root));
 	// ft_nodeclear(root);
 }
@@ -145,7 +145,7 @@ Test(Parser, PIPE_test)
 
 	t_err	err;
 	t_node		*root = parse_tokens(&tokens, &err);
-	cr_assert_eq(err.err_no, OK);
+	cr_assert_eq(err.type, OK);
 	cr_assert(compare_trees(&expected, root));
 	// ft_nodeclear(root);
 }
@@ -189,7 +189,7 @@ Test(Parser, TRIPLE_PIPE_test)
 
 	t_err	err;
 	t_node		*root = parse_tokens(&tokens, &err);
-	cr_assert_eq(err.err_no, OK);
+	cr_assert_eq(err.type, OK);
 	cr_assert(compare_trees(&expected, root));
 	// ft_nodeclear(root);
 }
@@ -224,7 +224,7 @@ Test(Parser, HEREDOC_THEN_REDIR_OUT_test)
 
 	t_err	err;
 	t_node		*root = parse_tokens(&tokens, &err);
-	cr_assert_eq(err.err_no, OK);
+	cr_assert_eq(err.type, OK);
 	cr_assert(compare_trees(&expected, root));
 	// ft_nodeclear(root);
 }
@@ -266,7 +266,7 @@ Test(Parser, PIPE_WITH_REDIRS_BOTH_SIDES_test)
 
 	t_err	err;
 	t_node		*root = parse_tokens(&tokens, &err);
-	cr_assert_eq(err.err_no, OK);
+	cr_assert_eq(err.type, OK);
 	cr_assert(compare_trees(&expected, root));
 	// ft_nodeclear(root);
 }
@@ -303,7 +303,7 @@ Test(Parser, MULTIPLE_HEREDOC_test)
 
 	t_err	err;
 	t_node		*root = parse_tokens(&tokens, &err);
-	cr_assert_eq(err.err_no, OK);
+	cr_assert_eq(err.type, OK);
 	cr_assert(compare_trees(&expected, root));
 	// ft_nodeclear(root);
 }
@@ -356,7 +356,7 @@ Test(Parser, FULL_PIPELINE_WITH_REDIRS_test)
 
 	t_err	err;
 	t_node		*root = parse_tokens(&tokens, &err);
-	cr_assert_eq(err.err_no, OK);
+	cr_assert_eq(err.type, OK);
 	cr_assert(compare_trees(&expected, root));
 	// ft_nodeclear(root);
 }

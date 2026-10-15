@@ -42,7 +42,7 @@ static void	capture_input(char *delimiter, int fd, t_err *err)
 		line = readline("> ");
 	}
 	if (g_sig_captured == SIGINT)
-		err->err_no = HEREDOC_ABORT;
+		err->type = HEREDOC_ABORT;
 	if (line == NULL)
 		warn_eof(delimiter);
 	free(line);

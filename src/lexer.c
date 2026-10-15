@@ -74,7 +74,7 @@ t_list	*lexer(char *line, t_err *err)
 	t_token	*tok;
 	int		i;
 
-	err->err_no = OK;
+	err->type = OK;
 	if (!line)
 		return (NULL);
 	tokens = NULL;
