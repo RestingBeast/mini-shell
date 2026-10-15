@@ -12,16 +12,16 @@
 
 #include "minishell.h"
 
-static void	print_cmd_err_msg(t_err *err)
+void	print_cmd_err_msg(t_err_type type, int err_no, char *msg)
 {
-	ft_putstr_fd(err->msg, STDERR_FILENO);
+	ft_putstr_fd(msg, STDERR_FILENO);
 	ft_putstr_fd(": ", STDERR_FILENO);
-	if (err->type == IS_DIR_ERR)
+	if (type == IS_DIR_ERR)
 		ft_putstr_fd("Is a directory", STDERR_FILENO);
-	else if (ft_strchr(err->msg, '/') == NULL)
+	else if (ft_strchr(msg, '/') == NULL)
 		ft_putstr_fd("command not found...", STDERR_FILENO);
 	else
-		ft_putstr_fd(strerror(err->err_no), STDERR_FILENO);
+		ft_putstr_fd(strerror(err_no), STDERR_FILENO);
 	ft_putstr_fd("\n", STDERR_FILENO);
 }
 
@@ -38,7 +38,7 @@ static void	print_err_msg(t_err *err)
 	if (err->type == CMD_ERROR || err->type == CMD_NOT_FOUND 
 			|| err->type == IS_DIR_ERR)
 	{
-		print_cmd_err_msg(err);
+		print_cmd_err_msg(err->type, err->err_no, err->msg);
 		return ;
 	}
 	ft_putstr_fd(err->msg, STDERR_FILENO);
@@ -46,7 +46,7 @@ static void	print_err_msg(t_err *err)
 	ft_putstr_fd("\n", STDERR_FILENO);
 }
 
-static int	get_status(t_err_type type)
+int	get_status(t_err_type type)
 {
 	if (type == MALLOC_ERROR || type == SYSCALL_ERR)
 		return (1);
