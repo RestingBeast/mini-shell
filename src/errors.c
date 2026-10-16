@@ -57,6 +57,8 @@ int	get_status(t_err_type type)
 		return (126);
 	if (type == CMD_NOT_FOUND)
 		return (127);
+	if (type == HEREDOC_ABORT)
+		return (130);
 	return (0);
 }
 
@@ -64,9 +66,9 @@ int	check_error(t_data *data, t_list *env)
 {
 	if (data->err.type == OK)
 		return (1);
+	data->status = get_status(data->err.type);
 	if (data->err.type == HEREDOC_ABORT)
 		return (clean_up(data), 0);
-	data->status = get_status(data->err.type);
 	print_err_msg(&(data->err));
 	clean_up(data);
 	if (data->err.type == MALLOC_ERROR)
