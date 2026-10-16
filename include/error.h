@@ -32,6 +32,7 @@ enum	e_err_type
 	CMD_NOT_FOUND,
 	IS_DIR_ERR,
 	AMBIGUOUS_ERR,
+	FILE_ERR,
 };
 
 struct	s_err
@@ -49,6 +50,7 @@ int		check_error(t_data *data, t_list *env, int *status);
 void	set_malloc_err(t_err *err);
 void	set_syscall_err(t_err *err);
 void	set_ambiguous_err(t_err *err, char *file);
+void	set_file_err(t_err *err, char *file);
 
 // syntac_err.c
 void	set_quote_err(t_err *err, char quote);

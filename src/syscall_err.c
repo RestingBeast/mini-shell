@@ -29,3 +29,10 @@ void	set_ambiguous_err(t_err *err, char *file)
 	err->type = AMBIGUOUS_ERR;
 	err->msg = file;
 }
+
+void	set_file_err(t_err *err, char *file)
+{
+	err->type = FILE_ERR;
+	err->err_no = errno;
+	err->msg = file;
+}

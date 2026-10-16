@@ -12,6 +12,20 @@
 
 #include "minishell.h"
 
+/*
+** Redirection errors name the file, like bash:
+** "minishell: nofile: No such file or directory"
+*/
+static void	print_redir_err(t_err *err)
+{
+	ft_putstr_fd(err->msg, STDERR_FILENO);
+	ft_putstr_fd(": ", STDERR_FILENO);
+	if (err->type == AMBIGUOUS_ERR)
+		ft_putendl_fd("ambiguous redirect", STDERR_FILENO);
+	else
+		ft_putendl_fd(strerror(err->err_no), STDERR_FILENO);
+}
+
 static void	print_err_msg(t_err *err)
 {
 	ft_putstr_fd("minishell: ", STDERR_FILENO);
@@ -28,10 +42,9 @@ static void	print_err_msg(t_err *err)
 		print_cmd_err_msg(err->type, err->err_no, err->msg);
 		return ;
 	}
-	if (err->type == AMBIGUOUS_ERR)
+	if (err->type == AMBIGUOUS_ERR || err->type == FILE_ERR)
 	{
-		ft_putstr_fd(err->msg, STDERR_FILENO);
-		ft_putstr_fd(": ambiguous redirect\n", STDERR_FILENO);
+		print_redir_err(err);
 		return ;
 	}
 	ft_putstr_fd(err->msg, STDERR_FILENO);
@@ -41,7 +54,8 @@ static void	print_err_msg(t_err *err)
 
 int	get_status(t_err_type type)
 {
-	if (type == MALLOC_ERROR || type == SYSCALL_ERR || type == AMBIGUOUS_ERR)
+	if (type == MALLOC_ERROR || type == SYSCALL_ERR || type == AMBIGUOUS_ERR
+			|| type == FILE_ERR)
 		return (1);
 	if (type == UNCLOSED_QUOTE || type == UNEXPECTED_TOK || type == END_PIPE
 			|| type == END_REDIR)

@@ -28,6 +28,7 @@ static int	dupe_fds(int in_fd, int out_fd)
 		return (0);
 	if (out_fd >= 0 && dup2(out_fd, STDOUT_FILENO) == -1)
 		return (0);
+	close_fds(in_fd, out_fd);
 	return (1);
 }
 
