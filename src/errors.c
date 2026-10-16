@@ -62,11 +62,11 @@ int	get_status(t_err_type type)
 	return (0);
 }
 
-int	check_error(t_data *data, t_list *env)
+int	check_error(t_data *data, t_list *env, int *status)
 {
 	if (data->err.type == OK)
 		return (1);
-	data->status = get_status(data->err.type);
+	*status = get_status(data->err.type);
 	if (data->err.type == HEREDOC_ABORT)
 		return (clean_up(data), 0);
 	print_err_msg(&(data->err));

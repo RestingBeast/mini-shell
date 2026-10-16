@@ -39,12 +39,14 @@ static void	end_shell(t_list **env)
 
 int	main(void)
 {
+	int		status;
 	t_data	data;
 	t_list	*env;
 
 	if (init_envlst(&env) == 1)
 		return (1);
-	data.status = 0;
+	status = 0;
+	data.should_exit = 0;
 	while (1)
 	{
 		init_shell(&data);
@@ -54,19 +56,21 @@ int	main(void)
 		if (*(data.line))
 			add_history(data.line);
 		data.tokens = lexer(data.line, &(data.err));
-		if (!check_error(&data, env))
+		if (!check_error(&data, env, &status))
 			continue ;
 		data.tree = parse_tokens(data.tokens, &(data.err));
-		if (!check_error(&data, env))
+		if (!check_error(&data, env, &status))
 			continue ;
-		expand_tree(data.tree, env, data.status, &(data.err));
-		if (!check_error(&data, env))
+		expand_tree(data.tree, env, status, &(data.err));
+		if (!check_error(&data, env, &status))
 			continue ;
-		execute_tree(data.tree, &data, env);
-		if (!check_error(&data, env))
+		execute_tree(data.tree, &data, &env, &status);
+		if (data.should_exit)
+			return (clean_up(&data), end_shell(&env), status);
+		if (!check_error(&data, env, &status))
 			continue ;
 		clean_up(&data);
 	}
 	end_shell(&env);
-	return (0);
+	return (status);
 }

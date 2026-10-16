@@ -62,10 +62,8 @@ int	builtin_exit(char **argv, int last_status, int *should_exit)
 	int					negative;
 	int					code;
 
-	if (isatty(STDIN_FILENO))
-		ft_putendl_fd("exit", STDERR_FILENO);
 	*should_exit = 1;
-	if (argv[1] == NULL)
+	if (argv == NULL || argv[1] == NULL)
 		return (last_status);
 	if (!read_number(argv[1], &number, &negative))
 	{

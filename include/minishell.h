@@ -29,7 +29,7 @@
 # include "builtins.h"
 # include "expand.h"
 # include "error.h"
-# include "exe.h"
+# include "exec.h"
 
 extern volatile sig_atomic_t	g_sig_captured;
 
@@ -37,7 +37,7 @@ typedef struct s_data			t_data;
 
 struct s_data
 {
-	int	status;
+	int		should_exit;
 	char	*line;
 	t_list	*tokens;
 	t_node	*tree;

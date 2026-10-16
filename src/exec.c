@@ -37,7 +37,7 @@ static void	child_fail(char *full_cmd, char **env_arr, t_data *data,
 /*
 ** The shell ignores Ctrl-C while it waits, so only the child is killed.
 */
-static void	wait_child(pid_t pid, t_data *data)
+void	wait_child(pid_t pid, int *status)
 {
 	int	wstatus;
 
@@ -45,10 +45,10 @@ static void	wait_child(pid_t pid, t_data *data)
 	waitpid(pid, &wstatus, 0);
 	set_sigaction();
 	if (WIFEXITED(wstatus))
-		data->status = WEXITSTATUS(wstatus);
+		*status = WEXITSTATUS(wstatus);
 	else if (WIFSIGNALED(wstatus))
 	{
-		data->status = 128 + WTERMSIG(wstatus);
+		*status = 128 + WTERMSIG(wstatus);
 		if (WTERMSIG(wstatus) == SIGINT)
 			ft_putstr_fd("\n", STDOUT_FILENO);
 		else if (WTERMSIG(wstatus) == SIGQUIT)
@@ -56,7 +56,7 @@ static void	wait_child(pid_t pid, t_data *data)
 	}
 }
 
-static void	exe_other_cmd(t_cmd *cmd, t_data *data, t_list *env)
+static void	exec_external(t_cmd *cmd, t_data *data, t_list *env, int *status)
 {
 	pid_t	pid;
 	char	*full_cmd;
@@ -78,12 +78,12 @@ static void	exe_other_cmd(t_cmd *cmd, t_data *data, t_list *env)
 	if (pid == -1)
 		set_syscall_err(&(data->err));
 	else
-		wait_child(pid, data);
+		wait_child(pid, status);
 	free(full_cmd);
 	ft_argclear(env_arr);
 }
 
-static void	exe_cmd(t_node *root, t_data *data, t_list *env)
+static void	exec_cmd(t_node *root, t_data *data, t_list **env, int *status)
 {
 	t_cmd	*cmd;
 
@@ -92,20 +92,20 @@ static void	exe_cmd(t_node *root, t_data *data, t_list *env)
 	cmd = (t_cmd *)root->data;
 	if (!cmd->args || !cmd->args[0])
 	{
-		data->status = 0;
+		*status = 0;
 		return ;
 	}
 	if (is_builtin(cmd->args[0]))
-		printf("Built In\n");
+		exec_builtin(cmd, data, env, status);
 	else
-		exe_other_cmd(cmd, data, env);
+		exec_external(cmd, data, *env, status);
 }
 
-void	execute_tree(t_node *root, t_data *data, t_list *env)
+void	execute_tree(t_node *root, t_data *data, t_list **env, int *status)
 {
 	if (root == NULL)
 		return ;
-	execute_tree(root->left, data, env);
-	exe_cmd(root, data, env);
-	execute_tree(root->right, data, env);
+	execute_tree(root->left, data, env, status);
+	exec_cmd(root, data, env, status);
+	execute_tree(root->right, data, env, status);
 }
