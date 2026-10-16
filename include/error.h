@@ -42,7 +42,7 @@ struct	s_err
 
 // errors.c
 int		get_status(t_err_type type);
-int		check_error(t_data *data, t_list *env);
+int		check_error(t_data *data, t_list *env, int *status);
 void	print_cmd_err_msg(t_err_type type, int err_no, char *msg);
 
 // syscall_err.c
