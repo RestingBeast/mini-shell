@@ -11,8 +11,6 @@
 /* ************************************************************************** */
 
 #include "minishell.h"
-#include <fcntl.h>
-#include <errno.h>
 
 static void	warn_eof(char *delimiter)
 {

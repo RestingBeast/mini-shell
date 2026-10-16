@@ -13,28 +13,6 @@
 #include "minishell.h"
 
 /*
-** Only reached in the child when execve() failed.
-** Like bash: 127 if the file is gone, 126 for any other reason.
-*/
-static void	child_fail(char *full_cmd, char **env_arr, t_data *data,
-		t_list *env)
-{
-	int	err_no;
-
-	err_no = errno;
-	ft_putstr_fd("minishell: ", STDERR_FILENO);
-	print_cmd_err_msg(CMD_ERROR, err_no, full_cmd);
-	free(full_cmd);
-	ft_argclear(env_arr);
-	clean_up(data);
-	ft_lstclear(&env, free);
-	rl_clear_history();
-	if (err_no == ENOENT)
-		exit(127);
-	exit(126);
-}
-
-/*
 ** The shell ignores Ctrl-C while it waits, so only the child is killed.
 */
 void	wait_child(pid_t pid, int *status)
@@ -56,49 +34,33 @@ void	wait_child(pid_t pid, int *status)
 	}
 }
 
-static void	exec_external(t_cmd *cmd, t_data *data, t_list *env, int *status)
+static int	set_up_exec(t_exec *exec, char **args)
 {
-	pid_t	pid;
-	char	*full_cmd;
-	char	**env_arr;
-
-	full_cmd = find_command(cmd->args[0], data, env);
-	if (!full_cmd)
-		return ;
-	env_arr = env_to_array(env);
-	if (!env_arr)
-		return (free(full_cmd), set_malloc_err(&(data->err)));
-	pid = fork();
-	if (pid == 0)
-	{
-		set_child_sig();
-		execve(full_cmd, cmd->args, env_arr);
-		child_fail(full_cmd, env_arr, data, env);
-	}
-	if (pid == -1)
-		set_syscall_err(&(data->err));
-	else
-		wait_child(pid, status);
-	free(full_cmd);
-	ft_argclear(env_arr);
+	if (!args || !args[0])
+		return (close_fds(exec->in_fd, exec->out_fd), 0);
+	exec->args = args;
+	return (1);
 }
 
 static void	exec_cmd(t_node *root, t_data *data, t_list **env, int *status)
 {
 	t_cmd	*cmd;
+	t_exec	exec;
 
 	if (root->type != COMMAND)
 		return ;
 	cmd = (t_cmd *)root->data;
-	if (!cmd->args || !cmd->args[0])
+	if (!resolve_redir(cmd->redir, &(data->err), &(exec.in_fd), &(exec.out_fd)))
+		return ;
+	if (!set_up_exec(&exec, cmd->args))
 	{
 		*status = 0;
 		return ;
 	}
-	if (is_builtin(cmd->args[0]))
-		exec_builtin(cmd, data, env, status);
+	if (is_builtin(exec.args[0]))
+		exec_builtin(&exec, data, env, status);
 	else
-		exec_external(cmd, data, *env, status);
+		exec_external(&exec, data, *env, status);
 }
 
 void	execute_tree(t_node *root, t_data *data, t_list **env, int *status)

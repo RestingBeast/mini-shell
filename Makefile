@@ -38,13 +38,16 @@ SRC = src/minishell.c \
 	  src/errors.c \
 	  src/syntax_err.c \
 	  src/syscall_err.c \
+	  src/cmd_err.c \
 	  src/quotes.c \
 	  src/expand.c \
 	  src/expand_word.c \
 	  src/expand_dollar.c \
 	  src/exec.c \
 	  src/exec_path.c \
-	  src/exec_builtin.c
+	  src/exec_ext.c \
+	  src/exec_builtin.c \
+	  src/exec_redir.c
 OBJ = $(SRC:.c=.o)
 
 TEST = run-tests

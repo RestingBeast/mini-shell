@@ -22,6 +22,7 @@
 # include <sys/stat.h>
 # include <string.h>
 # include <errno.h>
+# include <fcntl.h>
 # include "libft.h"
 # include "lexer.h"
 # include "parser.h"

@@ -24,22 +24,8 @@ void	set_syscall_err(t_err *err)
 	err->err_no = errno;
 }
 
-void	set_cmd_err(t_err *err, char *cmd)
+void	set_ambiguous_err(t_err *err, char *file)
 {
-	err->type = CMD_ERROR;
-	err->err_no = errno;
-	err->msg = cmd;
-}
-
-void	set_cmd_not_found_err(t_err *err, char *cmd)
-{
-	err->type = CMD_NOT_FOUND;
-	err->err_no = errno;
-	err->msg = cmd;
-}
-
-void	set_dir_err(t_err *err, char *cmd)
-{
-	err->type = IS_DIR_ERR;
-	err->msg = cmd;
+	err->type = AMBIGUOUS_ERR;
+	err->msg = file;
 }
