@@ -61,7 +61,8 @@ int	resolve_redir(t_list *redir, t_err *err, int *in_fd, int *out_fd)
 		{
 			fd = open(rdr->target.file, get_flags(rdr->type), 0666);
 			if (fd == -1)
-				return (close_fds(*in_fd, *out_fd), set_syscall_err(err), 0);
+				return (set_file_err(err, rdr->target.file),
+					close_fds(*in_fd, *out_fd), 0);
 			set_fds(rdr->type, in_fd, out_fd, fd);
 		}
 		else

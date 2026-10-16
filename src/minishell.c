@@ -26,8 +26,11 @@ static int	init_envlst(t_list **env)
 }
 
 /*
-** Ctrl-D at the prompt. Like bash, "exit" is printed only when
-** someone is typing (stdin is a terminal), and on stderr.
+** Ctrl-D at the prompt or the exit builtin. Like bash, "exit" is
+** printed only when someone is typing (stdin is a terminal), and on stderr.
+** stdin and stdout are closed so valgrind --track-fds does not report
+** stdout after a builtin redirection restored it with dup2().
+** stderr stays open: ASan prints its leak report there at exit.
 */
 static void	end_shell(t_list **env)
 {
@@ -35,6 +38,32 @@ static void	end_shell(t_list **env)
 		ft_putendl_fd("exit", STDERR_FILENO);
 	ft_lstclear(env, free);
 	rl_clear_history();
+	close(STDIN_FILENO);
+	close(STDOUT_FILENO);
+}
+
+/*
+** Lexes, parses, expands and runs one line.
+** Returns 0 when the exit builtin says the shell must stop.
+*/
+static int	run_line(t_data *data, t_list **env, int *status)
+{
+	data->tokens = lexer(data->line, &(data->err));
+	if (!check_error(data, *env, status))
+		return (1);
+	data->tree = parse_tokens(data->tokens, &(data->err));
+	if (!check_error(data, *env, status))
+		return (1);
+	expand_tree(data->tree, *env, *status, &(data->err));
+	if (!check_error(data, *env, status))
+		return (1);
+	execute_tree(data->tree, data, env, status);
+	if (data->should_exit)
+		return (clean_up(data), 0);
+	if (!check_error(data, *env, status))
+		return (1);
+	clean_up(data);
+	return (1);
 }
 
 int	main(void)
@@ -55,21 +84,8 @@ int	main(void)
 			break ;
 		if (*(data.line))
 			add_history(data.line);
-		data.tokens = lexer(data.line, &(data.err));
-		if (!check_error(&data, env, &status))
-			continue ;
-		data.tree = parse_tokens(data.tokens, &(data.err));
-		if (!check_error(&data, env, &status))
-			continue ;
-		expand_tree(data.tree, env, status, &(data.err));
-		if (!check_error(&data, env, &status))
-			continue ;
-		execute_tree(data.tree, &data, &env, &status);
-		if (data.should_exit)
-			return (clean_up(&data), end_shell(&env), status);
-		if (!check_error(&data, env, &status))
-			continue ;
-		clean_up(&data);
+		if (!run_line(&data, &env, &status))
+			break ;
 	}
 	end_shell(&env);
 	return (status);
