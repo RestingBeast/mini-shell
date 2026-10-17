@@ -62,6 +62,10 @@ t_redir	*handle_redir(t_list *tok, t_err *err);
 // heredoc.c
 t_redir	*handle_heredoc(t_list *tok, t_data *data);
 
+// heredoc_utils.c
+void	warn_eof(char *delimiter);
+char	*make_tmp_path(int n);
+
 // node.c
 t_cmd	*ft_cmdnew(char **args, t_list *redir);
 t_redir	*ft_redirnew_fd(t_type type, int fd);

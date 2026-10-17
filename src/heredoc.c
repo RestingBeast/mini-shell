@@ -12,15 +12,30 @@
 
 #include "minishell.h"
 
-static void	warn_eof(char *delimiter)
+static void	expand_and_write(char *line, int fd, t_data *data, int has_quotes)
 {
-	ft_putstr_fd("minishell: warning: here-document delimited by "
-		"end-of-file (wanted `", STDERR_FILENO);
-	ft_putstr_fd(delimiter, STDERR_FILENO);
-	ft_putendl_fd("')", STDERR_FILENO);
+	int	i;
+	char	*tmp;
+
+	i = -1;
+	while (line[++i] != '\0')
+	{
+		if (!has_quotes && line[i] == '$')
+		{
+			tmp = expand_dollar(line, &i, data->env, data->status);
+			if (!tmp)
+				return (set_malloc_err(&(data->err)));
+			write(fd, tmp, ft_strlen(tmp));
+			free(tmp);
+			i--;
+		}
+		else
+			write(fd, &(line[i]), 1);
+	}
+	write(fd, "\n", 1);
 }
 
-static void	capture_input(char *delimiter, int fd, t_err *err)
+static void	capture_input(char *delimiter, int fd, t_data *data, int has_quotes)
 {
 	char	*line;
 
@@ -34,31 +49,17 @@ static void	capture_input(char *delimiter, int fd, t_err *err)
 		if (ft_memcmp((void *)delimiter,
 				(void *)line, ft_strlen(delimiter) + 1) == 0)
 			break ;
-		write(fd, line, ft_strlen(line));
-		write(fd, "\n", 1);
+		expand_and_write(line, fd, data, has_quotes);
 		free(line);
 		line = readline("> ");
 	}
 	if (g_sig_captured == SIGINT)
-		err->type = HEREDOC_ABORT;
+		data->err.type = HEREDOC_ABORT;
 	if (line == NULL)
 		warn_eof(delimiter);
 	free(line);
 	rl_event_hook = NULL;
 	g_sig_captured = 0;
-}
-
-static char	*make_tmp_path(int n)
-{
-	char	*number;
-	char	*path;
-
-	number = ft_itoa(n);
-	if (!number)
-		return (NULL);
-	path = ft_strjoin("/tmp/.minishell_heredoc_", number);
-	free(number);
-	return (path);
 }
 
 /*
@@ -94,29 +95,45 @@ static int	open_tmp_file(char **path, t_err *err)
 ** We write the file, then open it again to read from the start.
 ** unlink() removes the name right away, but our fd can still read it.
 ** The file is really deleted when the fd is closed.
+** Returns that fd, or -1 and sets the error in DATA.
 */
-t_redir	*handle_heredoc(t_list *tok, t_data *data)
+static int	read_heredoc(char *delimiter, t_data *data, int has_quotes)
 {
-	t_redir	*res;
-	char	*delimiter;
 	char	*path;
 	int		fd;
 
-	delimiter = strip_quotes(((t_token *)tok->next->content)->lexeme);
-	if (!delimiter)
-		return (set_malloc_err(&(data->err)), NULL);
-	((t_token *)tok->next->content)->lexeme = NULL;
 	fd = open_tmp_file(&path, &(data->err));
 	if (fd == -1)
-		return (free(delimiter), NULL);
-	capture_input(delimiter, fd, &(data->err));
-	free(delimiter);
+		return (-1);
+	capture_input(delimiter, fd, data, has_quotes);
 	close(fd);
 	fd = open(path, O_RDONLY);
 	unlink(path);
 	free(path);
 	if (fd == -1)
-		return (set_syscall_err(&(data->err)), NULL);
+		return (set_syscall_err(&(data->err)), -1);
+	return (fd);
+}
+
+t_redir	*handle_heredoc(t_list *tok, t_data *data)
+{
+	t_redir	*res;
+	char	*delimiter;
+	int		fd;
+	int		has_quotes;
+
+	has_quotes = 0;
+	if (ft_strchr(((t_token *)tok->next->content)->lexeme, '\'') ||
+			ft_strchr(((t_token *)tok->next->content)->lexeme, '\"'))
+		has_quotes = 1;
+	delimiter = strip_quotes(((t_token *)tok->next->content)->lexeme);
+	if (!delimiter)
+		return (set_malloc_err(&(data->err)), NULL);
+	((t_token *)tok->next->content)->lexeme = NULL;
+	fd = read_heredoc(delimiter, data, has_quotes);
+	free(delimiter);
+	if (fd == -1)
+		return (NULL);
 	res = ft_redirnew_fd(HEREDOC, fd);
 	if (!res)
 		return (close(fd), set_malloc_err(&(data->err)), NULL);
