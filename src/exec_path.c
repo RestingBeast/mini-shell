@@ -40,7 +40,8 @@ static char	*search_path(char *cmd, char *path, t_err *err)
 }
 
 /*
-** A command with a '/' is used as it is, no PATH search.
+** A command with a '/' is used as it is, no PATH search. Like bash, so is
+** any command when PATH is unset or empty: it is looked up in the cwd.
 ** Returns a copy, so the caller can always free the result.
 */
 static char	*check_slash_cmd(char *cmd, t_err *err)
@@ -51,7 +52,11 @@ static char	*check_slash_cmd(char *cmd, t_err *err)
 	if (stat(cmd, &statbuf) == -1)
 	{
 		if (errno == ENOENT)
-			return (set_cmd_not_found_err(err, cmd), NULL);
+		{
+			set_cmd_not_found_err(err, cmd);
+			err->err_no = ENOENT;
+			return (NULL);
+		}
 		return (set_cmd_err(err, cmd), NULL);
 	}
 	if (S_ISDIR(statbuf.st_mode))
@@ -71,7 +76,7 @@ char	*find_command(char *cmd, t_data *data)
 	if (ft_strchr(cmd, '/') != NULL)
 		return (check_slash_cmd(cmd, &(data->err)));
 	path = env_get(data->env, "PATH");
-	if (!path)
-		return (set_cmd_not_found_err(&(data->err), cmd), NULL);
+	if (!path || !*path)
+		return (check_slash_cmd(cmd, &(data->err)));
 	return (search_path(cmd, path, &(data->err)));
 }
