@@ -15,7 +15,7 @@ static void	fork_builtin(t_exec *exec, t_data *data, t_list **env, int *status)
 	if (pid == 0)
 	{
 		set_child_sig();
-		if (dup2(exec->out_fd, STDOUT_FILENO) == -1)
+		if (exec->out_fd >= 0 && dup2(exec->out_fd, STDOUT_FILENO) == -1)
 		{
 			ft_putstr_fd("minishell: ", STDERR_FILENO);
 			ft_putstr_fd(strerror(errno), STDERR_FILENO);

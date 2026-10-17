@@ -48,10 +48,11 @@ void	exec_external(t_exec *exec, t_data *data, t_list *env, int *status)
 
 	full_cmd = find_command(exec->args[0], data, env);
 	if (!full_cmd)
-		return ;
+		return (close_fds(exec->in_fd, exec->out_fd));
 	env_arr = env_to_array(env);
 	if (!env_arr)
-		return (free(full_cmd), set_malloc_err(&(data->err)));
+		return (free(full_cmd), close_fds(exec->in_fd, exec->out_fd)
+					set_malloc_err(&(data->err)));
 	pid = fork();
 	if (pid == 0)
 	{
