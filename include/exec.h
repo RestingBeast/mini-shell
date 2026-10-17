@@ -24,7 +24,8 @@ struct s_exec
 };
 
 // exec.c
-void	execute_tree(t_node *root, t_data *data, t_exec exec);
+void	execute_tree(t_node *root, t_data *data, t_exec *exec,
+			int to_pipe);
 
 // exec_path.c
 char	*find_command(char *cmd, t_data *data);
