@@ -24,24 +24,24 @@ static int	set_up_exec(t_exec *exec, char **args, int *status)
 	return (1);
 }
 
-static void	exec_cmd(t_node *root, t_data *data, t_exec exec)
+static void	exec_cmd(t_node *root, t_data *data, t_exec *exec)
 {
 	t_cmd	*cmd;
 
 	if (root->type != COMMAND)
 		return ;
 	cmd = (t_cmd *)root->data;
-	if (!resolve_redir(cmd->redir, &(data->err), &exec))
+	if (!resolve_redir(cmd->redir, &(data->err), exec))
 		return ;
-	if (!set_up_exec(&exec, cmd->args, &(data->status)))
+	if (!set_up_exec(exec, cmd->args, &(data->status)))
 		return ;
-	if (is_builtin(exec.args[0]))
-		exec_builtin(&exec, data);
+	if (is_builtin(exec->args[0]))
+		exec_builtin(exec, data);
 	else
-		exec_external(&exec, data);
+		exec_external(exec, data);
 }
 
-void	execute_tree(t_node *root, t_data *data, t_exec exec)
+void	execute_tree(t_node *root, t_data *data, t_exec *exec, int to_pipe)
 {
 	int		fds[2];
 
@@ -49,14 +49,22 @@ void	execute_tree(t_node *root, t_data *data, t_exec exec)
 		return ;
 	if (root->type == PIPE)
 	{
+		execute_tree(root->left, data, exec, 1);
+		execute_tree(root->right, data, exec, to_pipe);
+		return ;
+	}
+	if (to_pipe)
+	{
 		if (pipe(fds) == -1)
 			return (set_syscall_err(&(data->err)));
-		exec.close_fd = fds[0];
-		exec.out_fd = fds[1];
+		exec->close_fd = fds[0];
+		exec->out_fd = fds[1];
 	}
-	execute_tree(root->left, data, exec);
 	exec_cmd(root, data, exec);
-	exec.in_fd = fds[0];
-	exec.close_fd = -1;
-	execute_tree(root->right, data, exec);
+	if (to_pipe)
+	{
+		exec->in_fd = fds[0];
+		exec->out_fd = -1;
+		exec->close_fd = -1;
+	}
 }
