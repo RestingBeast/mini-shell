@@ -34,10 +34,14 @@ void	wait_child(pid_t pid, int *status)
 	}
 }
 
-static int	set_up_exec(t_exec *exec, char **args)
+static int	set_up_exec(t_exec *exec, char **args, int *status)
 {
 	if (!args || !args[0])
-		return (close_fds(exec->in_fd, exec->out_fd), 0);
+	{
+		close_fds(exec->in_fd, exec->out_fd);
+		*status = 0;
+		return (0);
+	}
 	exec->args = args;
 	return (1);
 }
@@ -52,11 +56,8 @@ static void	exec_cmd(t_node *root, t_data *data, t_list **env, int *status)
 	cmd = (t_cmd *)root->data;
 	if (!resolve_redir(cmd->redir, &(data->err), &(exec.in_fd), &(exec.out_fd)))
 		return ;
-	if (!set_up_exec(&exec, cmd->args))
-	{
-		*status = 0;
+	if (!set_up_exec(&exec, cmd->args, status))
 		return ;
-	}
 	if (is_builtin(exec.args[0]))
 		exec_builtin(&exec, data, env, status);
 	else
@@ -65,8 +66,15 @@ static void	exec_cmd(t_node *root, t_data *data, t_list **env, int *status)
 
 void	execute_tree(t_node *root, t_data *data, t_list **env, int *status)
 {
+	int	fds[2];
+
 	if (root == NULL)
 		return ;
+	if (root->type == PIPE)
+	{
+		if (pipe(fds) == -1)
+			return (set_syscall_err(&(data->err)));
+	}
 	execute_tree(root->left, data, env, status);
 	exec_cmd(root, data, env, status);
 	execute_tree(root->right, data, env, status);
