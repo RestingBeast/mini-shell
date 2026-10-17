@@ -53,14 +53,14 @@ struct s_redir
 };
 
 // parser.c
-t_node	*parse_tokens(t_list *tokens, t_err *err);
+t_node	*parse_tokens(t_list *tokens, t_data *data);
 
 // parser_utils.c
 int		count_args(t_list *tokens);
 t_redir	*handle_redir(t_list *tok, t_err *err);
 
 // heredoc.c
-t_redir	*handle_heredoc(t_list *tok, t_err *err);
+t_redir	*handle_heredoc(t_list *tok, t_data *data);
 
 // node.c
 t_cmd	*ft_cmdnew(char **args, t_list *redir);

@@ -52,7 +52,7 @@ static int	run_line(t_data *data)
 	data->tokens = lexer(data->line, &(data->err));
 	if (!check_error(data))
 		return (1);
-	data->tree = parse_tokens(data->tokens, &(data->err));
+	data->tree = parse_tokens(data->tokens, data);
 	if (!check_error(data))
 		return (1);
 	expand_tree(data->tree, data->env, data->status, &(data->err));
