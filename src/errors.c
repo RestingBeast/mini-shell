@@ -69,6 +69,27 @@ int	get_status(t_err_type type)
 	return (0);
 }
 
+/*
+** Reports the error of one command right away, so the next command of
+** the line starts clean and $? ends up as the status of the last one.
+** A malloc failure still ends the shell, like in check_error().
+*/
+void	report_exec_err(t_data *data)
+{
+	if (data->err.type == OK)
+		return ;
+	data->status = get_status(data->err.type);
+	print_err_msg(&(data->err));
+	if (data->err.type == MALLOC_ERROR)
+	{
+		clean_exit(data);
+		exit(1);
+	}
+	data->err.type = OK;
+	data->err.err_no = 0;
+	data->err.msg = "";
+}
+
 int	check_error(t_data *data)
 {
 	if (data->err.type == OK)

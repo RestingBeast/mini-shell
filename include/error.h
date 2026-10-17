@@ -45,6 +45,7 @@ struct	s_err
 // errors.c
 int		get_status(t_err_type type);
 int		check_error(t_data *data);
+void	report_exec_err(t_data *data);
 
 // syscall_err.c
 void	set_malloc_err(t_err *err);
