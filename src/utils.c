@@ -34,9 +34,26 @@ void	init_shell(t_data *data)
 	set_sigaction();
 }
 
+/*
+** Frees what one command line allocated. The pointers are reset so that
+** calling it twice (e.g. clean_up() then clean_exit()) is safe.
+*/
 void	clean_up(t_data *data)
 {
 	free(data->line);
 	free_tokens(data->tokens);
 	ft_nodeclear(data->tree);
+	data->line = NULL;
+	data->tokens = NULL;
+	data->tree = NULL;
+}
+
+/*
+** Frees everything the shell owns, before the shell or a child exits.
+*/
+void	clean_exit(t_data *data)
+{
+	clean_up(data);
+	ft_lstclear(&(data->env), free);
+	rl_clear_history();
 }

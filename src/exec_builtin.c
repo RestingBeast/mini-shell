@@ -7,7 +7,7 @@ static int	is_one_cmd(t_data *data)
 	return (0);
 }
 
-static void	fork_builtin(t_exec *exec, t_data *data, t_list **env, int *status)
+static void	fork_builtin(t_exec *exec, t_data *data)
 {
 	pid_t	pid;
 
@@ -23,24 +23,24 @@ static void	fork_builtin(t_exec *exec, t_data *data, t_list **env, int *status)
 			close_fds(exec->in_fd, exec->out_fd);
 		}
 		else
-			*status = run_builtin(exec->args, env, *status, &(data->should_exit));
-		clean_up(data);
-		ft_lstclear(env, free);
+			data->status = run_builtin(exec->args, &(data->env),
+					data->status, &(data->should_exit));
+		clean_exit(data);
 		close_fds(exec->in_fd, exec->out_fd);
-		exit(*status);
+		exit(data->status);
 	}
 	if (pid == -1)
 		set_syscall_err(&(data->err));
 	else
-		wait_child(pid, status);
+		wait_child(pid, &(data->status));
 }
 
-void	exec_builtin(t_exec *exec, t_data *data, t_list **env, int *status)
+void	exec_builtin(t_exec *exec, t_data *data)
 {
 	int	fd;
 
 	if (!is_one_cmd(data))
-		return (fork_builtin(exec, data, env, status));
+		return (fork_builtin(exec, data));
 	fd = dup(STDOUT_FILENO);
 	if (fd == -1)
 		return (close_fds(exec->in_fd, exec->out_fd),
@@ -48,8 +48,8 @@ void	exec_builtin(t_exec *exec, t_data *data, t_list **env, int *status)
 	if (exec->out_fd >= 0 && dup2(exec->out_fd, STDOUT_FILENO) == -1)
 		return (close_fds(exec->in_fd, exec->out_fd),
 					close(fd), set_syscall_err(&(data->err)));
-	*status = run_builtin(exec->args, env,
-						*status, &(data->should_exit));
+	data->status = run_builtin(exec->args, &(data->env),
+			data->status, &(data->should_exit));
 	if (dup2(fd, STDOUT_FILENO) == -1)
 		return (close(fd), set_syscall_err(&(data->err)));
 	close(fd);

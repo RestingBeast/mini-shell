@@ -62,7 +62,7 @@ static char	*check_slash_cmd(char *cmd, t_err *err)
 	return (res);
 }
 
-char	*find_command(char *cmd, t_data *data, t_list *env)
+char	*find_command(char *cmd, t_data *data)
 {
 	char	*path;
 
@@ -70,7 +70,7 @@ char	*find_command(char *cmd, t_data *data, t_list *env)
 		return (set_cmd_not_found_err(&(data->err), cmd), NULL);
 	if (ft_strchr(cmd, '/') != NULL)
 		return (check_slash_cmd(cmd, &(data->err)));
-	path = env_get(env, "PATH");
+	path = env_get(data->env, "PATH");
 	if (!path)
 		return (set_cmd_not_found_err(&(data->err), cmd), NULL);
 	return (search_path(cmd, path, &(data->err)));

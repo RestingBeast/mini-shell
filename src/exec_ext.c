@@ -4,8 +4,7 @@
 ** Only reached in the child when execve() failed.
 ** Like bash: 127 if the file is gone, 126 for any other reason.
 */
-static void	child_fail(char *full_cmd, char **env_arr, t_data *data,
-		t_list *env)
+static void	child_fail(char *full_cmd, char **env_arr, t_data *data)
 {
 	int	err_no;
 
@@ -14,9 +13,7 @@ static void	child_fail(char *full_cmd, char **env_arr, t_data *data,
 	print_cmd_err_msg(CMD_ERROR, err_no, full_cmd);
 	free(full_cmd);
 	ft_argclear(env_arr);
-	clean_up(data);
-	ft_lstclear(&env, free);
-	rl_clear_history();
+	clean_exit(data);
 	if (err_no == ENOENT)
 		exit(127);
 	exit(126);
@@ -40,16 +37,16 @@ static void	try_execve(char *full_cmd, t_exec *exec, char **env_arr)
 	execve(full_cmd, exec->args, env_arr);
 }
 
-void	exec_external(t_exec *exec, t_data *data, t_list *env, int *status)
+void	exec_external(t_exec *exec, t_data *data)
 {
 	pid_t	pid;
 	char	*full_cmd;
 	char	**env_arr;
 
-	full_cmd = find_command(exec->args[0], data, env);
+	full_cmd = find_command(exec->args[0], data);
 	if (!full_cmd)
 		return (close_fds(exec->in_fd, exec->out_fd));
-	env_arr = env_to_array(env);
+	env_arr = env_to_array(data->env);
 	if (!env_arr)
 		return (free(full_cmd), close_fds(exec->in_fd, exec->out_fd),
 					set_malloc_err(&(data->err)));
@@ -57,12 +54,12 @@ void	exec_external(t_exec *exec, t_data *data, t_list *env, int *status)
 	if (pid == 0)
 	{
 		try_execve(full_cmd, exec, env_arr);
-		child_fail(full_cmd, env_arr, data, env);
+		child_fail(full_cmd, env_arr, data);
 	}
 	if (pid == -1)
 		set_syscall_err(&(data->err));
 	else
-		wait_child(pid, status);
+		wait_child(pid, &(data->status));
 	close_fds(exec->in_fd, exec->out_fd);
 	free(full_cmd);
 	ft_argclear(env_arr);

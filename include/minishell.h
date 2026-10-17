@@ -39,6 +39,8 @@ typedef struct s_data			t_data;
 struct s_data
 {
 	int		should_exit;
+	int		status;
+	t_list	*env;
 	char	*line;
 	t_list	*tokens;
 	t_node	*tree;
@@ -60,6 +62,7 @@ int		is_space(char c);
 int		is_redir(t_type type);
 void	init_shell(t_data *data);
 void	clean_up(t_data *data);
+void	clean_exit(t_data *data);
 
 // quotes.c
 int		is_quote_mark(char c, char *quote);

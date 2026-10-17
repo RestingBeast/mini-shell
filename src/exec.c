@@ -46,7 +46,7 @@ static int	set_up_exec(t_exec *exec, char **args, int *status)
 	return (1);
 }
 
-static void	exec_cmd(t_node *root, t_data *data, t_list **env, int *status)
+static void	exec_cmd(t_node *root, t_data *data)
 {
 	t_cmd	*cmd;
 	t_exec	exec;
@@ -56,15 +56,15 @@ static void	exec_cmd(t_node *root, t_data *data, t_list **env, int *status)
 	cmd = (t_cmd *)root->data;
 	if (!resolve_redir(cmd->redir, &(data->err), &(exec.in_fd), &(exec.out_fd)))
 		return ;
-	if (!set_up_exec(&exec, cmd->args, status))
+	if (!set_up_exec(&exec, cmd->args, &(data->status)))
 		return ;
 	if (is_builtin(exec.args[0]))
-		exec_builtin(&exec, data, env, status);
+		exec_builtin(&exec, data);
 	else
-		exec_external(&exec, data, *env, status);
+		exec_external(&exec, data);
 }
 
-void	execute_tree(t_node *root, t_data *data, t_list **env, int *status)
+void	execute_tree(t_node *root, t_data *data)
 {
 	int	fds[2];
 
@@ -75,7 +75,7 @@ void	execute_tree(t_node *root, t_data *data, t_list **env, int *status)
 		if (pipe(fds) == -1)
 			return (set_syscall_err(&(data->err)));
 	}
-	execute_tree(root->left, data, env, status);
-	exec_cmd(root, data, env, status);
-	execute_tree(root->right, data, env, status);
+	execute_tree(root->left, data);
+	exec_cmd(root, data);
+	execute_tree(root->right, data);
 }
