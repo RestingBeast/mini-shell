@@ -14,6 +14,7 @@ static void	fork_builtin(t_exec *exec, t_data *data)
 	pid = fork();
 	if (pid == 0)
 	{
+		close_fds(exec->close_fd, -1);
 		set_child_sig();
 		if (exec->out_fd >= 0 && dup2(exec->out_fd, STDOUT_FILENO) == -1)
 		{
@@ -40,7 +41,8 @@ void	exec_builtin(t_exec *exec, t_data *data)
 	int	fd;
 
 	if (!is_one_cmd(data))
-		return (fork_builtin(exec, data));
+		return (fork_builtin(exec, data),
+					close_fds(exec->in_fd, exec->out_fd));
 	fd = dup(STDOUT_FILENO);
 	if (fd == -1)
 		return (close_fds(exec->in_fd, exec->out_fd),

@@ -47,6 +47,8 @@ static void	end_shell(t_data *data)
 */
 static int	run_line(t_data *data)
 {
+	t_exec	exec;
+
 	data->tokens = lexer(data->line, &(data->err));
 	if (!check_error(data))
 		return (1);
@@ -56,7 +58,8 @@ static int	run_line(t_data *data)
 	expand_tree(data->tree, data->env, data->status, &(data->err));
 	if (!check_error(data))
 		return (1);
-	execute_tree(data->tree, data);
+	init_exec(&exec);
+	execute_tree(data->tree, data, exec);
 	if (data->should_exit)
 		return (clean_up(data), 0);
 	if (!check_error(data))
