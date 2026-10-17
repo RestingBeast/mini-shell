@@ -28,6 +28,7 @@ static void	exec_cmd(t_node *root, t_data *data, t_exec *exec)
 {
 	t_cmd	*cmd;
 
+	data->last_pid = -1;
 	if (root->type != COMMAND)
 		return ;
 	cmd = (t_cmd *)root->data;

@@ -40,11 +40,13 @@ struct s_data
 {
 	int		should_exit;
 	int		status;
-	t_list	*env;
+	pid_t	last_pid;
+	int		processes;
 	char	*line;
+	t_err	err;
+	t_list	*env;
 	t_list	*tokens;
 	t_node	*tree;
-	t_err	err;
 };
 
 // signals.c

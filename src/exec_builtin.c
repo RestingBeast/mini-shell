@@ -33,7 +33,7 @@ static void	fork_builtin(t_exec *exec, t_data *data)
 	if (pid == -1)
 		set_syscall_err(&(data->err));
 	else
-		wait_child(pid, &(data->status));
+		set_last_pid(data, pid);
 }
 
 void	exec_builtin(t_exec *exec, t_data *data)
