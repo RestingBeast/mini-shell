@@ -15,7 +15,7 @@
 void	set_malloc_err(t_err *err)
 {
 	err->type = MALLOC_ERROR;
-	err->msg = "malloc: failed to allocate memory\n";
+	err->msg = "malloc: failed to allocate memory";
 }
 
 void	set_syscall_err(t_err *err)

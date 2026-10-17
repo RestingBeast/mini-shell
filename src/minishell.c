@@ -81,6 +81,11 @@ int	main(void)
 	{
 		init_shell(&data);
 		data.line = readline("minishell$ ");
+		if (g_sig_captured == SIGINT)
+		{
+			data.status = 130;
+			g_sig_captured = 0;
+		}
 		if (!data.line)
 			break ;
 		if (*(data.line))
