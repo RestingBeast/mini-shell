@@ -50,13 +50,13 @@ static void	check_word(char *word, char *expected)
 */
 static t_node	*parse_line(char *line, t_list **tokens)
 {
-	t_err	err;
+	t_data	data;
 	t_node	*tree;
 
-	*tokens = lexer(line, &err);
-	cr_assert_eq(err.type, OK, "lexer failed on: %s", line);
-	tree = parse_tokens(*tokens, &err);
-	cr_assert_eq(err.type, OK, "parser failed on: %s", line);
+	*tokens = lexer(line, &data.err);
+	cr_assert_eq(data.err.type, OK, "lexer failed on: %s", line);
+	tree = parse_tokens(*tokens, &data);
+	cr_assert_eq(data.err.type, OK, "parser failed on: %s", line);
 	return (tree);
 }
 

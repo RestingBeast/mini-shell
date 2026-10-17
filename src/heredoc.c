@@ -95,7 +95,7 @@ static int	open_tmp_file(char **path, t_err *err)
 ** unlink() removes the name right away, but our fd can still read it.
 ** The file is really deleted when the fd is closed.
 */
-t_redir	*handle_heredoc(t_list *tok, t_err *err)
+t_redir	*handle_heredoc(t_list *tok, t_data *data)
 {
 	t_redir	*res;
 	char	*delimiter;
@@ -104,21 +104,21 @@ t_redir	*handle_heredoc(t_list *tok, t_err *err)
 
 	delimiter = strip_quotes(((t_token *)tok->next->content)->lexeme);
 	if (!delimiter)
-		return (set_malloc_err(err), NULL);
+		return (set_malloc_err(&(data->err)), NULL);
 	((t_token *)tok->next->content)->lexeme = NULL;
-	fd = open_tmp_file(&path, err);
+	fd = open_tmp_file(&path, &(data->err));
 	if (fd == -1)
 		return (free(delimiter), NULL);
-	capture_input(delimiter, fd, err);
+	capture_input(delimiter, fd, &(data->err));
 	free(delimiter);
 	close(fd);
 	fd = open(path, O_RDONLY);
 	unlink(path);
 	free(path);
 	if (fd == -1)
-		return (set_syscall_err(err), NULL);
+		return (set_syscall_err(&(data->err)), NULL);
 	res = ft_redirnew_fd(HEREDOC, fd);
 	if (!res)
-		return (close(fd), set_malloc_err(err), NULL);
+		return (close(fd), set_malloc_err(&(data->err)), NULL);
 	return (res);
 }
