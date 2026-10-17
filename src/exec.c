@@ -32,14 +32,15 @@ static void	exec_cmd(t_node *root, t_data *data, t_exec *exec)
 	if (root->type != COMMAND)
 		return ;
 	cmd = (t_cmd *)root->data;
-	if (!resolve_redir(cmd->redir, &(data->err), exec))
-		return ;
-	if (!set_up_exec(exec, cmd->args, &(data->status)))
-		return ;
-	if (is_builtin(exec->args[0]))
-		exec_builtin(exec, data);
-	else
-		exec_external(exec, data);
+	if (resolve_redir(cmd->redir, &(data->err), exec)
+		&& set_up_exec(exec, cmd->args, &(data->status)))
+	{
+		if (is_builtin(exec->args[0]))
+			exec_builtin(exec, data);
+		else
+			exec_external(exec, data);
+	}
+	report_exec_err(data);
 }
 
 void	execute_tree(t_node *root, t_data *data, t_exec *exec, int to_pipe)
