@@ -26,6 +26,21 @@ void	ft_redirclear(void *rdr)
 	free(redir);
 }
 
+void	ft_heredoc_clear(t_node *tree)
+{
+	t_cmd	*cmd;
+
+	if (!tree)
+		return ;
+	ft_heredoc_clear(tree->left);
+	ft_heredoc_clear(tree->right);
+	if (tree->type == COMMAND)
+	{
+		cmd = (t_cmd *)tree->data;
+		ft_lstclear(&(cmd->redir), ft_redirclear);
+	}
+}
+
 void	ft_argclear(char **args)
 {
 	int	i;

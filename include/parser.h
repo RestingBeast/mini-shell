@@ -74,6 +74,7 @@ t_node	*ft_nodenew(void *data, t_type type);
 
 // node_utils.c
 void	ft_redirclear(void *rdr);
+void	ft_heredoc_clear(t_node *tree);
 void	ft_argclear(char **args);
 void	ft_cmdclear(t_cmd *cmd);
 void	ft_nodeclear(t_node *root);
