@@ -29,12 +29,14 @@ static int	dupe_fds(int in_fd, int out_fd)
 	return (1);
 }
 
-static void	try_execve(char *full_cmd, t_exec *exec, char **env_arr)
+static void	try_execve(char *full_cmd, t_exec *exec,
+		char **env_arr, t_data *data)
 {
 	set_child_sig();
 	close_fds(exec->close_fd, -1);
 	if (!dupe_fds(exec->in_fd, exec->out_fd))
 		return (close_fds(exec->in_fd, exec->out_fd));
+	ft_heredoc_clear(data->tree);
 	execve(full_cmd, exec->args, env_arr);
 }
 
@@ -54,7 +56,7 @@ void	exec_external(t_exec *exec, t_data *data)
 	pid = fork();
 	if (pid == 0)
 	{
-		try_execve(full_cmd, exec, env_arr);
+		try_execve(full_cmd, exec, env_arr, data);
 		child_fail(full_cmd, env_arr, data);
 	}
 	if (pid == -1)
