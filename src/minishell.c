@@ -60,6 +60,7 @@ static int	run_line(t_data *data)
 		return (1);
 	init_exec(&exec);
 	execute_tree(data->tree, data, &exec, 0);
+	wait_children(data->last_pid, &(data->status), data->processes);
 	if (data->should_exit)
 		return (clean_up(data), 0);
 	if (!check_error(data))

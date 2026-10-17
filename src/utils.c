@@ -25,6 +25,8 @@ int	is_redir(t_type type)
 
 void	init_shell(t_data *data)
 {
+	data->last_pid = -1;
+	data->processes = 0;
 	data->line = NULL;
 	data->tokens = NULL;
 	data->tree = NULL;

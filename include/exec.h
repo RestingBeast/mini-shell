@@ -41,7 +41,8 @@ int		resolve_redir(t_list *redir, t_err *err, t_exec *exec);
 
 //exec_utils.c
 void	close_fds(int in_fd, int out_fd);
-void	wait_child(pid_t pid, int *status);
+void	wait_children(pid_t pid, int *status, int processes);
 void	init_exec(t_exec *exec);
+void	set_last_pid(t_data *data, int pid);
 
 #endif

@@ -60,7 +60,7 @@ void	exec_external(t_exec *exec, t_data *data)
 	if (pid == -1)
 		set_syscall_err(&(data->err));
 	else
-		wait_child(pid, &(data->status));
+		set_last_pid(data, pid);
 	close_fds(exec->in_fd, exec->out_fd);
 	free(full_cmd);
 	ft_argclear(env_arr);
