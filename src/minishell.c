@@ -32,12 +32,11 @@ static int	init_envlst(t_list **env)
 ** stdout after a builtin redirection restored it with dup2().
 ** stderr stays open: ASan prints its leak report there at exit.
 */
-static void	end_shell(t_list **env)
+static void	end_shell(t_data *data)
 {
 	if (isatty(STDIN_FILENO))
 		ft_putendl_fd("exit", STDERR_FILENO);
-	ft_lstclear(env, free);
-	rl_clear_history();
+	clean_exit(data);
 	close(STDIN_FILENO);
 	close(STDOUT_FILENO);
 }
@@ -46,21 +45,21 @@ static void	end_shell(t_list **env)
 ** Lexes, parses, expands and runs one line.
 ** Returns 0 when the exit builtin says the shell must stop.
 */
-static int	run_line(t_data *data, t_list **env, int *status)
+static int	run_line(t_data *data)
 {
 	data->tokens = lexer(data->line, &(data->err));
-	if (!check_error(data, *env, status))
+	if (!check_error(data))
 		return (1);
 	data->tree = parse_tokens(data->tokens, &(data->err));
-	if (!check_error(data, *env, status))
+	if (!check_error(data))
 		return (1);
-	expand_tree(data->tree, *env, *status, &(data->err));
-	if (!check_error(data, *env, status))
+	expand_tree(data->tree, data->env, data->status, &(data->err));
+	if (!check_error(data))
 		return (1);
-	execute_tree(data->tree, data, env, status);
+	execute_tree(data->tree, data);
 	if (data->should_exit)
 		return (clean_up(data), 0);
-	if (!check_error(data, *env, status))
+	if (!check_error(data))
 		return (1);
 	clean_up(data);
 	return (1);
@@ -68,13 +67,11 @@ static int	run_line(t_data *data, t_list **env, int *status)
 
 int	main(void)
 {
-	int		status;
 	t_data	data;
-	t_list	*env;
 
-	if (init_envlst(&env) == 1)
+	if (init_envlst(&(data.env)) == 1)
 		return (1);
-	status = 0;
+	data.status = 0;
 	data.should_exit = 0;
 	while (1)
 	{
@@ -84,9 +81,9 @@ int	main(void)
 			break ;
 		if (*(data.line))
 			add_history(data.line);
-		if (!run_line(&data, &env, &status))
+		if (!run_line(&data))
 			break ;
 	}
-	end_shell(&env);
-	return (status);
+	end_shell(&data);
+	return (data.status);
 }

@@ -24,16 +24,16 @@ struct s_exec
 
 // exec.c
 void	wait_child(pid_t pid, int *status);
-void	execute_tree(t_node *root, t_data *data, t_list **env, int *status);
+void	execute_tree(t_node *root, t_data *data);
 
 // exec_path.c
-char	*find_command(char *cmd, t_data *data, t_list *env);
+char	*find_command(char *cmd, t_data *data);
 
 // exec_ext.c
-void	exec_external(t_exec *exec, t_data *data, t_list *env, int *status);
+void	exec_external(t_exec *exec, t_data *data);
 
 // exec_builtin.c
-void	exec_builtin(t_exec *exec, t_data *data, t_list **env, int *status);
+void	exec_builtin(t_exec *exec, t_data *data);
 
 // exec_redir.c
 void	close_fds(int in_fd, int out_fd);
