@@ -48,7 +48,8 @@ static void	print_err_msg(t_err *err)
 		return ;
 	}
 	ft_putstr_fd(err->msg, STDERR_FILENO);
-	ft_putstr_fd(strerror(err->err_no), STDERR_FILENO);
+	if (err->type == SYSCALL_ERR)
+		ft_putstr_fd(strerror(err->err_no), STDERR_FILENO);
 	ft_putstr_fd("\n", STDERR_FILENO);
 }
 

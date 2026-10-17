@@ -4,3 +4,4 @@ run-tests
 libft.a
 .DS_Store
 en.subject.pdf
+minishell_tester/
