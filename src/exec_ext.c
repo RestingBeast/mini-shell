@@ -32,6 +32,7 @@ static int	dupe_fds(int in_fd, int out_fd)
 static void	try_execve(char *full_cmd, t_exec *exec, char **env_arr)
 {
 	set_child_sig();
+	close_fds(exec->close_fd, -1);
 	if (!dupe_fds(exec->in_fd, exec->out_fd))
 		return (close_fds(exec->in_fd, exec->out_fd));
 	execve(full_cmd, exec->args, env_arr);

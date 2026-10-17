@@ -47,7 +47,8 @@ SRC = src/minishell.c \
 	  src/exec_path.c \
 	  src/exec_ext.c \
 	  src/exec_builtin.c \
-	  src/exec_redir.c
+	  src/exec_redir.c \
+	  src/exec_utils.c
 OBJ = $(SRC:.c=.o)
 
 TEST = run-tests

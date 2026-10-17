@@ -12,28 +12,6 @@
 
 #include "minishell.h"
 
-/*
-** The shell ignores Ctrl-C while it waits, so only the child is killed.
-*/
-void	wait_child(pid_t pid, int *status)
-{
-	int	wstatus;
-
-	set_wait_sig();
-	waitpid(pid, &wstatus, 0);
-	set_sigaction();
-	if (WIFEXITED(wstatus))
-		*status = WEXITSTATUS(wstatus);
-	else if (WIFSIGNALED(wstatus))
-	{
-		*status = 128 + WTERMSIG(wstatus);
-		if (WTERMSIG(wstatus) == SIGINT)
-			ft_putstr_fd("\n", STDOUT_FILENO);
-		else if (WTERMSIG(wstatus) == SIGQUIT)
-			ft_putstr_fd("Quit (core dumped)\n", STDERR_FILENO);
-	}
-}
-
 static int	set_up_exec(t_exec *exec, char **args, int *status)
 {
 	if (!args || !args[0])
@@ -46,15 +24,14 @@ static int	set_up_exec(t_exec *exec, char **args, int *status)
 	return (1);
 }
 
-static void	exec_cmd(t_node *root, t_data *data)
+static void	exec_cmd(t_node *root, t_data *data, t_exec exec)
 {
 	t_cmd	*cmd;
-	t_exec	exec;
 
 	if (root->type != COMMAND)
 		return ;
 	cmd = (t_cmd *)root->data;
-	if (!resolve_redir(cmd->redir, &(data->err), &(exec.in_fd), &(exec.out_fd)))
+	if (!resolve_redir(cmd->redir, &(data->err), &exec))
 		return ;
 	if (!set_up_exec(&exec, cmd->args, &(data->status)))
 		return ;
@@ -64,9 +41,9 @@ static void	exec_cmd(t_node *root, t_data *data)
 		exec_external(&exec, data);
 }
 
-void	execute_tree(t_node *root, t_data *data)
+void	execute_tree(t_node *root, t_data *data, t_exec exec)
 {
-	int	fds[2];
+	int		fds[2];
 
 	if (root == NULL)
 		return ;
@@ -74,8 +51,12 @@ void	execute_tree(t_node *root, t_data *data)
 	{
 		if (pipe(fds) == -1)
 			return (set_syscall_err(&(data->err)));
+		exec.close_fd = fds[0];
+		exec.out_fd = fds[1];
 	}
-	execute_tree(root->left, data);
-	exec_cmd(root, data);
-	execute_tree(root->right, data);
+	execute_tree(root->left, data, exec);
+	exec_cmd(root, data, exec);
+	exec.in_fd = fds[0];
+	exec.close_fd = -1;
+	execute_tree(root->right, data, exec);
 }

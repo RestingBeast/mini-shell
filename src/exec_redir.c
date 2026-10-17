@@ -11,63 +11,54 @@ static int	get_flags(t_type type)
 	return (0);
 }
 
-void	close_fds(int in_fd, int out_fd)
-{
-	if (in_fd >= 0)
-		close(in_fd);
-	if (out_fd >= 0)
-		close(out_fd);
-}
-
-static void	set_fds(t_type type, int *in_fd, int *out_fd, int fd)
+static void	set_fds(t_type type, t_exec *exec, int fd)
 {
 	if (type == REDIR_IN || type == HEREDOC)
 	{
-		close_fds(*in_fd, -1);
-		*in_fd = fd;
+		close_fds(exec->in_fd, -1);
+		exec->in_fd = fd;
 	}
 	else
 	{
-		close_fds(-1, *out_fd);
-		*out_fd = fd;
+		close_fds(-1, exec->out_fd);
+		exec->out_fd = fd;
 	}
 }
 
-static	int	copy_heredoc_fd(t_redir *rdr, int *in_fd)
+static	int	copy_heredoc_fd(t_redir *rdr, t_exec *exec)
 {
 	int	fd;
 	
 	fd = dup(rdr->target.fd);
 	if (fd == -1)
 		return (0);
-	set_fds(rdr->type, in_fd, NULL, fd);
+	set_fds(rdr->type, exec, fd);
 	return (1);
 }
 
-int	resolve_redir(t_list *redir, t_err *err, int *in_fd, int *out_fd)
+int	resolve_redir(t_list *redir, t_err *err, t_exec *exec)
 {
 	t_redir	*rdr;
 	int		fd;
 
-	*in_fd = -1;
-	*out_fd = -1;
 	while (redir != NULL)
 	{
 		rdr = (t_redir *)(redir->content);
 		if (rdr->ambiguous)
-			return (close_fds(*in_fd, *out_fd),
+			return (close_fds(exec->in_fd, exec->out_fd),
 				set_ambiguous_err(err, rdr->target.file), 0);
 		if (rdr->type != HEREDOC)
 		{
 			fd = open(rdr->target.file, get_flags(rdr->type), 0666);
 			if (fd == -1)
 				return (set_file_err(err, rdr->target.file),
-					close_fds(*in_fd, *out_fd), 0);
-			set_fds(rdr->type, in_fd, out_fd, fd);
+					close_fds(exec->in_fd, exec->out_fd), 0);
+			set_fds(rdr->type, exec, fd);
 		}
 		else
-			if (!copy_heredoc_fd(rdr, in_fd))
-				return (close_fds(*in_fd, *out_fd), set_syscall_err(err), 0);
+			if (!copy_heredoc_fd(rdr, exec))
+				return (close_fds(exec->in_fd, exec->out_fd),
+					set_syscall_err(err), 0);
 		redir = redir->next;
 	}
 	return (1);

@@ -19,12 +19,12 @@ struct s_exec
 {
 	int		in_fd;
 	int		out_fd;
+	int		close_fd;
 	char	**args;
 };
 
 // exec.c
-void	wait_child(pid_t pid, int *status);
-void	execute_tree(t_node *root, t_data *data);
+void	execute_tree(t_node *root, t_data *data, t_exec exec);
 
 // exec_path.c
 char	*find_command(char *cmd, t_data *data);
@@ -36,7 +36,11 @@ void	exec_external(t_exec *exec, t_data *data);
 void	exec_builtin(t_exec *exec, t_data *data);
 
 // exec_redir.c
+int		resolve_redir(t_list *redir, t_err *err, t_exec *exec);
+
+//exec_utils.c
 void	close_fds(int in_fd, int out_fd);
-int		resolve_redir(t_list *redir, t_err *err, int *in_fd, int *out_fd);
+void	wait_child(pid_t pid, int *status);
+void	init_exec(t_exec *exec);
 
 #endif
